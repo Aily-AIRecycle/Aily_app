@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graduation_project/screen/information_screen.dart';
 import 'information_screen.dart';
+import 'mypage_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => InformationScreen()),
+              MaterialPageRoute(builder: (context) => MyPageScreen()),
             );
           },
           child: Text(
