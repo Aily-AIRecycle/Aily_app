@@ -22,7 +22,7 @@ class _Account_screenState extends State<Account_screen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      '프로필3',
+                      '프로필5',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -59,7 +59,7 @@ class _Account_screenState extends State<Account_screen> {
                           Container(
                             padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                             child: Text(
-                              '윤찬',
+                              '졸작가즈아',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w200,
