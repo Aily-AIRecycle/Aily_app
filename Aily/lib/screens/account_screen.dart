@@ -8,10 +8,6 @@ class Account_screen extends StatefulWidget {
   State<Account_screen> createState() => _Account_screenState();
 }
 
-void _test(){
-  //test
-}
-
 class _Account_screenState extends State<Account_screen> {
   @override
   Widget build(BuildContext context) {
