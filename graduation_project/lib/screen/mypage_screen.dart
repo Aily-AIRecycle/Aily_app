@@ -295,7 +295,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         child: Container(
-          height: 60,
+            // height: 60,
+          height: MediaQuery.of(context).size.height * 0.08,
           child: Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
