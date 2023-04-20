@@ -22,7 +22,7 @@ class _Account_screenState extends State<Account_screen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      '프로필3',
+                      '프로필2',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
