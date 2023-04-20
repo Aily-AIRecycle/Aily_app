@@ -8,13 +8,7 @@ class Account_screen extends StatefulWidget {
   State<Account_screen> createState() => _Account_screenState();
 }
 
-
-
 class _Account_screenState extends State<Account_screen> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,8 +21,8 @@ class _Account_screenState extends State<Account_screen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '프로필',
+                    const Text(
+                      '프로필3',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
