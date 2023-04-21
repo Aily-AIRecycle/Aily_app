@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<String> SelectedTitles = [];
+  late List<String> SelectedTitles = [];
   late double screenWidth, screenHeight;
   late String? username;
   late int? userpoint;
@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _getListTitle();
     _getScreenSize();
     _getUser();
   }
@@ -50,12 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getListTitle() {
-    final TitleProvider titleProvider = Provider.of<TitleProvider>(context, listen: true);
+    final TitleProvider titleProvider = Provider.of<TitleProvider>(context, listen: false);
     final titles = titleProvider.title.title;
-    setState(() {
-      SelectedTitles = titles;
-    });
-    _addMarker(SelectedTitles);
+    _addMarker(titles);
   }
 
   void _addMarker(List<String> titles) {
@@ -65,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildListTiles() {
-    List<Widget> listTiles = [];
+    final List<Widget> listTiles = [];
     for (var title in SelectedTitles) {
       listTiles.add(_ListTile(context, title));
     }
@@ -83,8 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget HomeWidget(String username, BuildContext context) {
-    _getListTitle();
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
