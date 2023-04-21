@@ -213,10 +213,12 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
 }
 
 Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {
+  Color myColor = const Color(0xFFF8B195);
+
   return Card(
     shape: RoundedRectangleBorder(
       side: BorderSide(
-          color: const Color(0xffF8B195).withOpacity(0.5)
+          color: myColor.withOpacity(0.5)
       ),
       borderRadius: BorderRadius.circular(15.0),
     ),
@@ -225,7 +227,7 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
     child: ListTile(
       horizontalTitleGap: 0,
       contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-      leading: const Icon(Icons.directions_walk),
+      leading: Icon(Icons.directions_walk, color: myColor),
       title: Text(title, style: const TextStyle(fontSize: 18)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -259,41 +261,6 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
     ),
   );
 }
-
-
-// Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {
-//   return Card(
-//     shape: RoundedRectangleBorder(
-//       side: BorderSide(
-//           color: const Color(0xffF8B195).withOpacity(0.5)
-//       ),
-//       borderRadius: BorderRadius.circular(15.0),
-//     ),
-//     elevation: 0,
-//     margin: const EdgeInsets.symmetric(horizontal: 35),
-//     child: ListTile(
-//       horizontalTitleGap: 0,
-//       contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-//       leading: const Icon(Icons.directions_walk),
-//       title: Text(title, style: const TextStyle(fontSize: 18)),
-//       trailing: Column(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         children: [
-//           const Text('상태', style: TextStyle(fontSize: 10)),
-//           const SizedBox(height: 5), // 간격 추가
-//           isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
-//           const Icon(Icons.circle, color: Colors.red, size: 14),
-//           const SizedBox(height: 3), // 간격 추가
-//           isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 10)) : const Text('사용 불가능', style: TextStyle(fontSize: 10)),
-//         ],
-//       ),
-//       onTap: () {
-//         showMsg(context, '까꿍', title);
-//       },
-//     ),
-//   );
-// }
 
 
 
