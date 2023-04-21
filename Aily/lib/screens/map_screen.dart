@@ -166,6 +166,7 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
                     SizedBox(
                       width: 350,
                       child: TextField(
+                        style: TextStyle(color: Colors.grey.shade600),
                         focusNode: _focusNode,
                         controller: searchctrl,
                         decoration: InputDecoration(
@@ -179,11 +180,11 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
                             borderRadius: BorderRadius.circular(20),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.black),
+                            borderSide: BorderSide(color: Colors.grey.shade400),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           suffixIcon: IconButton(
-                            color: Colors.black,
+                            color: Colors.grey.shade400,
                             icon: const Icon(Icons.search),
                             onPressed: (){
                               _search();
@@ -218,7 +219,7 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
   return Card(
     shape: RoundedRectangleBorder(
       side: BorderSide(
-          color: myColor.withOpacity(0.5)
+          color: myColor.withOpacity(0.3)
       ),
       borderRadius: BorderRadius.circular(15.0),
     ),
@@ -228,7 +229,7 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
       horizontalTitleGap: 0,
       contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
       leading: Icon(Icons.directions_walk, color: myColor),
-      title: Text(title, style: const TextStyle(fontSize: 18)),
+      title: Text(title, style: TextStyle(fontSize: 18, color: myColor)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -246,10 +247,10 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('상태', style: TextStyle(fontSize: 12)),
-              const SizedBox(height: 5), // 간격 추가
+              const SizedBox(height: 5),
               isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
               const Icon(Icons.circle, color: Colors.red, size: 14),
-              const SizedBox(height: 3), // 간격 추가
+              const SizedBox(height: 3),
               isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 12)) : const Text('사용 불가능', style: TextStyle(fontSize: 10)),
             ],
           ),
