@@ -235,14 +235,7 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text("남은거리", style: TextStyle(fontSize: 12)),
-              Row(
-                children: [
-                  const Icon(Icons.directions_walk, size: 14),
-                  const SizedBox(width: 2),
-                  Text("\t${distance}M"),
-                ],
-              ),
-              const SizedBox(height: 11)
+              Text('${distance}M\n'),
             ],
           ),
           const SizedBox(width: 10),
