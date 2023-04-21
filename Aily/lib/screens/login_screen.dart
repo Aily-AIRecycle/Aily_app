@@ -96,9 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
         //
       }
       //현재 페이지를 제거 후 페이지 이동
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => NavigatorScreen()),
+        MaterialPageRoute(builder: (context) => const NavigatorScreen()),
+            (route) => false,
       );
     } catch (e) {
       //
