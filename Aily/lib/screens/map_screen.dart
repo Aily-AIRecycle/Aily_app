@@ -21,7 +21,7 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController searchctrl;
   late String searchStr = '';
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -89,7 +89,7 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
   void _search() {
     final String str = searchctrl.text.trim();
     if (str.contains('Aily1') || str.contains('동양')){
-      searchStr = '동양미래대학교';
+      searchStr = '동양미래대점';
     } else if (str.contains('Aily2')){
       searchStr = '코엑스';
     } else if (str.isEmpty){
@@ -110,10 +110,9 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    Color backColor = const Color(0xFFF6F1F6);
 
     return Scaffold(
-      backgroundColor: backColor,
+      backgroundColor: Colors.white,
       body: MapWidget(context),
     );
   }
@@ -121,9 +120,7 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
   Widget _buildListTiles() {
     List<Widget> listTiles = [];
     if (searchStr.isNotEmpty){
-      listTiles.add(_ListTile(context, searchStr));
-    }else{
-      return const Text('현 위치에서 가까운 Aily의 위치가 나타나요.', style: TextStyle(fontSize: 16));
+      listTiles.add(_ListTile(context, searchStr, 226, true));
     }
     return Column(children: listTiles);
   }
@@ -167,12 +164,12 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
                 Column(
                   children: [
                     SizedBox(
-                      width: 370,
+                      width: 350,
                       child: TextField(
                         focusNode: _focusNode,
                         controller: searchctrl,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           hintText: '주소, 지역 검색',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -196,10 +193,12 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
                         obscureText: false,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     Column(
                       children: [
-                        _buildListTiles()
+                        const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
+                        const SizedBox(height: 20),
+                        _buildListTiles(),
                       ],
                     ),
                   ],
@@ -213,12 +212,96 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
   }
 }
 
-Widget _ListTile(BuildContext context, String title) {
-  return ListTile(
-    title: Text(title, style: const TextStyle(fontSize: 18)),
-    subtitle: const Text('캔 사용가능 | 플라스틱 사용불가', style: TextStyle(fontSize: 16)),
-    onTap: () {
-      showMsg(context, '까꿍', title);
-    },
+Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {
+  return Card(
+    shape: RoundedRectangleBorder(
+      side: BorderSide(
+          color: const Color(0xffF8B195).withOpacity(0.5)
+      ),
+      borderRadius: BorderRadius.circular(15.0),
+    ),
+    elevation: 0,
+    margin: const EdgeInsets.symmetric(horizontal: 35),
+    child: ListTile(
+      horizontalTitleGap: 0,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+      leading: const Icon(Icons.directions_walk),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("남은거리", style: TextStyle(fontSize: 12)),
+              Row(
+                children: [
+                  const Icon(Icons.directions_walk, size: 14),
+                  const SizedBox(width: 2),
+                  Text("\t${distance}M"),
+                ],
+              ),
+              const SizedBox(height: 11)
+            ],
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('상태', style: TextStyle(fontSize: 12)),
+              const SizedBox(height: 5), // 간격 추가
+              isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
+              const Icon(Icons.circle, color: Colors.red, size: 14),
+              const SizedBox(height: 3), // 간격 추가
+              isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 12)) : const Text('사용 불가능', style: TextStyle(fontSize: 10)),
+            ],
+          ),
+        ],
+      ),
+      onTap: () {
+        showMsg(context, '까꿍', title);
+      },
+    ),
   );
 }
+
+
+// Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {
+//   return Card(
+//     shape: RoundedRectangleBorder(
+//       side: BorderSide(
+//           color: const Color(0xffF8B195).withOpacity(0.5)
+//       ),
+//       borderRadius: BorderRadius.circular(15.0),
+//     ),
+//     elevation: 0,
+//     margin: const EdgeInsets.symmetric(horizontal: 35),
+//     child: ListTile(
+//       horizontalTitleGap: 0,
+//       contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+//       leading: const Icon(Icons.directions_walk),
+//       title: Text(title, style: const TextStyle(fontSize: 18)),
+//       trailing: Column(
+//         crossAxisAlignment: CrossAxisAlignment.center,
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           const Text('상태', style: TextStyle(fontSize: 10)),
+//           const SizedBox(height: 5), // 간격 추가
+//           isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
+//           const Icon(Icons.circle, color: Colors.red, size: 14),
+//           const SizedBox(height: 3), // 간격 추가
+//           isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 10)) : const Text('사용 불가능', style: TextStyle(fontSize: 10)),
+//         ],
+//       ),
+//       onTap: () {
+//         showMsg(context, '까꿍', title);
+//       },
+//     ),
+//   );
+// }
+
+
+
+
