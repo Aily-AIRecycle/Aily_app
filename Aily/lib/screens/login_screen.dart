@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
     signnicknamectrl = TextEditingController();
     selectedDate = DateTime(selectedYear, selectedMonth, selectedDay);
     _selectedGender = '남';
-    //tryAutoLogin();
+    //tryAutoLogin(); //자동 로그인
   }
 
   @override
