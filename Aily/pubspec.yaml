@@ -56,11 +56,11 @@ dependencies:
   qr_flutter: ^4.0.0
   gradients: ^0.1.1+2
   flutter_secure_storage: ^8.0.0
-  cached_network_image: ^3.2.3
   dio: ^5.1.1
   flutter_cache_manager: ^3.3.0
   flutter_svg: ^2.0.5
   flutter_keyboard_visibility: ^5.4.0
+  webview_flutter: ^2.8.0
 
 flutter_native_splash:
   android: true
