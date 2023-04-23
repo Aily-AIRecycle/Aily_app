@@ -160,7 +160,7 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
             ),
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 25),
                 Column(
                   children: [
                     SizedBox(
@@ -171,17 +171,18 @@ class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixi
                         controller: searchctrl,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          hintText: '주소, 지역 검색',
+                          hintText: '주소, 지역 등 검색',
+                          hintStyle: TextStyle(color: Color(0xff989898),),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: myColor),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey.shade400),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           suffixIcon: IconButton(
                             color: Colors.grey.shade400,
