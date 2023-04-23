@@ -83,11 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
         if (await profileFile.exists()) {
           await profileFile.delete();
         }
-        await profileFile.writeAsBytes(response.bodyBytes, mode: FileMode.write);
+        await profileFile.writeAsBytes(response.bodyBytes,
+            mode: FileMode.write);
         setState(() {
           profile = profileFile;
         });
-        final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+        final UserProvider userProvider =
+            Provider.of<UserProvider>(context, listen: false);
         userProvider.updateNickname(nickname);
         userProvider.updatePoint(point);
         userProvider.updateImage(profile!);
@@ -99,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const NavigatorScreen()),
-            (route) => false,
+        (route) => false,
       );
     } catch (e) {
       //
@@ -116,17 +118,17 @@ class _LoginScreenState extends State<LoginScreen> {
     final pw = await storage.read(key: 'pw');
     try {
       http.Response response = await loginUser(id!, pw!);
-      if (response.statusCode == 200){
+      if (response.statusCode == 200) {
         //로그인 성공
         var jsonResponse = jsonDecode(response.body);
         image = jsonResponse[0]['image'];
-        if (id == 'admin'){
+        if (id == 'admin') {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const ManagerScreen()),
-                (route) => false,
+            (route) => false,
           );
-        }else{
+        } else {
           showLoadingDialog(context);
           downloadImageFromServer(id);
         }
@@ -137,16 +139,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<http.Response> loginUser(String id, String password) async {
-    final response = await http.post(
-        Uri.parse('http://211.201.93.173:8081/api/login'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'id': id,
-          'password': password,
-        })
-    );
+    final response =
+        await http.post(Uri.parse('http://211.201.93.173:8081/api/login'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(<String, String>{
+              'id': id,
+              'password': password,
+            }));
     return response;
   }
 
@@ -163,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       try {
         http.Response response = await loginUser(id, md5Password);
-        if (response.statusCode == 200){
+        if (response.statusCode == 200) {
           //로그인 성공
           var jsonResponse = jsonDecode(response.body);
           nickname = jsonResponse[0]['nickname'];
@@ -171,14 +172,14 @@ class _LoginScreenState extends State<LoginScreen> {
           image = jsonResponse[0]['profile'];
           phonenumber = jsonResponse[0]['User_phonenumber'];
           saveLoginInfo(id, md5Password);
-          if (id == 'admin'){
+          if (id == 'admin') {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const ManagerScreen(),
               ),
             );
-          }else{
+          } else {
             showLoadingDialog(context);
             downloadImageFromServer(nickname);
           }
@@ -189,7 +190,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<http.Response> signUser(String phone, String id, password, nickname, birth) async {
+  Future<http.Response> signUser(
+      String phone, String id, password, nickname, birth) async {
     final Map<String, dynamic> data = {
       "phonenumber": phone,
       "id": id,
@@ -221,18 +223,18 @@ class _LoginScreenState extends State<LoginScreen> {
     // 회원가입 처리 로직 구현
     if (id.contains(' ') || pw.contains(' ')) {
       showMsg(context, "회원가입", "아이디 또는 비밀번호에 공백이 포함되어 있습니다.");
-    }
-    else if (id.isEmpty || pw.isEmpty || confirmPw.isEmpty) {
+    } else if (id.isEmpty || pw.isEmpty || confirmPw.isEmpty) {
       showMsg(context, "회원가입", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
       if (pw == confirmPw) {
-        try{
-          http.Response response = await signUser(phone, id, md5Password, nickname, _birth);
+        try {
+          http.Response response =
+              await signUser(phone, id, md5Password, nickname, _birth);
           final responsebody = json.decode(utf8.decode(response.bodyBytes));
           final error = responsebody['error'];
-          if (error == '중복된 닉네임입니다.'){
+          if (error == '중복된 닉네임입니다.') {
             showMsg(context, "회원가입", "중복된 닉네임입니다.");
-          }else if (error == '중복된 전화번호입니다.'){
+          } else if (error == '중복된 전화번호입니다.') {
             showMsg(context, "회원가입", "중복된 전화번호입니다.");
           }
         } catch (e) {
@@ -302,11 +304,13 @@ class _LoginScreenState extends State<LoginScreen> {
     if (selectedYear.isNaN || selectedMonth.isNaN || selectedDay.isNaN) {
       _birth = null;
     } else {
-      _birth = '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${selectedDay.toString().padLeft(2, '0')}';
+      _birth =
+          '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${selectedDay.toString().padLeft(2, '0')}';
     }
   }
 
-  Widget buildTextFormField(String hintText, TextEditingController controller, TextInputType keyboardType, bool obscure) {
+  Widget buildTextFormField(String hintText, TextEditingController controller,
+      TextInputType keyboardType, bool obscure) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -324,8 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Function(T?) onChanged,
       InputDecoration decoration,
       double width,
-      double height
-      ) {
+      double height) {
     return SizedBox(
       width: width,
       height: height,
@@ -339,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> signSheet () async {
+  Future<void> signSheet() async {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -351,34 +354,29 @@ class _LoginScreenState extends State<LoginScreen> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return Padding(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery
-                  .of(context)
-                  .viewInsets
-                  .bottom),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SingleChildScrollView(
             child: Container(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.7,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0, vertical: 40.0),
+              height: MediaQuery.of(context).size.height * 0.7,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
               child: Form(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .stretch,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Text(
                       '회원가입',
                       style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
-                    buildTextFormField('아이디 입력', signidctrl, TextInputType.text, false),
-                    buildTextFormField('비밀번호 입력', signpwctrl, TextInputType.visiblePassword, true),
-                    buildTextFormField('비밀번호 확인', signpwctrl2, TextInputType.visiblePassword, true),
+                    buildTextFormField(
+                        '아이디 입력', signidctrl, TextInputType.text, false),
+                    buildTextFormField('비밀번호 입력', signpwctrl,
+                        TextInputType.visiblePassword, true),
+                    buildTextFormField('비밀번호 확인', signpwctrl2,
+                        TextInputType.visiblePassword, true),
                     const SizedBox(height: 20.0),
                     const Text('생년월일'),
                     Row(
@@ -390,7 +388,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   100,
-                                      (index) => DropdownMenuItem<int>(
+                                  (index) => DropdownMenuItem<int>(
                                     value: DateTime.now().year - index,
                                     child: Text(
                                       '${DateTime.now().year - index}',
@@ -403,8 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: UnderlineInputBorder(),
                                 ),
                                 70,
-                                50
-                            ),
+                                50),
                           ),
                         ),
                         const SizedBox(width: 8.0),
@@ -415,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   12,
-                                      (index) => DropdownMenuItem<int>(
+                                  (index) => DropdownMenuItem<int>(
                                     value: index + 1,
                                     child: Text(
                                       '${index + 1}월',
@@ -428,8 +425,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: UnderlineInputBorder(),
                                 ),
                                 70,
-                                50
-                            ),
+                                50),
                           ),
                         ),
                         const SizedBox(width: 8.0),
@@ -440,7 +436,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   31,
-                                      (index) => DropdownMenuItem<int>(
+                                  (index) => DropdownMenuItem<int>(
                                     value: index + 1,
                                     child: Text(
                                       '${index + 1}일',
@@ -453,8 +449,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   border: UnderlineInputBorder(),
                                 ),
                                 70,
-                                50
-                            ),
+                                50),
                           ),
                         ),
                         const SizedBox(width: 50.0),
@@ -468,8 +463,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Row(
                                   children: [
                                     gender == '남'
-                                        ? const Icon(Icons.man, color: Colors.blue)
-                                        : const Icon(Icons.woman, color: Colors.red),
+                                        ? const Icon(Icons.man,
+                                            color: Colors.blue)
+                                        : const Icon(Icons.woman,
+                                            color: Colors.red),
                                     Text(gender)
                                   ],
                                 ),
@@ -487,8 +484,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     const SizedBox(height: 10.0),
-                    buildTextFormField('이름', signnicknamectrl, TextInputType.text, false),
-                    buildTextFormField('전화번호 입력', signphonectrl, TextInputType.phone, false),
+                    buildTextFormField(
+                        '이름', signnicknamectrl, TextInputType.text, false),
+                    buildTextFormField(
+                        '전화번호 입력', signphonectrl, TextInputType.phone, false),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () async {
@@ -496,8 +495,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         await signup(userProvider);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 248, 177, 149),
-                        padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 140.0),
+                        backgroundColor:
+                            const Color.fromARGB(255, 248, 177, 149),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 13.0, horizontal: 140.0),
                       ),
                       child: const Text('확 인'),
                     ),
@@ -555,15 +556,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset(
                         'assets/images/logo.png',
-                        width: 200.0,
-                        height: 200.0,
+                        width: 225.0,
+                        height: 225.0,
                       ),
-                      const SizedBox(height: 32.0),
+                      const SizedBox(height: 80.0),
                       TextField(
                         controller: idctrl,
                         decoration: const InputDecoration(
                           hintText: '아이디 입력',
-                          border: OutlineInputBorder(),
+                          hintStyle: TextStyle(
+                            color: Color(0xff969696),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8.0),
@@ -571,29 +577,42 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: passwordctrl,
                         decoration: const InputDecoration(
                           hintText: '비밀번호 입력',
-                          border: OutlineInputBorder(),
+                          hintStyle: TextStyle(
+                            color: Color(0xff969696),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
                         ),
                         obscureText: true,
                       ),
-                      const SizedBox(height: 32.0),
+                      const SizedBox(height: 30.0),
                       ElevatedButton(
                         onPressed: () {
                           signSheet();
                         },
                         style: ElevatedButton.styleFrom(
+                          fixedSize: const Size(400, 70),
+                          elevation: 0.5,
+                          shadowColor: myColor,
                           foregroundColor: myColor,
                           backgroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              vertical: 13.0, horizontal: 138.0),
+                              vertical: 13.0, horizontal: 60.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30.0),
                             side: BorderSide(
                               color: myColor, // 원하는 색상으로 변경
-                              width: 2.0, // 테두리 두께
+                              width: 0.5, // 테두리 두께
                             ),
                           ),
                         ),
-                        child: Text('회원가입', style: TextStyle(color: myColor)),
+                        child: Text('회원가입',
+                            style: TextStyle(
+                              color: myColor,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 20,
+                            )),
                       ),
                       const SizedBox(height: 13.0),
                       Stack(
@@ -604,14 +623,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               login();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: myColor,
+                              backgroundColor: myColor.withOpacity(0.9),
+                              elevation: 0,
+                              fixedSize: const Size(400, 70),
                               padding: const EdgeInsets.symmetric(
                                   vertical: 13.0, horizontal: 144.0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
-                            child: const Text('로그인'),
+                            child: const Text(
+                              '로그인',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
                           ),
                         ],
                       ),
