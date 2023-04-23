@@ -17,8 +17,11 @@ Future<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => TitleProvider()),
         ],
-        child: const MaterialApp(
-          home: LoginScreen(),
+        child:MaterialApp(
+          home: const LoginScreen(),
+          theme: ThemeData(
+            fontFamily: 'Pretendard',
+          ),
           debugShowCheckedModeBanner: false,
         ),
       ),

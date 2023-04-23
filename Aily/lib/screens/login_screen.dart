@@ -609,8 +609,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: Text('회원가입',
                             style: TextStyle(
+                              fontFamily: 'Pretendard',
                               color: myColor,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w400,
                               fontSize: 20,
                             )),
                       ),
@@ -627,7 +628,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               elevation: 0,
                               fixedSize: const Size(400, 70),
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 13.0, horizontal: 144.0),
+                                  vertical: 13.0, horizontal: 60.0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
@@ -635,6 +636,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Text(
                               '로그인',
                               style: TextStyle(
+                                fontFamily: 'Pretendard',
                                 fontWeight: FontWeight.w400,
                                 color: Colors.white,
                                 fontSize: 20,
