@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import '../proves/mapTitleProvider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -13,7 +12,7 @@ class MapScreen extends StatefulWidget {
   _MapScreenState createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen>{
+class _MapScreenState extends State<MapScreen> with AutomaticKeepAliveClientMixin<MapScreen> {
   @override
   bool get wantKeepAlive => true;
 
@@ -28,7 +27,7 @@ class _MapScreenState extends State<MapScreen>{
   void initState() {
     super.initState();
     searchctrl = TextEditingController();
-    //initMap();
+    initMap();
   }
 
   @override
@@ -110,6 +109,7 @@ class _MapScreenState extends State<MapScreen>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -126,161 +126,91 @@ class _MapScreenState extends State<MapScreen>{
   }
 
   Widget MapWidget(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Expanded(
-          child: WebView(
-            initialUrl: "http://211.201.93.173:8084/map",
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30.0),
-                  topRight: Radius.circular(30.0),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 2.4,
+                child: GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(37.500936916629, 126.86674390514),
+                    zoom: 18,
+                  ),
+                  markers: markers,
+                  onMapCreated: ((mapController) {
+                    setState(() {
+                      controller = mapController;
+                    });
+                  }),
                 ),
               ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: 350,
-                        child: TextField(
-                          style: TextStyle(color: Colors.grey.shade600),
-                          focusNode: _focusNode,
-                          controller: searchctrl,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                            hintText: '주소, 지역 검색',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: myColor),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            suffixIcon: IconButton(
-                              color: Colors.grey.shade400,
-                              icon: const Icon(Icons.search),
-                              onPressed: (){
-                                _search();
-                              },
-                            ),
-                          ),
-                          obscureText: false,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      Column(
-                        children: [
-                          const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
-                          const SizedBox(height: 20),
-                          _buildListTiles(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+            ],
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 1.983,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30.0),
+                topRight: Radius.circular(30.0),
               ),
             ),
-          )
-        ),
-      ],
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: 350,
+                      child: TextField(
+                        style: TextStyle(color: Colors.grey.shade600),
+                        focusNode: _focusNode,
+                        controller: searchctrl,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          hintText: '주소, 지역 검색',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: myColor),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          suffixIcon: IconButton(
+                            color: Colors.grey.shade400,
+                            icon: const Icon(Icons.search),
+                            onPressed: (){
+                              _search();
+                            },
+                          ),
+                        ),
+                        obscureText: false,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Column(
+                      children: [
+                        const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
+                        const SizedBox(height: 20),
+                        _buildListTiles(),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
-  // Widget MapWidget(BuildContext context) {
-  //   return SingleChildScrollView(
-  //     child: Column(
-  //       children: [
-  //         Stack(
-  //           children: [
-  //             SizedBox(
-  //               height: MediaQuery.of(context).size.height / 2.4,
-  //               child: Container(
-  //                 height: 280.0,
-  //                 margin: const EdgeInsets.symmetric(vertical: 20.0),
-  //                 child: WebView(
-  //                   initialUrl: "http://211.201.93.173:8084/map",
-  //                   javascriptMode: JavascriptMode.unrestricted,
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         Container(
-  //           width: MediaQuery.of(context).size.width,
-  //           height: MediaQuery.of(context).size.height / 1.983,
-  //           decoration: const BoxDecoration(
-  //             color: Colors.white,
-  //             borderRadius: BorderRadius.only(
-  //               topLeft: Radius.circular(30.0),
-  //               topRight: Radius.circular(30.0),
-  //             ),
-  //           ),
-  //           child: Column(
-  //             children: [
-  //               const SizedBox(height: 10),
-  //               Column(
-  //                 children: [
-  //                   SizedBox(
-  //                     width: 350,
-  //                     child: TextField(
-  //                       style: TextStyle(color: Colors.grey.shade600),
-  //                       focusNode: _focusNode,
-  //                       controller: searchctrl,
-  //                       decoration: InputDecoration(
-  //                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-  //                         hintText: '주소, 지역 검색',
-  //                         border: OutlineInputBorder(
-  //                           borderRadius: BorderRadius.circular(20),
-  //                         ),
-  //                         focusedBorder: OutlineInputBorder(
-  //                           borderSide: BorderSide(color: myColor),
-  //                           borderRadius: BorderRadius.circular(20),
-  //                         ),
-  //                         enabledBorder: OutlineInputBorder(
-  //                           borderSide: BorderSide(color: Colors.grey.shade400),
-  //                           borderRadius: BorderRadius.circular(20),
-  //                         ),
-  //                         suffixIcon: IconButton(
-  //                           color: Colors.grey.shade400,
-  //                           icon: const Icon(Icons.search),
-  //                           onPressed: (){
-  //                             _search();
-  //                           },
-  //                         ),
-  //                       ),
-  //                       obscureText: false,
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 30),
-  //                   Column(
-  //                     children: [
-  //                       const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
-  //                       const SizedBox(height: 20),
-  //                       _buildListTiles(),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {

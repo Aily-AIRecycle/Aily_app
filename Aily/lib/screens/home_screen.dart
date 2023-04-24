@@ -2,6 +2,7 @@ import 'package:Aily/utils/ShowDialog.dart';
 import 'package:Aily/proves/mapTitleProvider.dart';
 import 'package:Aily/screens/garbage_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:Aily/proves/testUserProvider.dart';
 
@@ -42,16 +43,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getUser() {
-    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     username = userProvider.user.nickname;
     userpoint = userProvider.user.point;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _getListTitle() {
-    final TitleProvider titleProvider = Provider.of<TitleProvider>(context, listen: false);
+    final TitleProvider titleProvider =
+        Provider.of<TitleProvider>(context, listen: false);
     final titles = titleProvider.title.title;
     _addMarker(titles);
   }
@@ -72,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Color backColor = const Color(0xFFF6F1F6);
-
+    // Color backColor = const Color(0xFFF6F1F6);
+    Color backColor = Colors.white;
     return Scaffold(
       backgroundColor: backColor,
       body: HomeWidget(username!, context),
@@ -83,16 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget HomeWidget(String username, BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const SizedBox(height: 55),
+            const SizedBox(height: 45),
             Expanded(
               flex: 1,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Stack(
@@ -111,6 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Positioned(
+
                       top: screenHeight * 0.02,
                       left: screenWidth * 0.75,
                       child: GestureDetector(
@@ -118,14 +119,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           // 클릭 시 실행될 코드
                           showMsg(context, "테스트", "테스트");
                         },
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              'assets/images/icons/alarm.png', // 이미지 파일 경로
-                              width: 40, // 이미지 크기
-                              height: 40,
-                            ),
-                          ],
+                        child: SvgPicture.asset(
+                          'assets/images/icons/notification_line_icon.svg', // 이미지 파일 경로
+                          width: 24, // 이미지 크기
+                          height: 24,
                         ),
                       ),
                     ),
@@ -133,13 +130,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 5),
             Expanded(
               flex: 3,
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 1,
+                      blurRadius: 1,
+                      offset: const Offset(0, 0.5), // changes position of shadow
+                    ),
+                  ],
                 ),
                 child: Stack(
                   children: [
@@ -172,32 +177,43 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                          Text(
-                            '$userpoint',
-                            style: const TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10)),
+                        Text(
+                          '$userpoint',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            elevation: 1,
+                            fixedSize: const Size(300, 60),
+                            shadowColor: Color(0xffF8B195).withOpacity(0.25),
+                            backgroundColor: Color(0xFFF8B195).withOpacity(0.8),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 13.0, horizontal: 30.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
 
-                          ElevatedButton(
-                            onPressed: (){
-                            },
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              backgroundColor: const Color.fromARGB(210, 248, 177, 149),
-                              padding: const EdgeInsets.symmetric(vertical: 13.0, horizontal: 130.0),
                             ),
-                            child: const Text('적립내역', style: TextStyle(fontSize: 15)
+
+                          ),
+                          child: const Text(
+                            '적립내역',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
-                      )
-                    ),
+                        ),
+                      ],
+                    )),
                   ],
                 ),
               ),
@@ -209,6 +225,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 0.5,
+                      blurRadius: 0.5,
+                      offset: const Offset(0, 0), // changes position of shadow
+                    ),
+                  ],
                 ),
                 child: SingleChildScrollView(
                   child: Center(
@@ -218,12 +242,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 지정
+                            borderRadius:
+                                BorderRadius.circular(10), // 모서리를 둥글게 지정
                           ),
                           child: Column(
-                            children: [
-                              _buildListTiles()
-                            ],
+                            children: [_buildListTiles()],
                           ),
                         ),
                       ],
@@ -240,21 +263,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget _ListTile(BuildContext context, String title){
+Widget _ListTile(BuildContext context, String title) {
   Color myColor = const Color(0xFFF8B195);
 
   return ListTile(
     title: Text(title),
     subtitle: const Text('일반, 캔, 페트'),
     trailing: ElevatedButton(
-      onPressed: (){
+      onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => GarbageScreen(title: title),
           ),
         );
-
       },
       style: ElevatedButton.styleFrom(
         elevation: 0,

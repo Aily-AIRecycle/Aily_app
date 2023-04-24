@@ -26,7 +26,8 @@ class _Account_screenState extends State<Account_screen> {
   final storage = const FlutterSecureStorage();
 
   Future<void> _getUser() async {
-    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     setState(() {
       username = userProvider.user.nickname;
       profile = userProvider.user.image;
@@ -81,7 +82,8 @@ class _Account_screenState extends State<Account_screen> {
         'username': username,
         'file': await MultipartFile.fromFile(file.path, filename: 'image.png'),
       });
-      final response = await Dio().post('http://211.201.93.173:8083/api/image', data: formData);
+      final response = await Dio()
+          .post('http://211.201.93.173:8083/api/image', data: formData);
 
       if (response.statusCode == 200) {
         //
@@ -106,6 +108,7 @@ class _Account_screenState extends State<Account_screen> {
                     const Text(
                       '프로필',
                       style: TextStyle(
+                        fontFamily: 'Pretendard',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -124,7 +127,7 @@ class _Account_screenState extends State<Account_screen> {
                 ListTile(
                   contentPadding: const EdgeInsets.only(left: 0),
                   horizontalTitleGap: 10,
-                    leading: CircleAvatar(
+                  leading: CircleAvatar(
                     radius: 30,
                     backgroundColor: Colors.white,
                     child: ClipOval(
@@ -136,21 +139,27 @@ class _Account_screenState extends State<Account_screen> {
                           color: Colors.transparent,
                           padding: EdgeInsets.zero,
                           iconSize: 48,
-                          icon: Image.file(profile!, width: 48, height: 48, fit: BoxFit.cover)
-                      ),
+                          icon: Image.file(profile!,
+                              width: 48, height: 48, fit: BoxFit.cover)),
                     ),
                   ),
-                  title: Text(username!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                  subtitle: const Text('프로필 설정', style: TextStyle(color: Color(0xff767676), fontSize: 12, fontWeight: FontWeight.w200)),
+                  title: Text(username!,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w200)),
+                  subtitle: const Text('프로필 설정',
+                      style: TextStyle(
+                          color: Color(0xff767676),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w200)),
                   trailing: Padding(
                     padding: const EdgeInsets.only(right: 15),
-                    child: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                    child: Icon(Icons.arrow_forward_ios,
+                        color: Colors.grey.shade700, size: 19),
                   ),
                   onTap: () {
                     _pickImage(context, ImageSource.gallery);
                   },
                 ),
-
               ],
             ),
           ),
@@ -193,8 +202,11 @@ class _Account_screenState extends State<Account_screen> {
                         width: 24,
                         height: 24,
                       ),
-                      title: const Text('이벤트', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                      title: const Text('이벤트',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w200)),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.shade700, size: 19),
                       selectedColor: Colors.red,
                       onTap: () {
                         showMsg(context, '이벤트', '이벤트');
@@ -208,8 +220,15 @@ class _Account_screenState extends State<Account_screen> {
                         width: 24,
                         height: 24,
                       ),
-                      title: const Text('포인트', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                      title: const Text(
+                        '포인트',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w200,
+                        ),
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.shade700, size: 19),
                       onTap: () {
                         showMsg(context, '포인트', '포인트');
                       },
@@ -222,10 +241,16 @@ class _Account_screenState extends State<Account_screen> {
                         width: 24,
                         height: 24,
                       ),
-                      title: const Text('자주 묻는 질문(FAQ)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                      title: const Text('자주 묻는 질문(FAQ)',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w200)),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.shade700, size: 19),
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FAQScreen()));
                       },
                     ),
                     const Divider(height: 0),
@@ -236,10 +261,16 @@ class _Account_screenState extends State<Account_screen> {
                         width: 24,
                         height: 24,
                       ),
-                      title: const Text('공지사항', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                      title: const Text('공지사항',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w200)),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.shade700, size: 19),
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const NoticeScreen()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const NoticeScreen()));
                       },
                     ),
                     const Divider(height: 0),
@@ -250,8 +281,11 @@ class _Account_screenState extends State<Account_screen> {
                         width: 24,
                         height: 24,
                       ),
-                      title: const Text('로그아웃', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200)),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.grey.shade700, size: 19),
+                      title: const Text('로그아웃',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w200)),
+                      trailing: Icon(Icons.arrow_forward_ios,
+                          color: Colors.grey.shade700, size: 19),
                       onTap: () {
                         logout(context);
                       },
