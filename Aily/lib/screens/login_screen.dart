@@ -6,12 +6,12 @@ import 'package:Aily/utils/ShowDialog.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:Aily/proves/testUserProvider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
 import '../widgets/Navigator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import '../class/URLs.dart';
+import '../class/UserData.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -88,12 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           profile = profileFile;
         });
-        final UserProvider userProvider =
-            Provider.of<UserProvider>(context, listen: false);
-        userProvider.updateNickname(nickname);
-        userProvider.updatePoint(point);
-        userProvider.updateImage(profile!);
-        userProvider.updatePhoneNumber(phonenumber);
+        UserData user = UserData();
+        user.nickname = nickname;
+        user.point = point;
+        user.profile = profile;
+        user.phonenumber = phonenumber;
       } catch (e) {
         //
       }
@@ -140,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<http.Response> loginUser(String id, String password) async {
     final response =
-        await http.post(Uri.parse('http://211.201.93.173:8081/api/login'),
+        await http.post(Uri.parse(URL().loginURL),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
@@ -202,14 +201,14 @@ class _LoginScreenState extends State<LoginScreen> {
     };
 
     final response = await http.post(
-      Uri.parse('http://211.201.93.173:8080/api/sign'),
+      Uri.parse(URL().signURL),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(data),
     );
     return response;
   }
 
-  Future<void> signup(UserProvider userProvider) async {
+  Future<void> signup() async {
     final String id = signidctrl.text.trim();
     final String pw = signpwctrl.text.trim();
     final String confirmPw = signpwctrl2.text.trim();
@@ -491,8 +490,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: () async {
-                        UserProvider userProvider = UserProvider();
-                        await signup(userProvider);
+                        await signup();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
@@ -562,26 +560,48 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 80.0),
                       TextField(
                         controller: idctrl,
-                        decoration: const InputDecoration(
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
                           hintText: '아이디 입력',
                           hintStyle: TextStyle(
                             color: Color(0xff969696),
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: myColor),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
+
                       ),
                       const SizedBox(height: 8.0),
                       TextField(
                         controller: passwordctrl,
-                        decoration: const InputDecoration(
+                        textInputAction: TextInputAction.go,
+                        onSubmitted: (value){
+                          login();
+                        },
+                        decoration: InputDecoration(
                           hintText: '비밀번호 입력',
-                          hintStyle: TextStyle(
+                          hintStyle: const TextStyle(
                             color: Color(0xff969696),
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: myColor),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         obscureText: true,
@@ -592,7 +612,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           signSheet();
                         },
                         style: ElevatedButton.styleFrom(
-                          fixedSize: const Size(400, 70),
+                          fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
                           elevation: 0.5,
                           shadowColor: myColor,
                           foregroundColor: myColor,
@@ -626,7 +646,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: myColor.withOpacity(0.9),
                               elevation: 0,
-                              fixedSize: const Size(400, 70),
+                              fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
                               padding: const EdgeInsets.symmetric(
                                   vertical: 13.0, horizontal: 60.0),
                               shape: RoundedRectangleBorder(

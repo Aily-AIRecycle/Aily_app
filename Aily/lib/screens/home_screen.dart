@@ -1,10 +1,7 @@
 import 'package:Aily/utils/ShowDialog.dart';
-import 'package:Aily/proves/mapTitleProvider.dart';
-import 'package:Aily/screens/garbage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
-import 'package:Aily/proves/testUserProvider.dart';
+import '../class/UserData.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,7 +11,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<String> SelectedTitles = [];
   late double screenWidth, screenHeight;
   late String? username;
   late int? userpoint;
@@ -23,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getListTitle();
     _getScreenSize();
     _getUser();
   }
@@ -43,37 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getUser() {
-    final UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
-    username = userProvider.user.nickname;
-    userpoint = userProvider.user.point;
-    setState(() {});
-  }
-
-  void _getListTitle() {
-    final TitleProvider titleProvider =
-        Provider.of<TitleProvider>(context, listen: false);
-    final titles = titleProvider.title.title;
-    _addMarker(titles);
-  }
-
-  void _addMarker(List<String> titles) {
+    UserData user = UserData();
     setState(() {
-      SelectedTitles = [...SelectedTitles, ...titles];
+      username = user.nickname;
+      userpoint = user.point;
     });
-  }
-
-  Widget _buildListTiles() {
-    final List<Widget> listTiles = [];
-    for (var title in SelectedTitles) {
-      listTiles.add(_ListTile(context, title));
-    }
-    return Column(children: listTiles);
   }
 
   @override
   Widget build(BuildContext context) {
-    // Color backColor = const Color(0xFFF6F1F6);
     Color backColor = Colors.white;
     return Scaffold(
       backgroundColor: backColor,
@@ -113,14 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Positioned(
 
                       top: screenHeight * 0.02,
-                      left: screenWidth * 0.75,
+                      left: screenWidth * 0.84,
                       child: GestureDetector(
                         onTap: () {
                           // 클릭 시 실행될 코드
                           showMsg(context, "테스트", "테스트");
                         },
                         child: SvgPicture.asset(
-                          'assets/images/icons/notification_line_icon.svg', // 이미지 파일 경로
+                          'assets/images/icons/notification_line_icon.svg',
                           width: 24, // 이미지 크기
                           height: 24,
                         ),
@@ -142,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 1,
                       blurRadius: 1,
-                      offset: const Offset(0, 0.5), // changes position of shadow
+                      offset: const Offset(0, 0.5),
                     ),
                   ],
                 ),
@@ -230,28 +203,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 0.5,
                       blurRadius: 0.5,
-                      offset: const Offset(0, 0), // changes position of shadow
+                      offset: const Offset(0, 0),
                     ),
                   ],
-                ),
-                child: SingleChildScrollView(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.circular(10), // 모서리를 둥글게 지정
-                          ),
-                          child: Column(
-                            children: [_buildListTiles()],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -261,35 +215,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-Widget _ListTile(BuildContext context, String title) {
-  Color myColor = const Color(0xFFF8B195);
-
-  return ListTile(
-    title: Text(title),
-    subtitle: const Text('일반, 캔, 페트'),
-    trailing: ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GarbageScreen(title: title),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          side: BorderSide(
-            color: myColor,
-            width: 1.5,
-          ),
-        ),
-      ),
-      child: const Text('상세', style: TextStyle(color: Colors.black)),
-    ),
-  );
 }

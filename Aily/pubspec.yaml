@@ -61,6 +61,8 @@ dependencies:
   flutter_svg: ^2.0.5
   flutter_keyboard_visibility: ^5.4.0
   webview_flutter: ^2.8.0
+  geolocator: ^9.0.2
+  flutter_inappwebview: ^5.7.2+3
 
 flutter_native_splash:
   android: true
@@ -118,6 +120,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/map.html
     - assets/images/
     - assets/images/icons/
     - assets/images/icons/wallet.png

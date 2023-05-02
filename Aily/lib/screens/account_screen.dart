@@ -6,11 +6,9 @@ import 'package:Aily/utils/ShowDialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:Aily/proves/testUserProvider.dart';
-import 'package:provider/provider.dart';
 import 'package:Aily/board/faq_screen.dart';
 import 'package:Aily/board/notice_screen.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import '../class/UserData.dart';
 
 class Account_screen extends StatefulWidget {
   const Account_screen({Key? key}) : super(key: key);
@@ -26,11 +24,10 @@ class _Account_screenState extends State<Account_screen> {
   final storage = const FlutterSecureStorage();
 
   Future<void> _getUser() async {
-    final UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    UserData user = UserData();
     setState(() {
-      username = userProvider.user.nickname;
-      profile = userProvider.user.image;
+      username = user.nickname;
+      profile = user.profile;
     });
   }
 
@@ -46,6 +43,7 @@ class _Account_screenState extends State<Account_screen> {
   }
 
   void logout(BuildContext context) async {
+    imageCache.evict(FileImage(profile!));
     await storage.delete(key: 'id');
     await storage.delete(key: 'pw');
     Navigator.pushReplacement(
@@ -58,11 +56,11 @@ class _Account_screenState extends State<Account_screen> {
   }
 
   void _profileUpdate(BuildContext context) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.updateImage(_image!);
-    profile = userProvider.user.image;
-    final cacheManager = DefaultCacheManager();
-    await cacheManager.removeFile(profile!.path);
+    UserData user  = UserData();
+    user.profile = _image;
+    profile = user.profile;
+    setState(() {
+    });
   }
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
