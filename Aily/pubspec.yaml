@@ -44,7 +44,7 @@ dependencies:
   image_gallery_saver: ^1.7.1
   mysql1: ^0.20.0
   crypto: ^3.0.2
-  flutter_barcode_scanner: ^2.0.0
+
   wave: ^0.2.2
   liquid_progress_indicator: ^0.4.0
   flutter_native_splash: ^2.2.19
