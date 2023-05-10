@@ -36,7 +36,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   http: ^0.13.5
-  camera: ^0.10.3+2
   path_provider: ^2.0.13
   image_picker: ^0.8.7
   permission_handler: ^10.2.0
@@ -44,12 +43,9 @@ dependencies:
   image_gallery_saver: ^1.7.1
   mysql1: ^0.20.0
   crypto: ^3.0.2
-  flutter_barcode_scanner: ^2.0.0
   wave: ^0.2.2
   liquid_progress_indicator: ^0.4.0
   flutter_native_splash: ^2.2.19
-  google_maps_flutter: ^2.2.5
-  label_marker: ^1.0.1
   animations: ^2.0.7
   another_transformer_page_view: ^2.0.1
   provider: ^6.0.5
@@ -120,7 +116,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/map.html
     - assets/images/
     - assets/images/icons/
     - assets/images/icons/wallet.png

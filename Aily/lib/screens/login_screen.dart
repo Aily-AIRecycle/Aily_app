@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../class/URLs.dart';
 import '../class/UserData.dart';
 
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -56,7 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
     signnicknamectrl = TextEditingController();
     selectedDate = DateTime(selectedYear, selectedMonth, selectedDay);
     _selectedGender = '남';
-    //tryAutoLogin(); //자동 로그인
+    _birth = selectedDate.toString();
+    tryAutoLogin(); //자동 로그인
   }
 
   @override
@@ -120,7 +122,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         //로그인 성공
         var jsonResponse = jsonDecode(response.body);
-        image = jsonResponse[0]['image'];
+        nickname = jsonResponse[0]['nickname'];
+        point = jsonResponse[0]['point'];
+        image = jsonResponse[0]['profile'];
+        phonenumber = jsonResponse[0]['User_phonenumber'];
         if (id == 'admin') {
           Navigator.pushAndRemoveUntil(
             context,
@@ -129,24 +134,24 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         } else {
           showLoadingDialog(context);
-          downloadImageFromServer(id);
+          downloadImageFromServer(nickname);
         }
       }
     } catch (e) {
-      showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.$e");
+      //
     }
   }
 
   Future<http.Response> loginUser(String id, String password) async {
     final response =
-        await http.post(Uri.parse(URL().loginURL),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(<String, String>{
-              'id': id,
-              'password': password,
-            }));
+    await http.post(Uri.parse(URL().loginURL),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'id': id,
+          'password': password,
+        }));
     return response;
   }
 
@@ -182,9 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
             showLoadingDialog(context);
             downloadImageFromServer(nickname);
           }
+        }else{
+          showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
       } catch (e) {
-        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
+        //
       }
     }
   }
@@ -197,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
       "password": password,
       "birth": birth,
       "nickname": nickname,
-      "profile": "http://211.201.93.173:8083/static/images/default/image.png"
+      "profile": "${URL().baseURL}/static/images/default/image.png"
     };
 
     final response = await http.post(
@@ -301,7 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _updateBirth() {
     if (selectedYear.isNaN || selectedMonth.isNaN || selectedDay.isNaN) {
-      _birth = null;
+
     } else {
       _birth =
           '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${selectedDay.toString().padLeft(2, '0')}';
@@ -313,6 +320,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         hintText: hintText,
         border: const UnderlineInputBorder(),
@@ -371,7 +379,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 10.0),
                     buildTextFormField(
-                        '아이디 입력', signidctrl, TextInputType.text, false),
+                        '이메일 입력', signidctrl, TextInputType.text, false),
                     buildTextFormField('비밀번호 입력', signpwctrl,
                         TextInputType.visiblePassword, true),
                     buildTextFormField('비밀번호 확인', signpwctrl2,
@@ -555,7 +563,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Image.asset(
                         'assets/images/logo.png',
                         width: 225.0,
-                        height: 225.0,
+                        height: MediaQuery.of(context).size.height * 0.25,
                       ),
                       const SizedBox(height: 80.0),
                       TextField(

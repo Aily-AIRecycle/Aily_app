@@ -6,10 +6,11 @@ class URL {
   }
 
   URL._internal();
-
-  String signURL = 'http://211.201.93.173:8080/api/sign';
-  String loginURL = 'http://211.201.93.173:8081/api/login';
-  String garbageURL = 'http://211.201.93.173:8082/api/garbage';
-  String imageURL = 'http://211.201.93.173:8083/api/image';
-  String mapURL = 'http://211.201.93.173:8084/map';
+  String baseURL = 'https://ailyproject.shop';
+  String get signURL => '$baseURL/api/sign';
+  String get loginURL => '$baseURL/api/login';
+  String get garbageURL => '$baseURL/api/garbage';
+  String get imageURL => '$baseURL/api/image';
+  String get pointURL => '$baseURL/api/point';
+  String get mapURL => '$baseURL/map';
 }
