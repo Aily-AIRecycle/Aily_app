@@ -11,6 +11,7 @@ import 'package:Aily/board/notice_screen.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
 
+
 class Account_screen extends StatefulWidget {
   const Account_screen({Key? key}) : super(key: key);
 
@@ -57,11 +58,10 @@ class _Account_screenState extends State<Account_screen> {
   }
 
   void _profileUpdate(BuildContext context) async {
-    UserData user  = UserData();
+    UserData user = UserData();
     user.profile = _image;
     profile = user.profile;
-    setState(() {
-    });
+    setState(() {});
   }
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
@@ -81,8 +81,7 @@ class _Account_screenState extends State<Account_screen> {
         'username': username,
         'file': await MultipartFile.fromFile(file.path, filename: 'image.png'),
       });
-      final response = await Dio()
-          .post(URL().imageURL, data: formData);
+      final response = await Dio().post(URL().imageURL, data: formData);
 
       if (response.statusCode == 200) {
         //
@@ -95,128 +94,150 @@ class _Account_screenState extends State<Account_screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(24.0, 50.0, 25.0, 20.0),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        '프로필',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: SvgPicture.asset(
-                          'assets/images/setting_icon.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    contentPadding: const EdgeInsets.only(left: 0),
-                    horizontalTitleGap: 10,
-                    leading: CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.white,
-                      child: ClipOval(
-                        child: IconButton(
-                            onPressed: () {
-                              showMsg(context, '프로필', '프로필');
-                            },
-                            splashRadius: 20,
-                            color: Colors.transparent,
-                            padding: EdgeInsets.zero,
-                            iconSize: 48,
-                            icon: Image.file(profile!,
-                                width: 48, height: 48, fit: BoxFit.cover)),
-                      ),
-                    ),
-                    title: Text(username!,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w200)),
-                    subtitle: const Text('프로필 설정',
-                        style: TextStyle(
-                            color: Color(0xff767676),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w200)),
-                    trailing: Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: Icon(Icons.arrow_forward_ios,
-                          color: Colors.grey.shade700, size: 19),
-                    ),
-                    onTap: () {
-                      _pickImage(context, ImageSource.gallery);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * 0.85,
-              height: MediaQuery.of(context).size.height / 7,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color(0xffF8B195).withOpacity(0.25),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xffF8B195).withOpacity(0.1),
-                    blurRadius: 30,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-            ),
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    padding: const EdgeInsets.fromLTRB(24, 80, 24, 0),
-                    child: Column(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 72, left: 24, right: 24, bottom: 24),
+
+                child: Column(
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _ListTile(context, 'assets/images/point_icon.svg', '포인트', () {
-                          showMsg(context, '포인트', '포인트');
-                        }),
-                        _ListTile(context, 'assets/images/faq_icon.svg', '자주 묻는 질문(FAQ)', () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQScreen()));
-                        }),
-                        _ListTile(context, 'assets/images/notice_icon.svg', '공지사항', () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const NoticeScreen()));
-                        }),
-                        _ListTile(context, 'assets/images/logout-box-line.svg', '로그아웃', () {
-                          logout(context);
-                        }),
+                        const Text(
+                          '마이페이지',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 28,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset(
+                            'assets/images/setting_icon.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    ListTile(
+                      contentPadding: const EdgeInsets.only(left: 0),
+                      horizontalTitleGap: 10,
+                      leading: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                        child: ClipOval(
+                          child: IconButton(
+                              onPressed: () {
+                                showMsg(context, '프로필', '프로필');
+                              },
+                              splashRadius: 20,
+                              color: Colors.transparent,
+                              padding: EdgeInsets.zero,
+                              iconSize: 48,
+                              icon: Image.file(profile!,
+                                  width: 48, height: 48, fit: BoxFit.cover)),
+                        ),
+                      ),
+                      title: Text(username!,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w500)),
+                      subtitle: const Text('프로필 설정',
+                          style: TextStyle(
+                              color: Color(0xff767676),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400)),
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(right: 15),
+                        child: Icon(Icons.arrow_forward_ios,
+                            color: Colors.grey.shade700, size: 19),
+                      ),
+                      onTap: () {
+                        _pickImage(context, ImageSource.gallery);
+                      },
+                    ),
+                    Container(
+                      height: 0.5,
+                      width: MediaQuery.of(context).size.width * 0.87,
+                      color: Colors.grey.shade300,
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
-        ),
-      )
-    );
+              Container(
+                padding: const EdgeInsets.only(left: 24, right: 24,),
+                width: MediaQuery.of(context).size.width - 48,
+                height: MediaQuery.of(context).size.height / 6,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xffF8B195).withOpacity(0.25),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xffF8B195).withOpacity(0.05),
+                      blurRadius: 30,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _ListTile(
+                              context, 'assets/images/point_icon.svg', '포인트',
+                              () {
+                            showMsg(context, '포인트', '포인트');
+                          }),
+                          _ListTile(context, 'assets/images/faq_icon.svg',
+                              '자주 묻는 질문(FAQ)', () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const FAQScreen()));
+                          }),
+                          _ListTile(context, 'assets/images/notice_icon.svg',
+                              '공지사항', () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NoticeScreen()));
+                          }),
+                          _ListTile(
+                              context,
+                              'assets/images/logout-box-line.svg',
+                              '로그아웃', () {
+                            logout(context);
+                          }),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ));
   }
 }
 
-Widget _ListTile(BuildContext context, String leadingAsset, String title, Function onTap) {
+Widget _ListTile(
+    BuildContext context, String leadingAsset, String title, Function onTap) {
   final InteractiveInkFeatureFactory splashFactory;
 
   return Column(
@@ -225,6 +246,7 @@ Widget _ListTile(BuildContext context, String leadingAsset, String title, Functi
         data: ThemeData().copyWith(
           dividerColor: Colors.transparent,
           highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
         ),
         child: ListTile(
           horizontalTitleGap: 0,
@@ -236,8 +258,8 @@ Widget _ListTile(BuildContext context, String leadingAsset, String title, Functi
           title: Text(
             title,
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w200,
+              fontSize: 18,
+              fontWeight: FontWeight.w400,
             ),
           ),
           trailing: Icon(
@@ -245,7 +267,7 @@ Widget _ListTile(BuildContext context, String leadingAsset, String title, Functi
             color: Colors.grey.shade700,
             size: 19,
           ),
-          onTap: (){
+          onTap: () {
             onTap();
           },
         ),
