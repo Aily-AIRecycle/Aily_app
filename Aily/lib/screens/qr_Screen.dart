@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:provider/provider.dart';
-import '../proves/testUserProvider.dart';
+import '../class/UserData.dart';
 
 class QRScreen extends StatefulWidget {
   const QRScreen({Key? key}) : super(key: key);
@@ -12,7 +11,7 @@ class QRScreen extends StatefulWidget {
 
 class _QRScreenState extends State<QRScreen> {
   Color myColor = const Color(0xFFF8B195);
-  late int phonenumber;
+  int? phonenumber;
 
   @override
   void initState() {
@@ -21,9 +20,9 @@ class _QRScreenState extends State<QRScreen> {
   }
 
   Future<void> _getPhone() async {
-    final UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    UserData user = UserData();
     setState(() {
-      phonenumber = userProvider.user.phonenumber;
+      phonenumber = user.phonenumber;
     });
   }
 
@@ -41,9 +40,18 @@ class _QRScreenState extends State<QRScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: const Text('QR Code', style: TextStyle(color: Colors.black)),
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, size: 20),
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
         child: Container(

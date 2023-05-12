@@ -30,7 +30,7 @@ void showMsg(context, title, content){
         content: Text(content),
         actions: <Widget>[
           TextButton(
-            child: const Text('확인'),
+            child: const Text('확인', style: TextStyle(color: Color(0xFFF8B195), fontSize: 17)),
             onPressed: () {
               Navigator.of(context).pop();
             },

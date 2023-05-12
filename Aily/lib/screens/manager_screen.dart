@@ -1,3 +1,4 @@
+import 'package:Aily/screens/garbage_screen.dart';
 import 'package:Aily/screens/home_screen.dart';
 import 'package:Aily/screens/map_screen.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
                   context,
                   '미정',
                   Icons.settings,
-                      () => _WidgetScreen(const HomeScreen()),
+                      () => _WidgetScreen(const GarbageScreen(title: 'Aily1')),
                 ),
               ],
             ),

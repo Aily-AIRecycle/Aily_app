@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
+import '../class/URLs.dart';
 
 class GarbageScreen extends StatefulWidget {
   final String title;
@@ -27,7 +28,7 @@ class _GarbageScreenState extends State<GarbageScreen> {
   Future<void> fetchGarbage() async {
     try {
       var response = await http.get(
-          Uri.parse("http://211.201.93.173:8082/api/garbage"));
+          Uri.parse(URL().garbageURL));
       if (response.statusCode == 200) {
         responseBody = convert.jsonDecode(response.body);
       }
