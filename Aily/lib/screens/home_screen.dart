@@ -82,11 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         centerTitle: false,
         title: Container(
-          margin: const EdgeInsets.only(left: 24, right: 24, top: 24),
+          margin: const EdgeInsets.only(left: 24),
           child: Text(
             "AILY",
             style: TextStyle(
-                fontSize: 35,
+                fontSize: 32,
                 fontFamily: 'Waiting for the Sunrise',
                 fontWeight: FontWeight.bold,
                 color: myColor),
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            padding: const EdgeInsets.only(top: 24, right: 24),
+            padding: const EdgeInsets.only(right: 36),
             onPressed: () {
               // 클릭 시 실행될 코드
               showMsg(context, "테스트", "테스트");
@@ -122,8 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-                width: screenWidth - 48,
-                height: screenHeight * 0.15,
+                width: screenWidth - 48, // 포인트 컨테이너 길이
+                height: screenHeight * 0.15, // 높이
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -131,13 +131,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.1),
                       spreadRadius: 1,
-                      blurRadius: 1,
-                      offset: const Offset(0, 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 0.2),
                     ),
                   ],
                   border: Border.all(
-                    color: const Color(0xff333333).withOpacity(0.1),
-                    width: 0.5,
+                    color: Colors.grey.shade200,
+                    width: 1.0,
                   ),
                 ),
                 child: Column(
@@ -157,10 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             username,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 17,
+                              fontSize: 14,
                             ),
                           ),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 2),
                           const Text(
                             '님의 포인트',
                             style: TextStyle(
@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       '${NumberFormat('#,###').format(userpoint)}원',
                       style: const TextStyle(
-                        fontSize: 25,
+                        fontSize: 24,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -183,14 +183,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         Container(
-          width: screenWidth - 48,
-          height: screenHeight * 0.57,
+          width: screenWidth - 48, // 적립내역 탭의 길이
+          height: screenHeight * 0.57, // 높이
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFF333333).withOpacity(0.1),
-              width: 0.5,
+              color: Colors.grey.shade200,
+              width: 1.0,
             ),
             boxShadow: [
               BoxShadow(
@@ -208,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const Text('포인트 적립내역',
                     style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 17)),
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
                 const SizedBox(height: 20),
                 Expanded(
                   child: SingleChildScrollView(

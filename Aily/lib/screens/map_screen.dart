@@ -13,8 +13,7 @@ class MapScreen extends StatefulWidget {
   _MapScreenState createState() => _MapScreenState();
 }
 
-
-class _MapScreenState extends State<MapScreen>{
+class _MapScreenState extends State<MapScreen> {
   @override
   bool get wantKeepAlive => true;
   Color myColor = const Color(0xFFF8B195);
@@ -37,8 +36,10 @@ class _MapScreenState extends State<MapScreen>{
     location.getLocationPermission();
     _getLocation();
     _getDistance();
-    timer2 = Timer.periodic(const Duration(milliseconds: 15), (timer) => _getLocation());
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
+    timer2 = Timer.periodic(
+        const Duration(milliseconds: 15), (timer) => _getLocation());
+    timer =
+        Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
 
   void _getLocation() async {
@@ -46,7 +47,7 @@ class _MapScreenState extends State<MapScreen>{
   }
 
   @override
-  void dispose(){
+  void dispose() {
     searchctrl.dispose();
     timer?.cancel();
     timer2?.cancel();
@@ -77,17 +78,16 @@ class _MapScreenState extends State<MapScreen>{
 
   void _search() {
     final String str = searchctrl.text.trim();
-    if (str.contains('Aily1') || str.contains('동양')){
+    if (str.contains('Aily1') || str.contains('동양')) {
       searchStr = '동양미래대점';
       distance = Location().data[searchStr]!;
-    } else if (str.contains('Aily2') || str.contains('3호')){
+    } else if (str.contains('Aily2') || str.contains('3호')) {
       searchStr = '3호관';
       distance = Location().data[searchStr]!;
-    }else if (str.isEmpty){
+    } else if (str.isEmpty) {
       showMsg(context, '검색', '검색어를 입력해주세요.');
       searchStr = '';
-    }
-    else {
+    } else {
       showMsg(context, '검색', '찾을 수 없습니다.');
     }
     _removeFocus();
@@ -102,10 +102,11 @@ class _MapScreenState extends State<MapScreen>{
   void _getDistance() async {
     //내 위치를 실시간으로 보냄
     // await location.getCurrentLocation();
-    await controller!.runJavascript("getDistance(${location.latitude}, ${location.longitude})");
-    if (updatebool && !_focusNode.hasFocus){
+    await controller!.runJavascript(
+        "getDistance(${location.latitude}, ${location.longitude})");
+    if (updatebool && !_focusNode.hasFocus) {
       _updateDistanceText();
-    }else{
+    } else {
       updatebool = false;
     }
   }
@@ -136,7 +137,7 @@ class _MapScreenState extends State<MapScreen>{
 
   Widget _buildListTiles() {
     List<Widget> listTiles = [];
-    if (searchStr.isNotEmpty){
+    if (searchStr.isNotEmpty) {
       listTiles.add(_ListTile(context, searchStr, int.parse(distance), status));
     }
     return Column(children: listTiles);
@@ -145,107 +146,105 @@ class _MapScreenState extends State<MapScreen>{
   Widget MapWidget(BuildContext context) {
     double ratio = MediaQuery.of(context).devicePixelRatio * 0.4;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         _focusNode.unfocus();
       },
       child: Column(
         children: <Widget>[
           Expanded(
               child: ClipRect(
-                child: Transform.scale(
-                  scale: ratio,
-                  child: WebView(
-                    initialUrl: URL().mapURL,
-                    javascriptMode: JavascriptMode.unrestricted,
-                    onWebViewCreated: (controller) {
-                      this.controller = controller;
-                    },
-                    javascriptChannels: channel,
-                  ),
-                ),
-              )
-          ),
+            child: Transform.scale(
+              scale: ratio,
+              child: WebView(
+                initialUrl: URL().mapURL,
+                javascriptMode: JavascriptMode.unrestricted,
+                onWebViewCreated: (controller) {
+                  this.controller = controller;
+                },
+                javascriptChannels: channel,
+              ),
+            ),
+          )),
           Expanded(
               child: SingleChildScrollView(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  child: Column(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 16),
+                  Column(
                     children: [
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          SizedBox(
-                            width: 350,
-                            child: TextField (
-                              textInputAction: TextInputAction.search,
-                              onSubmitted: (value){
+                      SizedBox(
+                        width: 350,
+                        child: TextField(
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (value) {
+                            _search();
+                          },
+                          style: TextStyle(color: Colors.grey.shade600),
+                          focusNode: _focusNode,
+                          controller: searchctrl,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            hintText: '주소, 지역 검색',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: myColor),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            suffixIcon: IconButton(
+                              color: Colors.grey.shade400,
+                              icon: const Icon(Icons.search),
+                              onPressed: () {
                                 _search();
                               },
-                              style: TextStyle(color: Colors.grey.shade600),
-                              focusNode: _focusNode,
-                              controller: searchctrl,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                hintText: '주소, 지역 검색',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: myColor),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey.shade400),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                suffixIcon: IconButton(
-                                  color: Colors.grey.shade400,
-                                  icon: const Icon(Icons.search),
-                                  onPressed: (){
-                                    _search();
-                                  },
-                                ),
-                              ),
-                              obscureText: false,
                             ),
                           ),
-
-                          const SizedBox(height: 30),
-                          Column(
-                            children: [
-                              const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
-                              const SizedBox(height: 20),
-                              _buildListTiles(),
-                            ],
-                          ),
+                          obscureText: false,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Column(
+                        children: [
+                          const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
+                          const SizedBox(height: 20),
+                          _buildListTiles(),
                         ],
                       ),
                     ],
                   ),
-                ),
-              )
-          ),
+                ],
+              ),
+            ),
+          )),
         ],
       ),
     );
   }
 }
 
-Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable) {
+Widget _ListTile(
+    BuildContext context, String title, int distance, bool isAvailable) {
   Color myColor = const Color(0xFFF8B195);
 
   return Card(
     shape: RoundedRectangleBorder(
-      side: BorderSide(
-          color: myColor.withOpacity(0.3)
-      ),
+      side: BorderSide(color: myColor.withOpacity(0.25)),
       borderRadius: BorderRadius.circular(15.0),
     ),
     elevation: 0,
@@ -254,11 +253,11 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
       data: ThemeData().copyWith(
           dividerColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          splashColor: Colors.transparent
-      ),
+          splashColor: Colors.transparent),
       child: ListTile(
         horizontalTitleGap: 0,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
         leading: Icon(Icons.directions_walk, color: myColor),
         title: Text(title, style: TextStyle(fontSize: 18, color: myColor)),
         trailing: Row(
@@ -268,7 +267,13 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("남은거리", style: TextStyle(fontSize: 12)),
+                const Text(
+                  "남은 거리",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff989898),
+                  ),
+                ),
                 Text('${distance}M\n'),
               ],
             ),
@@ -277,12 +282,31 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('상태', style: TextStyle(fontSize: 12)),
+                const Text(
+                  '상태',
+                  style: TextStyle(fontSize: 12, color: Color(0xff989898)),
+                ),
                 const SizedBox(height: 5),
-                isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
-                const Icon(Icons.circle, color: Colors.red, size: 14),
+                isAvailable
+                    ? const Icon(Icons.circle,
+                        color: Colors.lightGreenAccent, size: 14)
+                    : const Icon(Icons.circle, color: Colors.red, size: 14),
                 const SizedBox(height: 3),
-                isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 12)) : const Text('사용 불가', style: TextStyle(fontSize: 10)),
+                isAvailable
+                    ? const Text(
+                        '사용 가능',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff767676),
+                        ),
+                      )
+                    : const Text(
+                        '사용 불가',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff767676),
+                        ),
+                      ),
               ],
             ),
           ],
@@ -294,7 +318,3 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
     ),
   );
 }
-
-
-
-
