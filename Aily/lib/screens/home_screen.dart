@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../class/UserData.dart';
 import '../class/URLs.dart';
+import 'package:dio/dio.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _getScreenSize();
     //pointUser(user.phonenumber.toString());
     _getUser();
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) => pointUser(user.phonenumber.toString()));
   }
 
   @override
@@ -66,9 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
         data: {
           'phonenumber': phoneNumber,
         },
-        body: jsonEncode(<String, String>{
-          'phonenumber': phonenumber,
-        }));
+      );
 
       if (response.statusCode == 200) {
         var jsonResponse = response.data;
