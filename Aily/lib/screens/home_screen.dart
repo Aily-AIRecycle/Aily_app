@@ -146,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 15, top: 10),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
                             'assets/images/icons/wallet.png',
@@ -161,10 +162,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(width: 2),
-                          const Text(
-                            '님의 포인트',
-                            style: TextStyle(
-                              fontSize: 14,
+                          Expanded(
+                            child: const Text(
+                              '님의 포인트',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  pointUser(user.phonenumber.toString());
+                                  _getUser();
+                                });
+                              },
+                              child: const Icon(Icons.refresh, size: 20),
                             ),
                           ),
                         ],
