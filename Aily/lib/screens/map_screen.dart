@@ -37,7 +37,7 @@ class _MapScreenState extends State<MapScreen>{
     location.getLocationPermission();
     _getLocation();
     _getDistance();
-    timer2 = Timer.periodic(const Duration(milliseconds: 15), (timer) => _getLocation());
+    timer2 = Timer.periodic(const Duration(milliseconds: 10), (timer) => _getLocation());
     timer = Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
 
@@ -150,20 +150,23 @@ class _MapScreenState extends State<MapScreen>{
       },
       child: Column(
         children: <Widget>[
-          Expanded(
-              child: ClipRect(
-                child: Transform.scale(
-                  scale: ratio,
-                  child: WebView(
-                    initialUrl: URL().mapURL,
-                    javascriptMode: JavascriptMode.unrestricted,
-                    onWebViewCreated: (controller) {
-                      this.controller = controller;
-                    },
-                    javascriptChannels: channel,
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Expanded(
+                child: ClipRect(
+                  child: Transform.scale(
+                    scale: ratio,
+                    child: WebView(
+                      initialUrl: URL().mapURL,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      onWebViewCreated: (controller) {
+                        this.controller = controller;
+                      },
+                      javascriptChannels: channel,
+                    ),
                   ),
                 ),
-              )
+            ),
           ),
           Expanded(
               child: SingleChildScrollView(
@@ -178,11 +181,12 @@ class _MapScreenState extends State<MapScreen>{
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       Column(
                         children: [
                           SizedBox(
-                            width: 350,
+                            width: MediaQuery.of(context).size.width - 48,
+                            height: 50,
                             child: TextField (
                               textInputAction: TextInputAction.search,
                               onSubmitted: (value){

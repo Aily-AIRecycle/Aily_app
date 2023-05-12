@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:Aily/board/faq_screen.dart';
 import 'package:Aily/board/notice_screen.dart';
+import 'package:Aily/screens/quiz_screen.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
 
@@ -187,12 +188,12 @@ class _Account_screenState extends State<Account_screen> {
                 children: [
                   Container(
                     height: MediaQuery.of(context).size.height * 0.45,
-                    padding: const EdgeInsets.fromLTRB(24, 80, 24, 0),
+                    padding: const EdgeInsets.fromLTRB(24, 100, 24, 0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _ListTile(context, 'assets/images/point_icon.svg', '포인트', () {
-                          showMsg(context, '포인트', '포인트');
+                        _ListTile(context, 'assets/images/event_icon.svg', '퀴즈', () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const QuizScreen()));
                         }),
                         _ListTile(context, 'assets/images/faq_icon.svg', '자주 묻는 질문(FAQ)', () {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const FAQScreen()));
@@ -225,6 +226,7 @@ Widget _ListTile(BuildContext context, String leadingAsset, String title, Functi
         data: ThemeData().copyWith(
           dividerColor: Colors.transparent,
           highlightColor: Colors.transparent,
+          splashColor: Colors.transparent
         ),
         child: ListTile(
           horizontalTitleGap: 0,

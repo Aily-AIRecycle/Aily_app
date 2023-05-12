@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import '../widgets/Navigator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
 
@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController idctrl;
   late TextEditingController passwordctrl;
   late TextEditingController signidctrl;
+  late TextEditingController signcodectrl;
   late TextEditingController signpwctrl;
   late TextEditingController signpwctrl2;
   late TextEditingController signphonectrl;
@@ -43,6 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
   int selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
   int selectedDay = DateTime.now().day;
+  Dio dio = Dio();
+  String? emailCode;
 
   @override
   void initState() {
@@ -51,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordctrl = TextEditingController();
 
     signidctrl = TextEditingController();
+    signcodectrl = TextEditingController();
     signpwctrl = TextEditingController();
     signpwctrl2 = TextEditingController();
     signphonectrl = TextEditingController();
@@ -66,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     idctrl.dispose();
     passwordctrl.dispose();
     signidctrl.dispose();
+    signcodectrl.dispose();
     signpwctrl.dispose();
     signpwctrl2.dispose();
     signphonectrl.dispose();
@@ -80,13 +85,15 @@ class _LoginScreenState extends State<LoginScreen> {
       final profileFile = File(imagePath);
 
       try {
-        final response = await http.get(Uri.parse(image));
+        Response response = await dio.get(
+          image,
+          options: Options(responseType: ResponseType.bytes),
+        );
 
         if (await profileFile.exists()) {
           await profileFile.delete();
         }
-        await profileFile.writeAsBytes(response.bodyBytes,
-            mode: FileMode.write);
+        await profileFile.writeAsBytes(response.data, flush: true);
         setState(() {
           profile = profileFile;
         });
@@ -102,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const NavigatorScreen()),
-        (route) => false,
+            (route) => false,
       );
     } catch (e) {
       //
@@ -118,10 +125,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final id = await storage.read(key: 'id');
     final pw = await storage.read(key: 'pw');
     try {
-      http.Response response = await loginUser(id!, pw!);
+      Response<dynamic> response = await loginUser(id!, pw!);
       if (response.statusCode == 200) {
         //로그인 성공
-        var jsonResponse = jsonDecode(response.body);
+        var jsonResponse = response.data;
         nickname = jsonResponse[0]['nickname'];
         point = jsonResponse[0]['point'];
         image = jsonResponse[0]['profile'];
@@ -130,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const ManagerScreen()),
-            (route) => false,
+                (route) => false,
           );
         } else {
           showLoadingDialog(context);
@@ -142,18 +149,28 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<http.Response> loginUser(String id, String password) async {
-    final response =
-    await http.post(Uri.parse(URL().loginURL),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
+  Future<Response<dynamic>> loginUser(String id, String password) async {
+    try {
+      Response<dynamic> response = await dio.post(
+        URL().loginURL,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        ),
+        data: {
           'id': id,
           'password': password,
-        }));
-    return response;
+        },
+      );
+
+      return response;
+    } catch (error) {
+      // Error handling
+      throw error;
+    }
   }
+
 
   Future<void> login() async {
     final String id = idctrl.text.trim();
@@ -167,10 +184,10 @@ class _LoginScreenState extends State<LoginScreen> {
       showMsg(context, "로그인", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
       try {
-        http.Response response = await loginUser(id, md5Password);
+        Response<dynamic> response = await loginUser(id, md5Password);
         if (response.statusCode == 200) {
           //로그인 성공
-          var jsonResponse = jsonDecode(response.body);
+          var jsonResponse = response.data;
           nickname = jsonResponse[0]['nickname'];
           point = jsonResponse[0]['point'];
           image = jsonResponse[0]['profile'];
@@ -196,8 +213,26 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<http.Response> signUser(
-      String phone, String id, password, nickname, birth) async {
+  Future<Response<dynamic>> signAuth(String email) async {
+    try {
+      Response<dynamic> response = await dio.post(
+        URL().authURL,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        ),
+        data: {
+          'email': email
+        },
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<Response<dynamic>> signUser(String phone, String id, password, nickname, birth) async {
     final Map<String, dynamic> data = {
       "phonenumber": phone,
       "id": id,
@@ -207,12 +242,23 @@ class _LoginScreenState extends State<LoginScreen> {
       "profile": "${URL().baseURL}/static/images/default/image.png"
     };
 
-    final response = await http.post(
-      Uri.parse(URL().signURL),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
-    return response;
+    try {
+      Dio dio = Dio();
+      Response<dynamic> response = await dio.post(
+        URL().signURL,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: data,
+      );
+
+      return response;
+    } catch (error) {
+      // Error handling
+      throw error;
+    }
   }
 
   Future<void> signup() async {
@@ -234,9 +280,8 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       if (pw == confirmPw) {
         try {
-          http.Response response =
-              await signUser(phone, id, md5Password, nickname, _birth);
-          final responsebody = json.decode(utf8.decode(response.bodyBytes));
+          Response<dynamic> response = await signUser(phone, id, md5Password, nickname, _birth);
+          final responsebody = json.decode(utf8.decode(response.data));
           final error = responsebody['error'];
           if (error == '중복된 닉네임입니다.') {
             showMsg(context, "회원가입", "중복된 닉네임입니다.");
@@ -311,7 +356,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     } else {
       _birth =
-          '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${selectedDay.toString().padLeft(2, '0')}';
+      '$selectedYear-${selectedMonth.toString().padLeft(2, '0')}-${selectedDay.toString().padLeft(2, '0')}';
     }
   }
 
@@ -362,12 +407,12 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (BuildContext context) {
         return Padding(
           padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           child: SingleChildScrollView(
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.72,
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40.0),
               child: Form(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -378,8 +423,78 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10.0),
-                    buildTextFormField(
-                        '이메일 입력', signidctrl, TextInputType.text, false),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Stack(
+                            alignment: Alignment.centerRight,
+                            children: [
+                              buildTextFormField(
+                                '이메일 입력',
+                                signidctrl,
+                                TextInputType.text,
+                                false,
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    Response<dynamic> response = await signAuth(signidctrl.text.trim());
+                                    if (response.data != "Failed") {
+                                      emailCode = response.data;
+                                      showMsg(context, "이메일", "메일을 발송했습니다.");
+                                    } else {
+                                      showMsg(context, "이메일", "메일 발송에 실패했습니다.");
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: myColor,
+                                    onPrimary: Colors.white,
+                                  ),
+                                  child: const Text('인증요청'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Stack(
+                            alignment: Alignment.centerRight,
+                            children: [
+                              buildTextFormField(
+                                  '인증 번호',
+                                  signcodectrl,
+                                  TextInputType.number,
+                                  false
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: Row(
+                                  children: [
+                                    if (signcodectrl.text == emailCode)
+                                      const Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                      ),
+                                    if (signcodectrl.text != emailCode)
+                                      const Icon(
+                                        Icons.check,
+                                        color: Colors.red,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                     buildTextFormField('비밀번호 입력', signpwctrl,
                         TextInputType.visiblePassword, true),
                     buildTextFormField('비밀번호 확인', signpwctrl2,
@@ -395,7 +510,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   100,
-                                  (index) => DropdownMenuItem<int>(
+                                      (index) => DropdownMenuItem<int>(
                                     value: DateTime.now().year - index,
                                     child: Text(
                                       '${DateTime.now().year - index}',
@@ -419,7 +534,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   12,
-                                  (index) => DropdownMenuItem<int>(
+                                      (index) => DropdownMenuItem<int>(
                                     value: index + 1,
                                     child: Text(
                                       '${index + 1}월',
@@ -443,7 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: buildDropdownButtonFormField<int>(
                                 List.generate(
                                   31,
-                                  (index) => DropdownMenuItem<int>(
+                                      (index) => DropdownMenuItem<int>(
                                     value: index + 1,
                                     child: Text(
                                       '${index + 1}일',
@@ -471,9 +586,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   children: [
                                     gender == '남'
                                         ? const Icon(Icons.man,
-                                            color: Colors.blue)
+                                        color: Colors.blue)
                                         : const Icon(Icons.woman,
-                                            color: Colors.red),
+                                        color: Colors.red),
                                     Text(gender)
                                   ],
                                 ),
@@ -502,7 +617,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            const Color.fromARGB(255, 248, 177, 149),
+                        const Color.fromARGB(255, 248, 177, 149),
                         padding: const EdgeInsets.symmetric(
                             vertical: 13.0, horizontal: 140.0),
                       ),
