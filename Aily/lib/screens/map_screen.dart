@@ -272,7 +272,13 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("남은거리", style: TextStyle(fontSize: 12)),
+                const Text(
+                  "남은 거리",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xff989898),
+                  ),
+                ),
                 Text('${distance}M\n'),
               ],
             ),
@@ -281,12 +287,31 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('상태', style: TextStyle(fontSize: 12)),
+                const Text(
+                  '상태',
+                  style: TextStyle(fontSize: 12, color: Color(0xff989898)),
+                ),
                 const SizedBox(height: 5),
-                isAvailable ? const Icon(Icons.circle, color: Colors.lightGreenAccent, size: 14) :
-                const Icon(Icons.circle, color: Colors.red, size: 14),
+                isAvailable
+                    ? const Icon(Icons.circle,
+                        color: Colors.lightGreenAccent, size: 14)
+                    : const Icon(Icons.circle, color: Colors.red, size: 14),
                 const SizedBox(height: 3),
-                isAvailable ? const Text('사용 가능', style: TextStyle(fontSize: 12)) : const Text('사용 불가', style: TextStyle(fontSize: 10)),
+                isAvailable
+                    ? const Text(
+                        '사용 가능',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff767676),
+                        ),
+                      )
+                    : const Text(
+                        '사용 불가',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff767676),
+                        ),
+                      ),
               ],
             ),
           ],
