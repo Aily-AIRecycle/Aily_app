@@ -12,6 +12,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
+import 'register_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -732,7 +733,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 30.0),
                       ElevatedButton(
                         onPressed: () {
-                          signSheet();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const registerScreen()));
                         },
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
