@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'verification_screen.dart';
 
 class registerScreen extends StatefulWidget {
   const registerScreen({Key? key}) : super(key: key);
@@ -236,7 +237,12 @@ class _registerScreenState extends State<registerScreen> {
             width: MediaQuery.of(context).size.width,
             height: 60,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const verificationScreen()));
+              },
               child: Text(
                 '다음',
                 style: TextStyle(
