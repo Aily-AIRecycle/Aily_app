@@ -1,13 +1,13 @@
-<svg width="45" height="45" viewBox="0 -1 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="45" height="47" viewBox="0 -1 45 47" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#clip0_231_7382)">
         <g transform="translate(11 3)">
             <path d="M13 21V11H21V21H13ZM3 13V3H11V13H3ZM9 11V5H5V11H9ZM3 21V15H11V21H3ZM5 19H9V17H5V19ZM15 19H19V13H15V19ZM13 3H21V9H13V3ZM15 5V7H19V5H15Z" fill="#767676"/>
         </g>
-        <text x="50%" y="43" font-family="Pretendard-Variable" font-size="12" fill="#767676" text-anchor="middle">스토리</text>
+        <text x="50%" y="43" font-family="Pretendard-Variable" font-size="13" fill="#767676" text-anchor="middle">재활용</text>
     </g>
     <defs>
         <clipPath id="clip0_231_7382">
-            <rect width="45" height="45" fill="white"/>
+            <rect width="45" height="47" fill="white"/>
         </clipPath>
     </defs>
 </svg>

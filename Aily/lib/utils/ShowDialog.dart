@@ -8,12 +8,18 @@ void showLoadingDialog(BuildContext context) {
       return AlertDialog(
         title: const Text('로딩 중'),
         content: Row(
-          children: const [
+          children: const <Widget>[
             CircularProgressIndicator(
               color: Color(0xFFF8B195),
             ),
             SizedBox(width: 20),
-            Text('잠시만 기다려주세요...'),
+            Expanded(
+              child: Text(
+                '잠시만 기다려주세요...',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       );

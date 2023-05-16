@@ -10,6 +10,7 @@ import 'package:Aily/board/faq_screen.dart';
 import 'package:Aily/board/notice_screen.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 class Account_screen extends StatefulWidget {
@@ -100,7 +101,6 @@ class _Account_screenState extends State<Account_screen> {
             children: [
               Container(
                 padding: const EdgeInsets.only(top: 72, left: 24, right: 24, bottom: 24),
-
                 child: Column(
                   children: [
                     Row(
@@ -151,7 +151,8 @@ class _Account_screenState extends State<Account_screen> {
                           style: TextStyle(
                               color: Color(0xff767676),
                               fontSize: 12,
-                              fontWeight: FontWeight.w400)),
+                              fontWeight: FontWeight.w400)
+                      ),
                       trailing: Padding(
                         padding: const EdgeInsets.only(right: 15),
                         child: Icon(Icons.arrow_forward_ios,
@@ -170,24 +171,62 @@ class _Account_screenState extends State<Account_screen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 24, right: 24,),
+                padding: const EdgeInsets.only(left: 24, right: 24),
                 width: MediaQuery.of(context).size.width - 48,
                 height: MediaQuery.of(context).size.height / 6,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: const Color(0xffF8B195).withOpacity(0.25),
+                    color: Colors.grey.withOpacity(0.25),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xffF8B195).withOpacity(0.05),
+                      color: Colors.grey.withOpacity(0.05),
                       blurRadius: 30,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      '일상 속 지구를 위한 친환경 실천 !',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500
+                      ),
+                    ),
+                    const Text('Aily와 함께 시작하세요.',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          height: 60,
+                          child: SvgPicture.asset('assets/images/icons/earth.svg'),
+                        ),
+                        Positioned(
+                          top: 30,
+                          child:SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: SvgPicture.asset('assets/images/icons/hand.svg'),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                )
               ),
               SingleChildScrollView(
                 child: Column(
@@ -199,9 +238,9 @@ class _Account_screenState extends State<Account_screen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _ListTile(
-                              context, 'assets/images/point_icon.svg', '포인트',
+                              context, 'assets/images/point_icon.svg', '퀴즈',
                               () {
-                            showMsg(context, '포인트', '포인트');
+                            showMsg(context, '퀴즈', '퀴즈');
                           }),
                           _ListTile(context, 'assets/images/faq_icon.svg',
                               '자주 묻는 질문(FAQ)', () {
@@ -232,7 +271,8 @@ class _Account_screenState extends State<Account_screen> {
               )
             ],
           ),
-        ));
+        )
+    );
   }
 }
 

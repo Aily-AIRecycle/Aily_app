@@ -13,8 +13,10 @@ class UserData {
   }
 
   UserData._internal();
-
+  String? email = '';
+  String? password = '';
   String? nickname = '';
+  String? birth = '';
   int? point = 0;
   int? phonenumber = 0;
   File? profile = File('');

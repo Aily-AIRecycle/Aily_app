@@ -13,13 +13,16 @@ Future<void> main() async {
     statusBarColor: Colors.transparent,
   ));
 
-  runApp(
-    MaterialApp(
-      home: const LoginScreen(),
-      theme: ThemeData(
-        fontFamily: 'Pretendard',
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(
+      MaterialApp(
+        home: const LoginScreen(),
+        theme: ThemeData(
+          fontFamily: 'Pretendard',
+        ),
+        debugShowCheckedModeBanner: false,
       ),
-      debugShowCheckedModeBanner: false,
-    ),
-  );
+    );
+  });
 }
