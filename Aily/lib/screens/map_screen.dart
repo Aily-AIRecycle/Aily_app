@@ -182,12 +182,11 @@ class _MapScreenState extends State<MapScreen>{
                   ),
                   child: Column(
                     children: [
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Column(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 48,
-                            height: 50,
                             child: TextField (
                               textInputAction: TextInputAction.search,
                               onSubmitted: (value){
