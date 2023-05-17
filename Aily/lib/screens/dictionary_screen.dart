@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class dictionaryScreen extends StatefulWidget {
   const dictionaryScreen({Key? key}) : super(key: key);
@@ -87,27 +88,26 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
                               style: TextStyle(color: Colors.grey.shade600),
                               controller: searchctrl,
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                hintText: '물품 검색',
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                                hintText: "물품 검색",
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: myColor),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.grey.shade400),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(30),
                                 ),
-                                suffixIcon: IconButton(
-                                  color: Colors.grey.shade400,
-                                  icon: const Icon(Icons.search),
-                                  onPressed: () {
+                                prefixIcon: GestureDetector(
+                                  onTap: () {
                                     setState(() {
                                       searchStr = searchctrl.text;
                                       _searchFocusNode.unfocus();
                                     });
                                   },
-                                ),
+                                  child: SvgPicture.asset('assets/images/icons/search.svg')
+                                )
                               ),
                             ),
                           ),
