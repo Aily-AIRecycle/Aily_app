@@ -178,13 +178,13 @@ class _Account_screenState extends State<Account_screen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.grey.withOpacity(0.25),
+                    color: Color(0xff767676).withOpacity(0.25),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.05),
-                      blurRadius: 30,
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 5,
                       offset: const Offset(0, 4),
                     ),
                   ],

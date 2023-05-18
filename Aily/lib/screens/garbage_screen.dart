@@ -55,7 +55,7 @@ class _GarbageScreenState extends State<GarbageScreen> {
         centerTitle: true,
         backgroundColor: Colors.white,
         title: const Text(
-            '포화도', style: TextStyle(fontSize: 17, color: Colors.black)),
+            '포화도', style: TextStyle(fontSize: 18, color: Colors.black)),
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
         leading: IconButton(
@@ -73,85 +73,64 @@ class _GarbageScreenState extends State<GarbageScreen> {
 
   Widget GarbageWidget(BuildContext context) {
     return Center(
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Stack(
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 60, top: 20, right: 20, bottom: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.05,
-                              child: Text(widget.title, style: const TextStyle(color: Color(0xff353E5E), fontSize: 24, fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.55, bottom: 3),
-                        child: const Text(
-                          '상세정보',
-                          style: TextStyle(
-                              color: Color(
-                                0xff353E5E,
-                              ),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.75,
-                            height: MediaQuery.of(context).size.height * 0.23,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: myColor.withOpacity(0.1),
-                                  spreadRadius: 1,
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 0.2),
-                                ),
-                              ],
-                              border: Border.all(
-                                color: myColor,
-                                width: 1.0,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 70),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildGarbageCan(context, '일반', _genAmount, _genHeightPercent),
-                          _buildGarbageCan(context, '캔', _canAmount, _canHeightPercent),
-                          _buildGarbageCan(context, '페트', _petAmount, _petHeightPercent),
-                        ],
-                      ),
-                    ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('Aily1',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                Container(
+                    padding: const EdgeInsets.only(left: 24, right: 24),
+                    width: MediaQuery.of(context).size.width - 48,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Color(0xffF8B195).withOpacity(0.5),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xffF8B195).withOpacity(0.1),
+                          blurRadius: 30,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                ),
+                const SizedBox(height: 40),
+                Text('현재 쓰레기 적재량이 나타나요',
+                  style: TextStyle(
+                    color: Color(0xff767676),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                  ),
+
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildGarbageCan(context, '일반', _genAmount, _genHeightPercent),
+                    _buildGarbageCan(context, '캔', _canAmount, _canHeightPercent),
+                    _buildGarbageCan(context, '페트', _petAmount, _petHeightPercent),
+                  ],
+                ),
+              ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -186,8 +165,8 @@ Widget _buildGarbageCan(BuildContext context, String label, int amount, double h
                   LiquidLinearProgressIndicator(
                     value: percent,
                     backgroundColor: Colors.white,
-                    borderColor: gradientColor,
-                    borderWidth: 3.0,
+                    borderColor: Color(0xffF8B195),
+                    borderWidth: 1.0,
                     borderRadius: 25.0,
                     direction: Axis.vertical,
                     valueColor: AlwaysStoppedAnimation<Color>(gradientColor),
