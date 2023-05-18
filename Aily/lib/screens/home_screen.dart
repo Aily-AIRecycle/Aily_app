@@ -23,19 +23,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Color myColor = const Color(0xFFF8B195);
   var user = UserData();
   Dio dio = Dio();
+  Timer? timer;
+  late List<Map<String, dynamic>> processedData = [];
 
   @override
   void initState() {
     super.initState();
     _getScreenSize();
-    //pointUser(user.phonenumber.toString());
     _getUser();
+    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) => accrual_details(user.phonenumber.toString()));
   }
 
   @override
   void dispose() {
     super.dispose();
     dio.close();
+    timer?.cancel();
   }
 
   void _getScreenSize() async {
@@ -53,41 +56,51 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void pointUser(String phoneNumber) async {
+  void _getUser() {
+    setState(() {
+      username = user.nickname;
+    });
+  }
+
+  //포인트 적립내역
+  void accrual_details(String phoneNumber) async {
     try {
       Response response = await dio.post(
-        URL().pointURL,
+        URL().staticsURL,
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
           },
         ),
         data: {
-          'phonenumber': phoneNumber,
+          'phonenumber': "0$phoneNumber",
         },
       );
-
       if (response.statusCode == 200) {
-        var jsonResponse = response.data;
-        user.point = jsonResponse[0]['phonenumber'];
-        setState(() {});
+        timer?.cancel();
+        Map<String, dynamic> data = json.decode(response.data);
+        List<dynamic> phoneNumberList = data["0$phoneNumber"];
+
+        setState(() {
+          processedData = phoneNumberList.map((item) {
+            return {
+              "phonenumber": item["phonenumber"],
+              "GEN": item["GEN"],
+              "CAN": item["CAN"],
+              "PET": item["PET"],
+              "POINT": item["POINT"],
+              "TIMESTAMP": item["TIMESTAMP"],
+            };
+          }).toList();
+        });
       }
     } catch (error) {
       //
     }
   }
 
-  void _getUser() {
-    setState(() {
-      username = user.nickname;
-      userpoint = user.point;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Color backColor = const Color(0xFFF6F1F6);
-    Color backColor = Colors.white;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -135,82 +148,82 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-                width: screenWidth - 48, // 포인트 컨테이너 길이
-                height: screenHeight * 0.15, // 높이
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: const Offset(0, 0.2),
-                    ),
-                  ],
-                  border: Border.all(
-                    color: Colors.grey.shade200,
-                    width: 1.0,
+              width: screenWidth - 48, // 포인트 컨테이너 길이
+              height: screenHeight * 0.15, // 높이
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 0.2),
                   ),
+                ],
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                  width: 1.0,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15, top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            'assets/images/icons/wallet.png',
-                            width: 20,
-                            height: 20,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/images/icons/wallet.png',
+                          width: 20,
+                          height: 20,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          username,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            username,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                        ),
+                        const SizedBox(width: 2),
+                        const Expanded(
+                          child: Text(
+                            '님의 포인트',
+                            style: TextStyle(
                               fontSize: 14,
                             ),
                           ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: const Text(
-                              '님의 포인트',
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: GestureDetector(
+                            onTap: () {
+                              accrual_details(user.phonenumber.toString());
+                            },
+                            child: const Icon(Icons.refresh, size: 25),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 15),
-                            child: GestureDetector(
-                              onTap: (){
-                                setState(() {
-                                  pointUser(user.phonenumber.toString());
-                                  _getUser();
-                                });
-                              },
-                              child: const Icon(Icons.refresh, size: 20),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: screenHeight * 0.023),
-                    Text(
-                      '${NumberFormat('#,###').format(userpoint)}원',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  ),
+                  SizedBox(height: screenHeight * 0.023),
+                  processedData.isNotEmpty
+                      ? Text(
+                    '${NumberFormat('#,###').format(processedData.last["POINT"])}원',
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  )
+                      : const CircularProgressIndicator(color: Colors.black),
+                ],
+              ),
             ),
           ],
         ),
+
         Container(
           width: screenWidth - 48, // 적립내역 탭의 길이
           height: screenHeight * 0.57, // 높이
@@ -235,29 +248,54 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('포인트 적립내역',
+                const Text('이용내역',
                     style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                    TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _ListTile(context, '페트', '2023-05-06', 100, 7700),
-                        _ListTile(context, '캔', '2023-05-05', 100, 7600),
-                        _ListTile(context, '캔', '2023-05-04', 100, 7500),
-                        _ListTile(context, '페트', '2023-05-03', 100, 7400),
-                        _ListTile(context, '캔', '2023-05-02', 100, 7300),
-                        _ListTile(context, '페트', '2023-05-01', 100, 7200),
-                      ],
-                    ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: processedData.length,
+                    itemBuilder: (context, index) {
+                      final item = processedData[index];
+                      int gen = item["GEN"];
+                      int can = item["CAN"];
+                      int pet = item["PET"];
+                      int cntValue = (gen + can + pet) * 100;
+
+                      if (item["POINT"] == 0) {
+                        return Column(
+                          children: [
+                            SizedBox(height: screenHeight * 0.16),
+                            const Text(
+                              "이용내역이 없습니다.",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight:
+                                  FontWeight.w400
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return _ListTile(
+                          context,
+                          '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                          item['TIMESTAMP'],
+                          cntValue,
+                          item["POINT"],
+                        );
+                      }
+                    },
                   ),
                 ),
               ],
             ),
           ),
         ),
+
+
+
       ],
     );
   }
@@ -287,7 +325,7 @@ Widget _ListTile(BuildContext context, String title, String date, int incPoint, 
           child: ListTile(
             horizontalTitleGap: 0,
             contentPadding: const EdgeInsets.symmetric(horizontal: 25),
-            title: Text(title, style: const TextStyle(fontSize: 18)),
+            title: Text(title, style: const TextStyle(fontSize: 16)),
             subtitle: Text(date),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,

@@ -44,7 +44,7 @@ class _verificationScreenState extends State<verificationScreen> {
       showMsg(context, "이메일", "메일을 발송했습니다.");
       setState(() {
         isCodeSent = true;
-        remainingTime = const Duration(minutes: 1);
+        remainingTime = const Duration(minutes: 3);
       });
       startTimer(); // 타이머 시작
     } else {
@@ -117,8 +117,7 @@ class _verificationScreenState extends State<verificationScreen> {
     if (_codeTextController.text.trim() == emailCode){
       showMsg(context, '인증', '이메일 인증에 성공하였습니다 !');
       try {
-        await signUser(user.phonenumber.toString(), user.email!, user.password!, user.nickname!, user.birth!);
-
+        await signUser("0${user.phonenumber.toString()}", user.email!, user.password!, user.nickname!, user.birth!);
       } catch (e) {
         Navigator.pushReplacement(
           context,
