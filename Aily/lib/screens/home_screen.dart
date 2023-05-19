@@ -101,14 +101,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final EdgeInsetsGeometry margin = isAndroid
+        ? const EdgeInsets.only(left: 24, top: 24)  // 안드로이드일 경우
+        : const EdgeInsets.only(left: 24); // 아이폰일 경우
+
+    final EdgeInsetsGeometry noticeMargin = isAndroid
+        ? const EdgeInsets.only(right: 32, top: 24) // 알림 아이콘 안드로이드일 경우
+        : const EdgeInsets.only(right: 32); // 아이폰일 경우
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar:  AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
         title: Container(
-          margin: const EdgeInsets.only(left: 24),
+          margin: margin,
           child: Text(
             "AILY",
             style: TextStyle(
@@ -120,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            padding: const EdgeInsets.only(right: 36),
+            padding: noticeMargin,
             onPressed: () {
               // 클릭 시 실행될 코드
               showMsg(context, "테스트", "테스트");
@@ -155,10 +163,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withOpacity(0.2),
                     spreadRadius: 1,
-                    blurRadius: 4,
-                    offset: const Offset(0, 0.2),
+                    blurRadius: 2,
+                    offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
@@ -236,10 +244,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.grey.withOpacity(0.2),
                 spreadRadius: 1,
                 blurRadius: 1,
-                offset: const Offset(0, 0.1),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -268,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             SizedBox(height: screenHeight * 0.16),
                             const Text(
-                              "이용내역이 없습니다.",
+                              "이용하신 내역이 없습니다.",
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight:
@@ -293,9 +301,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-
-
-
       ],
     );
   }
