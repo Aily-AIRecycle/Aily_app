@@ -15,7 +15,7 @@ class NavigatorScreen extends StatefulWidget {
   _NavigatorScreenState createState() => _NavigatorScreenState();
 }
 
-class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderStateMixin{
+class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderStateMixin {
   Color myColor = const Color(0xFFF8B195);
   late String? username;
   late Uint8List? profile;
@@ -34,9 +34,8 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    _animation = Tween<double>(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward(from: 0.0);
 
     KeyboardVisibilityController().onChange.listen((bool visible) {
@@ -62,70 +61,79 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
       const HomeScreen(),
       const categoryScreen(),
       const MapScreen(),
-      const Account_screen()
+      const Account_screen(),
     ];
-    Widget _IconButton(String icon, int index) {
-      return Column(
-        children: [
-          IconButton(
-            iconSize: 40,
-            icon: SvgPicture.asset(
-              'assets/images/icons/$icon.svg',
-              color: _currentIndex == index ? myColor : Colors.grey,
-            ),
-            onPressed: () {
-              _onTap(index);
-            },
-          ),
-        ],
+
+    Widget _fadeZoomTransition(Widget child) {
+      return ScaleTransition(
+        scale: Tween<double>(begin: 0.95, end: 1.0).animate(_animationController),
+        child: FadeTransition(
+          opacity: _animation,
+          child: child,
+        ),
+      );
+    }
+
+    Widget _iconButton(String icon, int index) {
+      return IconButton(
+        iconSize: 40,
+        icon: SvgPicture.asset(
+          'assets/images/icons/$icon.svg',
+          color: _currentIndex == index ? myColor : Colors.grey,
+        ),
+        onPressed: () {
+          _onTap(index);
+        },
       );
     }
 
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: PageView(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
-        children: _children.map((e) => FadeTransition(
-          opacity: _animation,
-          child: e,
-        )).toList(),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.08,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-              _IconButton('home_icon', 0),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-              _IconButton('story_icon', 1),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.2),
-              _IconButton('map_icon', 2),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-              _IconButton('profile_tab_icon', 3),
-              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-            ],
-          ),
+        resizeToAvoidBottomInset: false,
+        body: PageView(
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: const NeverScrollableScrollPhysics(),
+          children: _children.map((e) => _fadeZoomTransition(e)).toList(),
         ),
+        bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+    child: SizedBox(
+    height: MediaQuery.of(context).size.height * 0.08,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+          _iconButton('home_icon', 0),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          _iconButton('story_icon', 1),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.2),
+          _iconButton('map_icon', 2),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+          _iconButton('profile_tab_icon', 3),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const QRScreen(),
-            ),
-          );
-        },
-        backgroundColor: myColor,
-        foregroundColor: Colors.white,
-        elevation: 5.0,
-        child: const Icon(Icons.qr_code, size: 40.0),
+    ),
+        ),
+      floatingActionButton: AnimatedContainer(
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+        margin: EdgeInsets.only(bottom: _fabTopMargin ?? fabBottomMargin),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const QRScreen(),
+              ),
+            );
+          },
+          backgroundColor: myColor,
+          foregroundColor: Colors.white,
+          elevation: 5.0,
+          child: const Icon(Icons.qr_code, size: 40.0),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -147,4 +155,3 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
     }
   }
 }
-
