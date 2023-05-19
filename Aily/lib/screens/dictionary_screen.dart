@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:Aily/screens/dictcontents_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';

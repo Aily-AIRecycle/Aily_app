@@ -31,7 +31,7 @@ class _QRScreenState extends State<QRScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final qrSize = screenWidth * 0.6;
     final qrCode = QrImage(
-      data: "$phonenumber",
+      data: "0$phonenumber",
       version: QrVersions.auto,
       size: qrSize,
     );
@@ -72,7 +72,7 @@ class _QRScreenState extends State<QRScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '전화번호 : $phonenumber',
+                '전화번호 : 0$phonenumber',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18.0,

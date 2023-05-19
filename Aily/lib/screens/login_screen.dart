@@ -174,11 +174,9 @@ class _LoginScreenState extends State<LoginScreen> {
             showLoadingDialog(context);
             downloadImageFromServer(nickname);
           }
-        }else{
-          showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
         }
       } catch (e) {
-        //
+        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
       }
     }
   }

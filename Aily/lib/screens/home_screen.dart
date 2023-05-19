@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:Aily/screens/push_screen.dart';
 import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -99,6 +100,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _pushScreen(){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const pushScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
@@ -111,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : const EdgeInsets.only(right: 32); // 아이폰일 경우
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:  AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -127,18 +135,50 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          IconButton(
-            padding: noticeMargin,
-            onPressed: () {
-              // 클릭 시 실행될 코드
-              showMsg(context, "테스트", "테스트");
-            },
-            icon: SvgPicture.asset(
-              'assets/images/icons/notification_line_icon.svg',
-              width: 24, // 이미지 크기
-              height: 24,
-            ),
-          ),
+          Stack(
+            children: [
+              IconButton(
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                padding: noticeMargin,
+                onPressed: () {
+                  // 클릭 시 실행될 코드
+                  _pushScreen();
+                },
+                icon: SvgPicture.asset(
+                  'assets/images/icons/notification_line_icon.svg',
+                  width: 24, // 이미지 크기
+                  height: 24,
+                ),
+              ),
+              Positioned(
+                top: 18,
+                left: 12,
+                child: GestureDetector(
+                  onTap: (){
+                    _pushScreen();
+                  },
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '0',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ),
+            ],
+          )
         ],
       ),
       body: HomeWidget(

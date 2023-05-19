@@ -29,6 +29,9 @@ class _MapScreenState extends State<MapScreen> {
   GarbageMerch merch = GarbageMerch();
   bool updatebool = false;
   bool status = false;
+  late int gen = 0;
+  late int can = 0;
+  late int pet = 0;
   Timer? timer, timer2;
 
   @override
@@ -59,6 +62,10 @@ class _MapScreenState extends State<MapScreen> {
   String _getSearchString(String inputStr, List<GarbageData> garbageData) {
     String searchStr = '';
     status = garbageData[0].status;
+    gen = garbageData[0].gen;
+    can = garbageData[0].can;
+    pet = garbageData[0].pet;
+
     if (inputStr.contains('Aily1') || inputStr.contains('동양')) {
       searchStr = '동양미래대점';
     } else if (inputStr.contains('Aily2') || inputStr.contains('3호')) {
@@ -139,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
   Widget _buildListTiles() {
     List<Widget> listTiles = [];
     if (searchStr.isNotEmpty) {
-      listTiles.add(_ListTile(context, searchStr, int.parse(distance), status));
+      listTiles.add(_ListTile(context, searchStr, int.parse(distance), status, gen, can, pet));
     }
     return Column(children: listTiles);
   }
@@ -244,8 +251,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
-Widget _ListTile(
-    BuildContext context, String title, int distance, bool isAvailable) {
+Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable, int gen, can, pet) {
   Color myColor = const Color(0xFFF8B195);
   GarbageMerch merch = GarbageMerch();
 
@@ -330,7 +336,7 @@ Widget _ListTile(
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => GarbageScreen(title: merch.merch!)));
+                  builder: (context) => GarbageScreen(title: merch.merch!, gen: gen, can: can, pet: pet)));
         },
       ),
     ),

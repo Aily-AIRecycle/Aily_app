@@ -5,7 +5,11 @@ import '../class/garbageData.dart';
 
 class GarbageScreen extends StatefulWidget {
   final String title;
-  const GarbageScreen({Key? key, required this.title}) : super(key: key);
+  final int gen;
+  final int can;
+  final int pet;
+
+  const GarbageScreen({Key? key, required this.title, required this.gen, required this.can, required this.pet}) : super(key: key);
 
   @override
   _GarbageScreenState createState() => _GarbageScreenState();
@@ -22,13 +26,13 @@ class _GarbageScreenState extends State<GarbageScreen> {
   Color myColor = const Color(0xFFF8B195);
 
   Future<void> _getgarbage() async {
-    List<GarbageData> garbageData = await fetchGarbage(widget.title);
-    _genAmount = garbageData[0].gen;
-    _genHeightPercent = HeightPercentage(_genAmount);
-    _canAmount = garbageData[0].can;
-    _canHeightPercent = HeightPercentage(_canAmount);
-    _petAmount = garbageData[0].pet;
-    _petHeightPercent = HeightPercentage(_petAmount);
+    // List<GarbageData> garbageData = await fetchGarbage(widget.title);
+     _genAmount = widget.gen;
+    _genHeightPercent = HeightPercentage(widget.gen);
+    _canAmount = widget.can;
+    _canHeightPercent = HeightPercentage(widget.can);
+    _petAmount = widget.pet;
+    _petHeightPercent = HeightPercentage(widget.pet);
     setState(() {});
   }
 
@@ -81,8 +85,8 @@ class _GarbageScreenState extends State<GarbageScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('Aily1',
-                  style: TextStyle(
+                Text(widget.title,
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 28,
                     fontWeight: FontWeight.w500,
@@ -110,7 +114,7 @@ class _GarbageScreenState extends State<GarbageScreen> {
                     ),
                 ),
                 const SizedBox(height: 40),
-                Text('현재 쓰레기 적재량이 나타나요',
+                const Text('현재 쓰레기 적재량이 나타나요',
                   style: TextStyle(
                     color: Color(0xff767676),
                     fontSize: 16,
