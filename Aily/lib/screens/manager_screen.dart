@@ -1,11 +1,11 @@
 import 'package:Aily/screens/garbage_screen.dart';
-import 'package:Aily/screens/home_screen.dart';
 import 'package:Aily/screens/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gradients/gradients.dart';
 import 'login_screen.dart';
+import '../class/garbageData.dart';
 
 class ManagerScreen extends StatefulWidget {
   const ManagerScreen({Key? key}) : super(key: key);
@@ -18,6 +18,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
   Color myColor = const Color(0xFFF8B195);
   Color backColor = const Color(0xFFF6F1F6);
   final storage = const FlutterSecureStorage();
+  GarbageMerch merch = GarbageMerch();
 
   Future<void> logout() async {
     await storage.delete(key: 'id');
@@ -44,81 +45,79 @@ class _ManagerScreenState extends State<ManagerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backColor,
-      body: ManagerWidget(context),
+      body: SingleChildScrollView(
+        child: ManagerWidget(context),
+      ),
     );
   }
 
   Widget ManagerWidget(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 60),
-            const Text(
-              '관리자',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+        SizedBox(
+          //width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                '관리자',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 45),
-            Row(
-              children: [
-                buildNavigationContainer(
-                  context,
-                  '위치',
-                  Icons.location_on,
-                      () => _WidgetScreen(const MapScreen()),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+              Container(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.06,
+                    left: MediaQuery.of(context).size.width * 0.16,
+                    right: MediaQuery.of(context).size.width * 0.16
                 ),
-                const Padding(padding: EdgeInsets.symmetric(horizontal: 10.0)),
-                buildNavigationContainer(
-                  context,
-                  '미정',
-                  Icons.settings,
-                      () => _WidgetScreen(const GarbageScreen(title: 'Aily1')),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        buildNavigationContainer(
+                          context,
+                          '지도',
+                          Icons.location_on,
+                              () => _WidgetScreen(const MapScreen()),
+                        ),
+                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
+                        buildNavigationContainer(
+                          context,
+                          '통계',
+                          Icons.bar_chart,
+                              () => (){},
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                    Row(
+                      children: [
+                        buildNavigationContainer(
+                          context,
+                          '설정',
+                          Icons.settings,
+                              () => (){},
+                        ),
+                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
+                        buildNavigationContainer(
+                          context,
+                          '로그아웃',
+                          Icons.logout,
+                              () => logout(),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                buildNavigationContainer(
-                  context,
-                  '미정',
-                  Icons.settings,
-                      () => _WidgetScreen(const MapScreen()),
-                ),
-                const Padding(padding: EdgeInsets.symmetric(horizontal: 10.0)),
-                buildNavigationContainer(
-                  context,
-                  '미정',
-                  Icons.settings,
-                      () => _WidgetScreen(const MapScreen()),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                buildNavigationContainer(
-                  context,
-                  '미정',
-                  Icons.settings,
-                      () => _WidgetScreen(const MapScreen()),
-                ),
-                const Padding(padding: EdgeInsets.symmetric(horizontal: 10.0)),
-                buildNavigationContainer(
-                  context,
-                  '로그아웃',
-                  Icons.logout,
-                      () => logout(),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }
@@ -129,8 +128,8 @@ Widget buildNavigationContainer(
     IconData icon,
     Function() onTap,
     ) {
-  var screenWidth = MediaQuery.of(context).size.width * 0.423;
-  var screenHeight = MediaQuery.of(context).size.height * 0.217;
+  var screenWidth = MediaQuery.of(context).size.width * 0.33;
+  var screenHeight = MediaQuery.of(context).size.height * 0.2;
   Color containerColor = const Color(0xFF87A7dD);
 
   return GestureDetector(

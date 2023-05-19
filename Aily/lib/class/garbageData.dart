@@ -1,33 +1,72 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import '../class/URLs.dart';
 
 class GarbageData {
+  final int can;
   final String merch;
-  final int no;
-  final int ca;
-  final int pl;
+  final int gen;
+  final int pet;
   final bool status;
 
-  GarbageData({required this.merch, required this.no, required this.ca, required this.pl, required this.status});
+  GarbageData({
+    required this.can,
+    required this.merch,
+    required this.gen,
+    required this.pet,
+    required this.status,
+  });
 
   factory GarbageData.fromJson(Map<String, dynamic> json) {
     return GarbageData(
-        merch: json['merch'],
-        no: json['no'],
-        ca: json['ca'],
-        pl: json['pl'],
-        status: json['status']
+      can: json['can'] as int,
+      merch: json['merch'] as String,
+      gen: json['gen'] as int,
+      pet: json['pet'] as int,
+      status: json['status'] as bool,
     );
   }
 }
 
-Future<List<GarbageData>> fetchGarbage() async {
-  final response = await http.get(Uri.parse(URL().garbageURL));
-  if (response.statusCode == 200) {
-    List<dynamic> jsonResponse = jsonDecode(response.body)['garbage'];
-    return jsonResponse.map((e) => GarbageData.fromJson(e)).toList();
-  } else {
-    throw Exception('Failed to load garbage data');
+class GarbageMerch {
+  static final GarbageMerch _singleton = GarbageMerch._internal();
+
+  factory GarbageMerch() {
+    return _singleton;
+  }
+
+  GarbageMerch._internal();
+  String? merch = '';
+}
+
+Future<List<GarbageData>> fetchGarbage(String merch) async {
+  Dio dio = Dio();
+
+  try {
+    Response<dynamic> response = await dio.post(
+      URL().garbageURL,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ),
+      data: {
+        'merch': merch
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = response.data as Map<String, dynamic>;
+      final garbageItemsData = jsonData['garbage'] as List<dynamic>;
+
+      final List<GarbageData> garbageItems = garbageItemsData
+          .map((item) => GarbageData.fromJson(item))
+          .toList();
+
+      return garbageItems;
+    } else {
+      throw Exception('Failed to fetch garbage');
+    }
+  } catch (error) {
+    throw error;
   }
 }

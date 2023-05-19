@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Aily/screens/garbage_screen.dart';
 import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -25,6 +26,7 @@ class _MapScreenState extends State<MapScreen> {
   late String label, distance = '';
   List<List<String>> resultList = [];
   Location location = Location();
+  GarbageMerch merch = GarbageMerch();
   bool updatebool = false;
   bool status = false;
   Timer? timer, timer2;
@@ -37,7 +39,7 @@ class _MapScreenState extends State<MapScreen> {
     _getLocation();
     _getDistance();
     timer2 = Timer.periodic(
-        const Duration(milliseconds: 15), (timer) => _getLocation());
+        const Duration(milliseconds: 10), (timer) => _getLocation());
     timer =
         Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
@@ -48,20 +50,19 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
+    super.dispose();
     searchctrl.dispose();
     timer?.cancel();
     timer2?.cancel();
-    super.dispose();
   }
 
   String _getSearchString(String inputStr, List<GarbageData> garbageData) {
     String searchStr = '';
+    status = garbageData[0].status;
     if (inputStr.contains('Aily1') || inputStr.contains('동양')) {
       searchStr = '동양미래대점';
-      status = garbageData[0].status;
     } else if (inputStr.contains('Aily2') || inputStr.contains('3호')) {
       searchStr = '3호관';
-      status = garbageData[1].status;
     } else if (inputStr.isEmpty) {
       searchStr = '';
     }
@@ -70,7 +71,8 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _updateDistanceText() async {
     final String str = searchctrl.text.trim();
-    List<GarbageData> garbageData = await fetchGarbage();
+    List<GarbageData> garbageData = await fetchGarbage(str);
+    merch.merch = str;
     final String searchStr = _getSearchString(str, garbageData);
     distance = Location().data[searchStr]!;
     setState(() {});
@@ -101,7 +103,6 @@ class _MapScreenState extends State<MapScreen> {
 
   void _getDistance() async {
     //내 위치를 실시간으로 보냄
-    // await location.getCurrentLocation();
     await controller!.runJavascript(
         "getDistance(${location.latitude}, ${location.longitude})");
     if (updatebool && !_focusNode.hasFocus) {
@@ -151,20 +152,24 @@ class _MapScreenState extends State<MapScreen> {
       },
       child: Column(
         children: <Widget>[
-          Expanded(
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Expanded(
               child: ClipRect(
-            child: Transform.scale(
-              scale: ratio,
-              child: WebView(
-                initialUrl: URL().mapURL,
-                javascriptMode: JavascriptMode.unrestricted,
-                onWebViewCreated: (controller) {
-                  this.controller = controller;
-                },
-                javascriptChannels: channel,
+                child: Transform.scale(
+                  scale: ratio,
+                  child: WebView(
+                    initialUrl: URL().mapURL,
+                    javascriptMode: JavascriptMode.unrestricted,
+                    onWebViewCreated: (controller) {
+                      this.controller = controller;
+                    },
+                    javascriptChannels: channel,
+                  ),
+                ),
               ),
             ),
-          )),
+          ),
           Expanded(
               child: SingleChildScrollView(
             child: Container(
@@ -178,11 +183,12 @@ class _MapScreenState extends State<MapScreen> {
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Column(
                     children: [
                       SizedBox(
-                        width: 350,
+                        width: MediaQuery.of(context).size.width - 48,
+                        height: 50,
                         child: TextField(
                           textInputAction: TextInputAction.search,
                           onSubmitted: (value) {
@@ -241,13 +247,15 @@ class _MapScreenState extends State<MapScreen> {
 Widget _ListTile(
     BuildContext context, String title, int distance, bool isAvailable) {
   Color myColor = const Color(0xFFF8B195);
+  GarbageMerch merch = GarbageMerch();
 
   return Card(
     shape: RoundedRectangleBorder(
       side: BorderSide(color: myColor.withOpacity(0.25)),
       borderRadius: BorderRadius.circular(15.0),
     ),
-    elevation: 0,
+    elevation: 0.25,
+
     margin: const EdgeInsets.symmetric(horizontal: 35),
     child: Theme(
       data: ThemeData().copyWith(
@@ -259,7 +267,14 @@ Widget _ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
         leading: Icon(Icons.directions_walk, color: myColor),
-        title: Text(title, style: TextStyle(fontSize: 18, color: myColor)),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            color: myColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -312,7 +327,10 @@ Widget _ListTile(
           ],
         ),
         onTap: () {
-          showMsg(context, '까꿍', title);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GarbageScreen(title: merch.merch!)));
         },
       ),
     ),

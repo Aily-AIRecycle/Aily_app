@@ -13,4 +13,6 @@ class URL {
   String get imageURL => '$baseURL/api/image';
   String get pointURL => '$baseURL/api/point';
   String get mapURL => '$baseURL/map';
+  String get authURL => '$baseURL/api/SignAuth';
+  String get staticsURL => '$baseURL/api/statics';
 }

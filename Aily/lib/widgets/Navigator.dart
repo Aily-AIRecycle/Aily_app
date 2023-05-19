@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:Aily/screens/account_screen.dart';
 import 'package:Aily/screens/map_screen.dart';
 import 'package:flutter/material.dart';
-import '../screens/point_screen.dart';
+import '../screens/dictionary_screen.dart';
 import '../screens/qr_Screen.dart';
 import '../screens/home_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,7 +60,7 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     _children = [
       const HomeScreen(),
-      const PointScreen(),
+      const dictionaryScreen(),
       const MapScreen(),
       const Account_screen()
     ];
@@ -100,15 +100,15 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              const SizedBox(width: 20.0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
               _IconButton('home_icon', 0),
-              const SizedBox(width: 10.0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
               _IconButton('story_icon', 1),
-              const SizedBox(width: 100.0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.2),
               _IconButton('map_icon', 2),
-              const SizedBox(width: 10.0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
               _IconButton('profile_tab_icon', 3),
-              const SizedBox(width: 20.0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
             ],
           ),
         ),
