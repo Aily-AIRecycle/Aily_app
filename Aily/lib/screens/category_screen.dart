@@ -114,7 +114,7 @@ class _categoryScreenState extends State<categoryScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => dictionaryScreen(title: categoryName),
+                            builder: (context) => dictionaryScreen(title: categoryName, type: index+1),
                           ),
                         );
                       },
