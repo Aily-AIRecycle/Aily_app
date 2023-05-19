@@ -15,4 +15,5 @@ class URL {
   String get mapURL => '$baseURL/map';
   String get authURL => '$baseURL/api/SignAuth';
   String get staticsURL => '$baseURL/api/statics';
+  String get typeURL => '$baseURL/api/type';
 }
