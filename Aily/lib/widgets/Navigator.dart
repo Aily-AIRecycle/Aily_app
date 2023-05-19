@@ -34,7 +34,7 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
     _animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward(from: 0.0);
 
@@ -66,7 +66,7 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
 
     Widget _fadeZoomTransition(Widget child) {
       return ScaleTransition(
-        scale: Tween<double>(begin: 0.95, end: 1.0).animate(_animationController),
+        scale: Tween<double>(begin: 0.99, end: 1.0).animate(_animationController),
         child: FadeTransition(
           opacity: _animation,
           child: child,
