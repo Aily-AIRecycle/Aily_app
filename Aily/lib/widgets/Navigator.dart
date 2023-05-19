@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:Aily/screens/account_screen.dart';
 import 'package:Aily/screens/map_screen.dart';
 import 'package:flutter/material.dart';
-import '../screens/dictionary_screen.dart';
+import '../screens/category_screen.dart';
 import '../screens/qr_Screen.dart';
 import '../screens/home_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,7 +60,7 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     _children = [
       const HomeScreen(),
-      const dictionaryScreen(),
+      const categoryScreen(),
       const MapScreen(),
       const Account_screen()
     ];

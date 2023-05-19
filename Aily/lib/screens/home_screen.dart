@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             SizedBox(height: screenHeight * 0.16),
                             const Text(
-                              "이용내역이 없습니다.",
+                              "이용하신 내역이 없습니다.",
                               style: TextStyle(
                                   fontSize: 18,
                                   fontWeight:
@@ -293,9 +293,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-
-
-
       ],
     );
   }

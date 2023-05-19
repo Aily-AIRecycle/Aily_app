@@ -1,8 +1,11 @@
+import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class dictionaryScreen extends StatefulWidget {
-  const dictionaryScreen({Key? key}) : super(key: key);
+  final String title;
+
+  const dictionaryScreen({Key? key, required this.title}) : super(key: key);
 
   @override
   _dictionaryScreenState createState() => _dictionaryScreenState();
@@ -44,7 +47,22 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
         },
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: DictionaryWidget(context)
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            centerTitle: true,
+            title: const Text('재활용 사전', style: TextStyle(color: Colors.black)),
+            iconTheme: const IconThemeData(color: Colors.black),
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios, size: 20),
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          body: DictionaryWidget(context),
         ),
       ),
     );
@@ -55,16 +73,16 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(top: 72, left: 24, right: 24, bottom: 24),
+            padding: const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 24),
             child: Column(
               children: [
                 Row(
-                  children: const [
+                  children: [
                     Text(
-                      '재활용 사전',
-                      style: TextStyle(
+                      '${widget.title} 분리배출',
+                      style: const TextStyle(
                         fontFamily: 'Pretendard',
-                        fontSize: 28,
+                        fontSize: 26,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -74,7 +92,7 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
                     child: Expanded(
                       child: Column(
                         children: [
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+                          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.9,
                             child: TextField(
@@ -190,20 +208,20 @@ Widget _ListTile(BuildContext context, String title, bool isAvailable) {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "카테고리",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff989898),
-                      ),
-                    ),
-                    Text('페트\n'),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.center,
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: const [
+                //     Text(
+                //       "카테고리",
+                //       style: TextStyle(
+                //         fontSize: 12,
+                //         color: Color(0xff989898),
+                //       ),
+                //     ),
+                //     Text('페트\n'),
+                //   ],
+                // ),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
