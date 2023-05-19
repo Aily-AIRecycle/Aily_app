@@ -101,14 +101,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
+    final EdgeInsetsGeometry margin = isAndroid
+        ? const EdgeInsets.only(left: 24, top: 24)  // 안드로이드일 경우
+        : const EdgeInsets.only(left: 24); // 아이폰일 경우
+
+    final EdgeInsetsGeometry noticeMargin = isAndroid
+        ? const EdgeInsets.only(right: 32, top: 24) // 알림 아이콘 안드로이드일 경우
+        : const EdgeInsets.only(right: 32); // 아이폰일 경우
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
+      appBar:  AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
         title: Container(
-          margin: const EdgeInsets.only(left: 24),
+          margin: margin,
           child: Text(
             "AILY",
             style: TextStyle(
@@ -120,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            padding: const EdgeInsets.only(right: 36),
+            padding: noticeMargin,
             onPressed: () {
               // 클릭 시 실행될 코드
               showMsg(context, "테스트", "테스트");
