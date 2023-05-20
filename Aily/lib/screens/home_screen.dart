@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? filterStr = "전체";
   List<Map<String, dynamic>> filteredData = [];
   late List<Map<String, dynamic>> processedData = [];
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -121,13 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
       DateTime startDate = DateTime.now();
 
       if (filterStr == '1개월') {
-        startDate = now.subtract(Duration(days: 30));
+        startDate = now.subtract(const Duration(days: 30));
       } else if (filterStr == '3개월') {
-        startDate = now.subtract(Duration(days: 90));
+        startDate = now.subtract(const Duration(days: 90));
       } else if (filterStr == '6개월') {
-        startDate = now.subtract(Duration(days: 180));
+        startDate = now.subtract(const Duration(days: 180));
       } else if (filterStr == '12개월') {
-        startDate = now.subtract(Duration(days: 365));
+        startDate = now.subtract(const Duration(days: 365));
       }
 
       for (var item in processedData) {
@@ -259,7 +259,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget HomeWidget(String username, BuildContext context) {
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
