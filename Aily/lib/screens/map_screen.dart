@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Aily/screens/garbage_screen.dart';
 import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../class/location.dart';
 import '../class/URLs.dart';
@@ -33,6 +34,12 @@ class _MapScreenState extends State<MapScreen> {
   late int can = 0;
   late int pet = 0;
   Timer? timer, timer2;
+  late double latitude = 0.0;
+  late double longitude = 0.0;
+  late StreamSubscription<Position> positionStream;
+  final LocationSettings locationSettings = const LocationSettings(
+    accuracy: LocationAccuracy.high
+  );
 
   @override
   void initState() {
@@ -41,22 +48,26 @@ class _MapScreenState extends State<MapScreen> {
     location.getLocationPermission();
     _getLocation();
     _getDistance();
-    timer2 = Timer.periodic(
-        const Duration(milliseconds: 10), (timer) => _getLocation());
+    //timer2 = Timer.periodic(const Duration(seconds: 1), (timer) => _getLocation());
     timer =
         Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
 
   void _getLocation() async {
-    await location.getCurrentLocation();
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    setState(() {
+      latitude = position.latitude;
+      longitude = position.longitude;
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
     searchctrl.dispose();
     timer?.cancel();
     timer2?.cancel();
+    super.dispose();
   }
 
   String _getSearchString(String inputStr, List<GarbageData> garbageData) {
@@ -111,7 +122,7 @@ class _MapScreenState extends State<MapScreen> {
   void _getDistance() async {
     //내 위치를 실시간으로 보냄
     await controller!.runJavascript(
-        "getDistance(${location.latitude}, ${location.longitude})");
+        "getDistance($latitude, $longitude)");
     if (updatebool && !_focusNode.hasFocus) {
       _updateDistanceText();
     } else {

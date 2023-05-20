@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:Aily/screens/push_screen.dart';
-import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   var user = UserData();
   Dio dio = Dio();
   Timer? timer;
+
+  String? filterStr = "전체";
+  List<Map<String, dynamic>> filteredData = [];
   late List<Map<String, dynamic>> processedData = [];
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -63,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  //포인트 적립내역
+  //이용내역
   void accrual_details(String phoneNumber) async {
     try {
       Response response = await dio.post(
@@ -93,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
               "TIMESTAMP": item["TIMESTAMP"],
             };
           }).toList();
+          _refreshData();
         });
       }
     } catch (error) {
@@ -105,6 +109,72 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
         MaterialPageRoute(
             builder: (context) => const pushScreen()));
+  }
+
+  void _refreshData() {
+    filteredData = [];
+
+    if (filterStr == null || filterStr == '전체') {
+      filteredData = processedData;
+    } else {
+      DateTime now = DateTime.now();
+      DateTime startDate = DateTime.now();
+
+      if (filterStr == '1개월') {
+        startDate = now.subtract(Duration(days: 30));
+      } else if (filterStr == '3개월') {
+        startDate = now.subtract(Duration(days: 90));
+      } else if (filterStr == '6개월') {
+        startDate = now.subtract(Duration(days: 180));
+      } else if (filterStr == '12개월') {
+        startDate = now.subtract(Duration(days: 365));
+      }
+
+      for (var item in processedData) {
+        DateTime dateTime = DateTime.parse(item['TIMESTAMP']);
+        if (dateTime.isAfter(startDate)) {
+          filteredData.add(item);
+        }
+      }
+    }
+  }
+
+  PopupMenuButton<String> buildPopupMenuButton() {
+    return PopupMenuButton<String>(
+      initialValue: filterStr,
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuEntry<String>>[
+          buildPopupMenuItem('전체'),
+          buildPopupMenuItem('1개월'),
+          buildPopupMenuItem('3개월'),
+          buildPopupMenuItem('6개월'),
+          buildPopupMenuItem('12개월'),
+        ];
+      },
+      onSelected: (String value) {
+        setState(() {
+          filterStr = value;
+          _refreshData();
+        });
+      },
+      child: const Icon(Icons.keyboard_arrow_down_outlined, size: 24, color: Colors.grey),
+    );
+  }
+
+
+  PopupMenuItem<String> buildPopupMenuItem(String value) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Text(
+        value.isEmpty ? '전체' : value,
+        style: TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
   }
 
   @override
@@ -189,6 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget HomeWidget(String username, BuildContext context) {
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -273,8 +344,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
 
         Container(
-          width: screenWidth - 48, // 적립내역 탭의 길이
-          height: screenHeight * 0.57, // 높이
+          width: screenWidth - 48,
+          height: screenHeight * 0.57,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -296,46 +367,99 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('이용내역',
-                    style:
-                    TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                Row(
+                  children: [
+                    const Text('이용내역',
+                        style:
+                        TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.45),
+                    Text(filterStr!),
+                    buildPopupMenuButton(),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: processedData.length,
-                    itemBuilder: (context, index) {
-                      final item = processedData[index];
-                      int gen = item["GEN"];
-                      int can = item["CAN"];
-                      int pet = item["PET"];
-                      int cntValue = (gen + can + pet) * 100;
-
-                      if (item["POINT"] == 0) {
-                        return Column(
-                          children: [
-                            SizedBox(height: screenHeight * 0.16),
-                            const Text(
-                              "이용하신 내역이 없습니다.",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight:
-                                  FontWeight.w400
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return _ListTile(
-                          context,
-                          '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
-                          item['TIMESTAMP'],
-                          cntValue,
-                          item["POINT"],
-                        );
-                      }
+                  child: RefreshIndicator(
+                    color: Colors.black,
+                    onRefresh: () async {
+                      accrual_details(user.phonenumber.toString());
                     },
-                  ),
+                    child: ScrollConfiguration(
+                      behavior: const ScrollBehavior(),
+                      child: GlowingOverscrollIndicator(
+                        axisDirection: AxisDirection.down,
+                        color: Colors.white,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: filteredData.length,
+                          reverse: true,
+                          controller: _scrollController,
+                          itemBuilder: (context, index) {
+                            final item = filteredData[index];
+                            int gen = item["GEN"];
+                            int can = item["CAN"];
+                            int pet = item["PET"];
+                            int cntValue = (gen + can + pet) * 100;
+
+                            if (item["POINT"] == 0) {
+                              return Column(
+                                children: [
+                                  SizedBox(height: screenHeight * 0.16),
+                                  const Text(
+                                    "이용하신 내역이 없습니다.",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              DateTime dateTime = DateTime.parse(item['TIMESTAMP']);
+                              String formattedDate = '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+
+                              if (index == processedData.length - 1 ||
+                                  formattedDate !=
+                                      '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
+                                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                                //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                                // });
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        formattedDate,
+                                        style: const TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    _ListTile(
+                                      context,
+                                      '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                      item['TIMESTAMP'],
+                                      cntValue,
+                                      item["POINT"],
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return _ListTile(
+                                  context,
+                                  '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                  item['TIMESTAMP'],
+                                  cntValue,
+                                  item["POINT"],
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    )
+                  )
                 ),
               ],
             ),

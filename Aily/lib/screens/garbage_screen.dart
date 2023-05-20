@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
-import '../class/garbageData.dart';
 
 class GarbageScreen extends StatefulWidget {
   final String title;
@@ -26,7 +25,6 @@ class _GarbageScreenState extends State<GarbageScreen> {
   Color myColor = const Color(0xFFF8B195);
 
   Future<void> _getgarbage() async {
-    // List<GarbageData> garbageData = await fetchGarbage(widget.title);
      _genAmount = widget.gen;
     _genHeightPercent = HeightPercentage(widget.gen);
     _canAmount = widget.can;
