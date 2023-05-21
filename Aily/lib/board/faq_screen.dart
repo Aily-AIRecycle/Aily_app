@@ -18,16 +18,16 @@ class _FAQScreenState extends State<FAQScreen> {
     {
       'title': '어떤 종류의 자원을 수집하면 되나요?',
       'content':
-      'Aily는 지역마다 회수하는 자원이 상이하나, 대부분의\n지역에서는 현재 CAN, PET를 수집하고 있습니다.'
+      'Aily는 지역마다 회수하는 자원이 상이하나, 대부분의\n지역에서는 현재 캔, 페트를 수집하고 있습니다.'
     },
     {
       'title': 'Aily 회원가입은 어떻게 하나요?',
       'content': 'Aily 회원가입은 Aily 홈페이지 또는 모바일 앱을 통해 가능합니다.'
     },
-    {'title': 'Aily 포인트는 어떻게 적립하나요?', 'content': '안돼'},
-    {'title': 'Aily 포인트 내역은 어디서 확인하나요?', 'content': '안돼'},
-    {'title': 'Aily의 뜻이 뭔가요?', 'content': '안돼'},
-    {'title': 'Aily의 포인트를 타인에게 양도 할 수 있나요?', 'content': '안돼'},
+    {'title': 'Aily 포인트는 어떻게 적립하나요?', 'content': 'Aily 기기를 이용하여 분리수거를 통해 포인트가 적립됩니다. (개당 100원)'},
+    {'title': 'Aily 이용내역은 어디서 확인하나요?', 'content': '홈 화면에 이용내역 검색필터 기능을 통해 확인하실 수 있습니다.'},
+    {'title': 'Aily의 뜻이 뭔가요?', 'content': 'AI Recycle의 이름을 조금 변형시켰습니다.'},
+    {'title': 'Aily의 포인트를 타인에게 양도 할 수 있나요?', 'content': '현재 포인트를 타인에게 양도 할 수 없습니다. 추후에 업데이트 예정입니다.'},
   ];
 
   @override
@@ -178,7 +178,7 @@ Widget _ListTile(BuildContext context, FocusNode focus, String title, String con
               focus.unfocus();
             }
           },
-          textColor: const Color(0xFFF8B195),
+          textColor: Colors.black,
           iconColor: Colors.grey.shade600,
           title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
           children: [

@@ -237,7 +237,7 @@ class _Account_screenState extends State<Account_screen> {
                   children: [
                     Container(
                       height: MediaQuery.of(context).size.height * 0.45,
-                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 50),
+                      padding: const EdgeInsets.fromLTRB(24, 80, 24, 50),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

@@ -31,7 +31,6 @@ class NoticeScreen extends StatefulWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -88,7 +87,7 @@ Widget _ListTile(BuildContext context, String title, String content) {
           splashColor: Colors.transparent
         ),
         child: ExpansionTile(
-          textColor: const Color(0xFFF8B195),
+          textColor: Colors.black,
           iconColor: Colors.grey.shade600,
           title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
           children: [
