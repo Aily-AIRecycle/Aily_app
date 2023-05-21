@@ -13,7 +13,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../class/URLs.dart';
 import '../class/UserData.dart';
-import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -32,6 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
   late int point, phonenumber;
   late String nickname, image;
   late File? profile;
+  late String savedId;
+  bool isIdSaved = false;
+  bool isCheckboxChecked = false;
   UserData user = UserData();
   Dio dio = Dio();
 
@@ -40,6 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     idctrl = TextEditingController();
     passwordctrl = TextEditingController();
+    loadSavedCheckboxState();
+    loadSavedId();
     tryAutoLogin(); //자동 로그인
   }
 
@@ -73,7 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
         user.point = point;
         user.profile = profile;
         user.phonenumber = phonenumber;
-
       } catch (e) {
         //
       }
@@ -88,9 +91,56 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> saveLoginInfo(String id, String pw) async {
+  // 체크박스 상태 저장하기
+  void saveCheckboxState(bool isChecked) async {
+    String checkboxState = isChecked ? 'checked' : 'unchecked';
+    await storage.write(key: 'checkboxState', value: checkboxState);
+  }
+
+  // 체크박스 상태 불러오기
+  Future<bool> getCheckboxState() async {
+    String? checkboxState = await storage.read(key: 'checkboxState');
+    if (checkboxState == 'checked') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void loadSavedCheckboxState() async {
+    bool isChecked = await getCheckboxState();
+    setState(() {
+      isCheckboxChecked = isChecked;
+      isIdSaved = isChecked; // 체크박스 상태를 아이디 저장 변수에도 반영합니다.
+    });
+  }
+
+  Future<void> savedInfo(String id, String pw) async {
     await storage.write(key: 'id', value: id);
     await storage.write(key: 'pw', value: pw);
+  }
+
+  void saveId(String id) async {
+    await storage.write(key: 'savedId', value: id);
+  }
+
+  Future<String?> getSavedId() async {
+    return await storage.read(key: 'savedId');
+  }
+
+  void loadSavedId() async {
+    String? id = await getSavedId();
+    setState(() {
+      savedId = id!;
+      if (savedId.isNotEmpty){
+
+      }
+      idctrl.text = savedId;
+    });
+  }
+
+  void deleteSavedId() async {
+    await storage.delete(key: 'savedId');
   }
 
   Future<void> tryAutoLogin() async {
@@ -163,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
           point = jsonResponse[0]['point'];
           image = jsonResponse[0]['profile'];
           phonenumber = jsonResponse[0]['User_phonenumber'];
-          saveLoginInfo(id, Password);
+          savedInfo(id, Password);
           if (id == 'admin') {
             user.nickname = nickname;
             Navigator.pushReplacement(
@@ -228,7 +278,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Image.asset(
                         'assets/images/logo.png',
                         width: 225.0,
-                        height: MediaQuery.of(context).size.height * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.23,
                       ),
                       const SizedBox(height: 80.0),
                       TextField(
@@ -280,7 +330,37 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         obscureText: true,
                       ),
-                      const SizedBox(height: 30.0),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isCheckboxChecked,
+                            checkColor: Colors.white,
+                            fillColor: MaterialStateProperty.resolveWith<Color>(
+                                  (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return myColor;
+                                }
+                                return Colors.black;
+                              },
+                            ),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckboxChecked = value!;
+                                isIdSaved = value; // 체크박스 상태를 아이디 저장 변수에 반영
+                                saveCheckboxState(value); // 체크박스 상태를 저장
+                                if (isIdSaved) {
+                                  final String id = idctrl.text.trim();
+                                  saveId(id);
+                                } else {
+                                  deleteSavedId();
+                                }
+                              });
+                            },
+                          ),
+                          const Text("아이디 저장"),
+                        ],
+                      ),
+                      const SizedBox(height: 5.0),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.push(

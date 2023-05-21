@@ -47,10 +47,10 @@ class _dictContentsScreenState extends State<dictContentsScreen> {
             child: Column(
               children: [
                 Row(
-                  children: [
+                  children: const [
                     Text(
-                      widget.title,
-                      style: const TextStyle(
+                      '버리는 법',
+                      style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 26,
                         fontWeight: FontWeight.w500,

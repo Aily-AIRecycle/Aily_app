@@ -1,4 +1,5 @@
 import 'package:Aily/utils/ShowDialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/dictionary_screen.dart';
@@ -50,59 +51,49 @@ class _categoryScreenState extends State<categoryScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisCount: 3,
-                  children: List.generate(12, (index) {
+                  children: List.generate(9, (index) {
                     String categoryName;
-                    IconData categoryIcon;
-                    Color categoryColors = Color(0);
+                    AssetImage categoryIcon;
                     switch (index + 1) {
                       case 1:
                         categoryName = '일반쓰레기';
-                        categoryIcon = Icons.delete;
-                        categoryColors = Colors.blueAccent;
+                        categoryIcon = const AssetImage('assets/images/icons/gen.png');
                         break;
                       case 2:
                         categoryName = '캔류·고철';
-                        categoryIcon = Icons.cached;
-                        categoryColors = Colors.blueGrey;
+                        categoryIcon = const AssetImage('assets/images/icons/can.png');
                         break;
                       case 3:
                         categoryName = '페트';
-                        categoryIcon = Icons.pets;
-                        categoryColors = Colors.green;
+                        categoryIcon = const AssetImage('assets/images/icons/pet.png');
                         break;
                       case 4:
                         categoryName = '종이·종이팩';
-                        categoryIcon = Icons.book;
-                        categoryColors = Colors.grey;
+                        categoryIcon = const AssetImage('assets/images/icons/paper.png');
                         break;
                       case 5:
                         categoryName = '유리';
-                        categoryIcon = Icons.ac_unit_sharp;
-                        categoryColors = Colors.grey.shade300;
+                        categoryIcon = const AssetImage('assets/images/icons/glass.png');
                         break;
                       case 6:
                         categoryName = '비닐';
-                        categoryIcon = Icons.clear_all;
-                        categoryColors = Colors.grey.shade400;
+                        categoryIcon = const AssetImage('assets/images/icons/vinyl.png');
                         break;
                       case 7:
                         categoryName = '플라스틱';
-                        categoryIcon = Icons.bubble_chart;
-                        categoryColors = Colors.orange;
+                        categoryIcon = const AssetImage('assets/images/icons/plastic.png');
                         break;
                       case 8:
                         categoryName = '음식물';
-                        categoryIcon = Icons.restaurant_menu;
-                        categoryColors = Colors.lightGreen;
+                        categoryIcon = const AssetImage('assets/images/icons/garbage.png');
                         break;
                       case 9:
                         categoryName = '의류·원단';
-                        categoryIcon = Icons.accessibility_new;
-                        categoryColors = Colors.pinkAccent;
+                        categoryIcon = const AssetImage('assets/images/icons/close.png');
                         break;
                       default:
                         categoryName = '';
-                        categoryIcon = Icons.error;
+                        categoryIcon = const AssetImage('assets/images/icons/gen.png');
                     }
                     return InkWell(
                       splashColor: Colors.transparent,
@@ -122,10 +113,10 @@ class _categoryScreenState extends State<categoryScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              categoryIcon,
-                              size: 48,
-                              color: categoryColors
+                            Image(
+                              width: 50,
+                              height: 50,
+                              image: categoryIcon,
                             ),
                             const SizedBox(height: 8),
                             Text(
