@@ -61,59 +61,44 @@ class _categoryScreenState extends State<categoryScreen> {
                         categoryColors = Colors.blueAccent;
                         break;
                       case 2:
-                        categoryName = '대형폐기물';
-                        categoryIcon = Icons.delete_outline;
-                        categoryColors = Colors.brown;
-                        break;
-                      case 3:
-                        categoryName = '종이·종이팩';
-                        categoryIcon = Icons.book;
-                        categoryColors = Colors.grey;
-                        break;
-                      case 4:
                         categoryName = '캔류·고철';
                         categoryIcon = Icons.cached;
                         categoryColors = Colors.blueGrey;
                         break;
-                      case 5:
+                      case 3:
                         categoryName = '페트';
                         categoryIcon = Icons.pets;
                         categoryColors = Colors.green;
                         break;
-                      case 6:
+                      case 4:
+                        categoryName = '종이·종이팩';
+                        categoryIcon = Icons.book;
+                        categoryColors = Colors.grey;
+                        break;
+                      case 5:
                         categoryName = '유리';
                         categoryIcon = Icons.ac_unit_sharp;
                         categoryColors = Colors.grey.shade300;
                         break;
-                      case 7:
+                      case 6:
                         categoryName = '비닐';
                         categoryIcon = Icons.clear_all;
                         categoryColors = Colors.grey.shade400;
                         break;
-                      case 8:
+                      case 7:
                         categoryName = '플라스틱';
                         categoryIcon = Icons.bubble_chart;
                         categoryColors = Colors.orange;
                         break;
-                      case 9:
+                      case 8:
                         categoryName = '음식물';
                         categoryIcon = Icons.restaurant_menu;
                         categoryColors = Colors.lightGreen;
                         break;
-                      case 10:
+                      case 9:
                         categoryName = '의류·원단';
                         categoryIcon = Icons.accessibility_new;
                         categoryColors = Colors.pinkAccent;
-                        break;
-                      case 11:
-                        categoryName = '불연성 쓰레기';
-                        categoryIcon = Icons.battery_unknown;
-                        categoryColors = Colors.black54;
-                        break;
-                      case 12:
-                        categoryName = '전용함 배출';
-                        categoryIcon = Icons.delivery_dining;
-                        categoryColors = Colors.purpleAccent;
                         break;
                       default:
                         categoryName = '';

@@ -4,6 +4,7 @@ import 'package:Aily/utils/ShowDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import '../class/UserData.dart';
 import '../class/location.dart';
 import '../class/URLs.dart';
 import '../class/garbageData.dart';
@@ -28,6 +29,7 @@ class _MapScreenState extends State<MapScreen> {
   List<List<String>> resultList = [];
   Location location = Location();
   GarbageMerch merch = GarbageMerch();
+  UserData user = UserData();
   bool updatebool = false;
   bool status = false;
   late int gen = 0;
@@ -45,17 +47,14 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     searchctrl = TextEditingController();
-    location.getLocationPermission();
     _getLocation();
     _getDistance();
-    //timer2 = Timer.periodic(const Duration(seconds: 1), (timer) => _getLocation());
-    timer =
-        Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
 
   void _getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+        desiredAccuracy: LocationAccuracy.high);
     setState(() {
       latitude = position.latitude;
       longitude = position.longitude;
@@ -77,8 +76,8 @@ class _MapScreenState extends State<MapScreen> {
     can = garbageData[0].can;
     pet = garbageData[0].pet;
 
-    if (inputStr.contains('Aily1') || inputStr.contains('동양')) {
-      searchStr = '동양미래대점';
+    if (inputStr.contains('Aily1') || inputStr.contains('고척')) {
+      searchStr = '고척스카이돔';
     } else if (inputStr.contains('Aily2') || inputStr.contains('3호')) {
       searchStr = '3호관';
     } else if (inputStr.isEmpty) {
@@ -99,7 +98,7 @@ class _MapScreenState extends State<MapScreen> {
   void _search() {
     final String str = searchctrl.text.trim();
     if (str.contains('Aily1') || str.contains('동양')) {
-      searchStr = '동양미래대점';
+      searchStr = '고척스카이돔';
       distance = Location().data[searchStr]!;
     } else if (str.contains('Aily2') || str.contains('3호')) {
       searchStr = '3호관';
@@ -121,12 +120,17 @@ class _MapScreenState extends State<MapScreen> {
 
   void _getDistance() async {
     //내 위치를 실시간으로 보냄
-    await controller!.runJavascript(
-        "getDistance($latitude, $longitude)");
-    if (updatebool && !_focusNode.hasFocus) {
-      _updateDistanceText();
-    } else {
-      updatebool = false;
+    if (latitude != 0.0){
+      if (user.nickname != "관리자"){
+        await controller!.runJavascript("getDistance($latitude, $longitude, false)");
+      }else{
+        await controller!.runJavascript("getDistance($latitude, $longitude, true)");
+      }
+      if (updatebool && !_focusNode.hasFocus) {
+        _updateDistanceText();
+      } else {
+        updatebool = false;
+      }
     }
   }
 

@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late int point, phonenumber;
   late String nickname, image;
   late File? profile;
+  UserData user = UserData();
   Dio dio = Dio();
 
   @override
@@ -39,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     idctrl = TextEditingController();
     passwordctrl = TextEditingController();
-
     tryAutoLogin(); //자동 로그인
   }
 
@@ -69,11 +69,11 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           profile = profileFile;
         });
-        UserData user = UserData();
         user.nickname = nickname;
         user.point = point;
         user.profile = profile;
         user.phonenumber = phonenumber;
+
       } catch (e) {
         //
       }
@@ -106,6 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
         image = jsonResponse[0]['profile'];
         phonenumber = jsonResponse[0]['User_phonenumber'];
         if (id == 'admin') {
+          user.nickname = nickname;
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const ManagerScreen()),
@@ -164,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
           phonenumber = jsonResponse[0]['User_phonenumber'];
           saveLoginInfo(id, Password);
           if (id == 'admin') {
+            user.nickname = nickname;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

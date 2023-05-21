@@ -31,7 +31,7 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
     super.initState();
     searchctrl = TextEditingController();
     timer = Timer.periodic(
-        const Duration(milliseconds: 100), (timer) => wasd(widget.type));
+        const Duration(milliseconds: 100), (timer) => dict(widget.type));
   }
 
   @override
@@ -41,7 +41,7 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
     super.dispose();
   }
 
-  void wasd(int type) async {
+  void dict(int type) async {
     try {
       Response response = await dio.post(
         URL().typeURL,

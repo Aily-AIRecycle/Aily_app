@@ -24,6 +24,7 @@ class _Account_screenState extends State<Account_screen> {
   late File? _image;
   String? username;
   File? profile;
+  UserData user = UserData();
   final storage = const FlutterSecureStorage();
 
   Future<void> _getUser() async {
@@ -49,6 +50,9 @@ class _Account_screenState extends State<Account_screen> {
     imageCache.evict(FileImage(profile!));
     await storage.delete(key: 'id');
     await storage.delete(key: 'pw');
+    setState(() {
+      user.nickname = '';
+    });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -233,15 +237,10 @@ class _Account_screenState extends State<Account_screen> {
                   children: [
                     Container(
                       height: MediaQuery.of(context).size.height * 0.45,
-                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 0),
+                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 50),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _ListTile(
-                              context, 'assets/images/point_icon.svg', '퀴즈',
-                              () {
-                            showMsg(context, '퀴즈', '퀴즈');
-                          }),
                           _ListTile(context, 'assets/images/faq_icon.svg',
                               '자주 묻는 질문(FAQ)', () {
                             Navigator.push(

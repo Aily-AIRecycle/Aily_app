@@ -4,6 +4,7 @@ import 'package:Aily/screens/push_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import '../class/location.dart';
 import '../class/UserData.dart';
 import '../class/URLs.dart';
 import 'package:dio/dio.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late String? username;
   late int? userpoint;
   Color myColor = const Color(0xFFF8B195);
+  Location location = Location();
   var user = UserData();
   Dio dio = Dio();
   Timer? timer;
@@ -35,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getScreenSize();
     _getUser();
+    location.getLocationPermission();
     timer = Timer.periodic(const Duration(milliseconds: 100), (timer) => accrual_details(user.phonenumber.toString()));
   }
 
