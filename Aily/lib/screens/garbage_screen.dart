@@ -99,12 +99,12 @@ class _GarbageScreenState extends State<GarbageScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Color(0xffF8B195).withOpacity(0.5),
+                        color: const Color(0xffF8B195).withOpacity(0.5),
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xffF8B195).withOpacity(0.1),
+                          color: const Color(0xffF8B195).withOpacity(0.1),
                           blurRadius: 30,
                           offset: const Offset(0, 4),
                         ),

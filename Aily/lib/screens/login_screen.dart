@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late Uint8List imgData;
   final storage = const FlutterSecureStorage();
   late int point, phonenumber;
-  late String nickname, image;
+  late String nickname, image, email, birth;
   late File? profile;
   late String savedId;
   bool isIdSaved = false;
@@ -73,6 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           profile = profileFile;
         });
+        user.email = email;
+        user.birth = birth;
         user.nickname = nickname;
         user.point = point;
         user.profile = profile;
@@ -151,6 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         //로그인 성공
         var jsonResponse = response.data;
+        email = jsonResponse[0]['id'];
+        birth = jsonResponse[0]["birth"];
         nickname = jsonResponse[0]['nickname'];
         point = jsonResponse[0]['point'];
         image = jsonResponse[0]['profile'];
@@ -209,10 +213,13 @@ class _LoginScreenState extends State<LoginScreen> {
         if (response.statusCode == 200) {
           //로그인 성공
           var jsonResponse = response.data;
+          email = jsonResponse[0]['id'];
+          birth = jsonResponse[0]["birth"];
           nickname = jsonResponse[0]['nickname'];
           point = jsonResponse[0]['point'];
           image = jsonResponse[0]['profile'];
           phonenumber = jsonResponse[0]['User_phonenumber'];
+
           savedInfo(id, Password);
           if (id == 'admin') {
             user.nickname = nickname;

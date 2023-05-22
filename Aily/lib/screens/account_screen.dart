@@ -1,16 +1,13 @@
+import 'package:Aily/screens/mypage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:io';
 import 'package:Aily/screens/login_screen.dart';
 import 'package:Aily/utils/ShowDialog.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:Aily/board/faq_screen.dart';
 import 'package:Aily/board/notice_screen.dart';
-import '../class/URLs.dart';
 import '../class/UserData.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 
 class Account_screen extends StatefulWidget {
@@ -21,19 +18,24 @@ class Account_screen extends StatefulWidget {
 }
 
 class _Account_screenState extends State<Account_screen> {
-  late File? _image;
   String? username;
   File? profile;
   UserData user = UserData();
   final storage = const FlutterSecureStorage();
 
-  Future<void> _getUser() async {
+  Future<UserData> _getUser() async {
     UserData user = UserData();
-    setState(() {
-      username = user.nickname;
-      profile = user.profile;
-    });
+    return user;
   }
+
+
+  // Future<void> _getUser() async {
+  //   UserData user = UserData();
+  //   setState(() {
+  //     username = user.nickname;
+  //     profile = user.profile;
+  //   });
+  // }
 
   @override
   void initState() {
@@ -60,40 +62,6 @@ class _Account_screenState extends State<Account_screen> {
       ),
     );
     showMsg(context, '로그아웃', '로그아웃 되었습니다.');
-  }
-
-  void _profileUpdate(BuildContext context) async {
-    UserData user = UserData();
-    user.profile = _image;
-    profile = user.profile;
-    setState(() {});
-  }
-
-  Future<void> _pickImage(BuildContext context, ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-      _profileUpdate(context);
-      await _uploadImage(_image!);
-    }
-  }
-
-  Future<void> _uploadImage(File file) async {
-    try {
-      final formData = FormData.fromMap({
-        'username': username,
-        'file': await MultipartFile.fromFile(file.path, filename: 'image.png'),
-      });
-      final response = await Dio().post(URL().imageURL, data: formData);
-
-      if (response.statusCode == 200) {
-        //
-      }
-    } catch (e) {
-      //
-    }
   }
 
   @override
@@ -129,42 +97,85 @@ class _Account_screenState extends State<Account_screen> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    ListTile(
-                      contentPadding: const EdgeInsets.only(left: 0),
-                      horizontalTitleGap: 10,
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: IconButton(
-                              onPressed: () {
-                                showMsg(context, '프로필', '프로필');
+                    Theme(
+                      data: ThemeData().copyWith(
+                        dividerColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                      ),
+                      child: FutureBuilder<UserData>(
+                        future: _getUser(),
+                        builder: (BuildContext context, AsyncSnapshot<UserData> snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            // While waiting for the data, you can show a loading indicator
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            // Handle any errors that occurred during fetching the data
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            UserData userData = snapshot.data!;
+                            return ListTile(
+                              contentPadding: const EdgeInsets.only(left: 0),
+                              horizontalTitleGap: 10,
+                              leading: CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.white,
+                                child: ClipOval(
+                                  child: IconButton(
+                                    onPressed: (){},
+                                    splashRadius: 20,
+                                    color: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    iconSize: 48,
+                                    icon: Image.file(
+                                      userData.profile!,
+                                      width: 48,
+                                      height: 48,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                userData.nickname!,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: const Text(
+                                '프로필 설정',
+                                style: TextStyle(
+                                  color: Color(0xff767676),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              trailing: Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.grey.shade700,
+                                  size: 19,
+                                ),
+                              ),
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Mypage_screen(),
+                                  ),
+                                );
+                                if (result != null) {
+                                  setState(() {
+                                    profile = result;
+                                  });
+                                }
                               },
-                              splashRadius: 20,
-                              color: Colors.transparent,
-                              padding: EdgeInsets.zero,
-                              iconSize: 48,
-                              icon: Image.file(profile!,
-                                  width: 48, height: 48, fit: BoxFit.cover)),
-                        ),
+                            );
+                          }
+                        },
                       ),
-                      title: Text(username!,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
-                      subtitle: const Text('프로필 설정',
-                          style: TextStyle(
-                              color: Color(0xff767676),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400)
-                      ),
-                      trailing: Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: Icon(Icons.arrow_forward_ios,
-                            color: Colors.grey.shade700, size: 19),
-                      ),
-                      onTap: () {
-                        _pickImage(context, ImageSource.gallery);
-                      },
                     ),
                     Container(
                       height: 0.5,
@@ -182,7 +193,7 @@ class _Account_screenState extends State<Account_screen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Color(0xff767676).withOpacity(0.25),
+                    color: const Color(0xff767676).withOpacity(0.25),
                     width: 1,
                   ),
                   boxShadow: [
@@ -275,9 +286,7 @@ class _Account_screenState extends State<Account_screen> {
   }
 }
 
-Widget _ListTile(
-    BuildContext context, String leadingAsset, String title, Function onTap) {
-  final InteractiveInkFeatureFactory splashFactory;
+Widget _ListTile(BuildContext context, String leadingAsset, String title, Function onTap) {
 
   return Column(
     children: [
