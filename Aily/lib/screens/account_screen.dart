@@ -28,15 +28,6 @@ class _Account_screenState extends State<Account_screen> {
     return user;
   }
 
-
-  // Future<void> _getUser() async {
-  //   UserData user = UserData();
-  //   setState(() {
-  //     username = user.nickname;
-  //     profile = user.profile;
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -49,12 +40,11 @@ class _Account_screenState extends State<Account_screen> {
   }
 
   void logout(BuildContext context) async {
-    imageCache.evict(FileImage(profile!));
+    imageCache.evict(FileImage(user.profile!));
     await storage.delete(key: 'id');
     await storage.delete(key: 'pw');
-    setState(() {
-      user.nickname = '';
-    });
+    user.nickname = '';
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -167,9 +157,7 @@ class _Account_screenState extends State<Account_screen> {
                                   ),
                                 );
                                 if (result != null) {
-                                  setState(() {
-                                    profile = result;
-                                  });
+                                  setState(() {});
                                 }
                               },
                             );

@@ -201,8 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final String id = idctrl.text.trim();
     final String pw = passwordctrl.text.trim();
 
-    var bytes = utf8.encode(pw); // 문자열을 바이트 배열로 변환
-    var sha256Result = sha256.convert(bytes); // MD5 해시 값 생성
+    var bytes = utf8.encode(pw);
+    var sha256Result = sha256.convert(bytes);
     String Password = sha256Result.toString();
     // 로그인 처리 로직 구현
     if (id.isEmpty || pw.isEmpty) {
