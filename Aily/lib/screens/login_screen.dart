@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:Aily/screens/register_screen.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'manager_screen.dart';
 import 'package:Aily/utils/ShowDialog.dart';
@@ -243,200 +244,191 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 60.0),
-        child: Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 7, bottom: 10.0),
-                      child: Text(
-                        "Ai Recycling",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'Waiting for the Sunrise',
-                          fontWeight: FontWeight.bold,
-                          color: myColor,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        "AILY",
-                        style: TextStyle(
-                          fontSize: 50,
-                          fontFamily: 'Waiting for the Sunrise',
-                          fontWeight: FontWeight.bold,
-                          color: myColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.13),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Stack(
                     children: [
-                      Image.asset(
-                        'assets/images/logo.png',
-                        width: 225.0,
-                        height: MediaQuery.of(context).size.height * 0.23,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 7, bottom: 10.0),
+                        child: SvgPicture.asset(
+                          'assets/images/logo.svg',
+                          width: 300.0,
+                          height: MediaQuery.of(context).size.height * 0.23,
+                        ),
                       ),
-                      const SizedBox(height: 80.0),
-                      TextField(
-                        controller: idctrl,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        decoration: InputDecoration(
-                          hintText: '아이디 입력',
-                          hintStyle: const TextStyle(
-                            color: Color(0xff969696),
-                          ),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: myColor),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey.shade400),
-                            borderRadius: BorderRadius.circular(20),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Ai Recycling",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontFamily: 'Waiting for the Sunrise',
+                            fontWeight: FontWeight.bold,
+                            color: myColor,
                           ),
                         ),
+                        const SizedBox(height: 80.0),
+                        TextField(
+                          controller: idctrl,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            hintText: '아이디 입력',
+                            hintStyle: const TextStyle(
+                              color: Color(0xff969696),
+                            ),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: myColor),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
 
-                      ),
-                      const SizedBox(height: 8.0),
-                      TextField(
-                        controller: passwordctrl,
-                        textInputAction: TextInputAction.go,
-                        onSubmitted: (value){
-                          login();
-                        },
-                        decoration: InputDecoration(
-                          hintText: '비밀번호 입력',
-                          hintStyle: const TextStyle(
-                            color: Color(0xff969696),
-                          ),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: myColor),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey.shade400),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
                         ),
-                        obscureText: true,
-                      ),
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: isCheckboxChecked,
-                            checkColor: Colors.white,
-                            fillColor: MaterialStateProperty.resolveWith<Color>(
-                                  (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return myColor;
-                                }
-                                return Colors.black;
+                        const SizedBox(height: 8.0),
+                        TextField(
+                          controller: passwordctrl,
+                          textInputAction: TextInputAction.go,
+                          onSubmitted: (value){
+                            login();
+                          },
+                          decoration: InputDecoration(
+                            hintText: '비밀번호 입력',
+                            hintStyle: const TextStyle(
+                              color: Color(0xff969696),
+                            ),
+                            border: const OutlineInputBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: myColor),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          obscureText: true,
+                        ),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: isCheckboxChecked,
+                              checkColor: Colors.white,
+                              fillColor: MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return myColor;
+                                  }
+                                  return Colors.black;
+                                },
+                              ),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  isCheckboxChecked = value!;
+                                  isIdSaved = value; // 체크박스 상태를 아이디 저장 변수에 반영
+                                  saveCheckboxState(value); // 체크박스 상태를 저장
+                                  if (isIdSaved) {
+                                    final String id = idctrl.text.trim();
+                                    saveId(id);
+                                  } else {
+                                    deleteSavedId();
+                                  }
+                                });
                               },
                             ),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isCheckboxChecked = value!;
-                                isIdSaved = value; // 체크박스 상태를 아이디 저장 변수에 반영
-                                saveCheckboxState(value); // 체크박스 상태를 저장
-                                if (isIdSaved) {
-                                  final String id = idctrl.text.trim();
-                                  saveId(id);
-                                } else {
-                                  deleteSavedId();
-                                }
-                              });
-                            },
-                          ),
-                          const Text("아이디 저장"),
-                        ],
-                      ),
-                      const SizedBox(height: 5.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const registerScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
-                          elevation: 0.5,
-                          shadowColor: myColor,
-                          foregroundColor: myColor,
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 13.0, horizontal: 60.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
-                            side: BorderSide(
-                              color: myColor, // 원하는 색상으로 변경
-                              width: 0.5, // 테두리 두께
+                            const Text("아이디 저장"),
+                          ],
+                        ),
+                        const SizedBox(height: 5.0),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const registerScreen()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
+                            elevation: 0.5,
+                            shadowColor: myColor,
+                            foregroundColor: myColor,
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 13.0, horizontal: 60.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              side: BorderSide(
+                                color: myColor, // 원하는 색상으로 변경
+                                width: 0.5, // 테두리 두께
+                              ),
                             ),
                           ),
-                        ),
-                        child: Text('회원가입',
+                          child: Text('회원가입',
                             style: TextStyle(
                               fontFamily: 'Pretendard',
                               color: myColor,
                               fontWeight: FontWeight.w400,
                               fontSize: 20,
-                            )),
-                      ),
-                      const SizedBox(height: 13.0),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              login();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: myColor.withOpacity(0.9),
-                              elevation: 0,
-                              fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 13.0, horizontal: 60.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                            ),
-                            child: const Text(
-                              '로그인',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontWeight: FontWeight.w400,
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        const SizedBox(height: 13.0),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                login();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: myColor.withOpacity(0.9),
+                                elevation: 0,
+                                fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 13.0, horizontal: 60.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              child: const Text(
+                                '로그인',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        ],
+      )
     );
   }
 }
