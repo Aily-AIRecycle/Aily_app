@@ -5,10 +5,10 @@ void showLoadingDialog(BuildContext context) {
     context: context,
     barrierDismissible: false,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('로딩 중'),
+      return const AlertDialog(
+        title: Text('로딩 중'),
         content: Row(
-          children: const <Widget>[
+          children: <Widget>[
             CircularProgressIndicator(
               color: Color(0xFFF8B195),
             ),
