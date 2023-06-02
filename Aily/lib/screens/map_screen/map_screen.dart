@@ -402,12 +402,12 @@ Widget _ListTile(BuildContext context, String title, int distance, bool isAvaila
         ),
         onTap: () {
           UserData user = UserData();
-          if (user.nickname == "관리자"){
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => GarbageScreen(title: merch.merch!, gen: gen, can: can, pet: pet)));
-          }
+          // if (user.nickname == "관리자"){
+          //   Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => GarbageScreen(title: merch.merch!, gen: gen, can: can, pet: pet)));
+          // }
         },
       ),
     ),
