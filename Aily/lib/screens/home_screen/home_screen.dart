@@ -4,18 +4,18 @@ import 'package:aily/screens/home_screen/push_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import '../../class/UserData.dart';
-import '../../class/URLs.dart';
+import '../../class/user_data.dart';
+import '../../class/urls.dart';
 import 'package:dio/dio.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   late double screenWidth = 0.0;
   late double screenHeight = 0.0;
   late String? username;
@@ -35,7 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getScreenSize();
     _getUser();
-    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) => accrual_details(user.phonenumber.toString()));
+    timer = Timer.periodic(const Duration(milliseconds: 100),
+        (timer) => accrualdetails(user.phonenumber.toString()));
   }
 
   @override
@@ -48,14 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void _getScreenSize() async {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
-        screenWidth = MediaQuery
-            .of(context)
-            .size
-            .width;
-        screenHeight = MediaQuery
-            .of(context)
-            .size
-            .height;
+        screenWidth = MediaQuery.of(context).size.width;
+        screenHeight = MediaQuery.of(context).size.height;
       });
     });
   }
@@ -67,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   //이용내역
-  void accrual_details(String phoneNumber) async {
+  void accrualdetails(String phoneNumber) async {
     try {
       Response response = await dio.post(
         URL().staticsURL,
@@ -104,11 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _pushScreen(){
+  void _pushScreen() {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const pushScreen()));
+        context, MaterialPageRoute(builder: (context) => const PushScreen()));
   }
 
   void _refreshData() {
@@ -157,10 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
           _refreshData();
         });
       },
-      child: const Icon(Icons.keyboard_arrow_down_outlined, size: 24, color: Colors.grey),
+      child: const Icon(Icons.keyboard_arrow_down_outlined,
+          size: 24, color: Colors.grey),
     );
   }
-
 
   PopupMenuItem<String> buildPopupMenuItem(String value) {
     return PopupMenuItem<String>(
@@ -181,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final EdgeInsetsGeometry margin = isAndroid
-        ? const EdgeInsets.only(left: 24, top: 24)  // 안드로이드일 경우
+        ? const EdgeInsets.only(left: 24, top: 24) // 안드로이드일 경우
         : const EdgeInsets.only(left: 24); // 아이폰일 경우
 
     final EdgeInsetsGeometry noticeMargin = isAndroid
@@ -195,13 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: false,
         title: Container(
           margin: margin,
-          child: Text(
-            "AILY",
-            style: TextStyle(
-                fontSize: 32,
-                fontFamily: 'Waiting for the Sunrise',
-                fontWeight: FontWeight.bold,
-                color: myColor),
+          child: SvgPicture.asset(
+            'assets/images/logo.svg',
+            width: 40, // 이미지 크기
+            height: 40,
           ),
         ),
         actions: [
@@ -222,43 +212,42 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(
-                top: 18,
-                left: 12,
-                child: GestureDetector(
-                  onTap: (){
-                    _pushScreen();
-                  },
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '0',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
+                  top: 18,
+                  left: 12,
+                  child: GestureDetector(
+                    onTap: () {
+                      _pushScreen();
+                    },
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '0',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ),
+                  )),
             ],
           )
         ],
       ),
-      body: HomeWidget(
+      body: homeWidget(
         username!,
         context,
       ),
     );
   }
 
-  Widget HomeWidget(String username, BuildContext context) {
+  Widget homeWidget(String username, BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -318,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.only(right: 15),
                           child: GestureDetector(
                             onTap: () {
-                              accrual_details(user.phonenumber.toString());
+                              accrualdetails(user.phonenumber.toString());
                             },
                             child: const Icon(Icons.refresh, size: 25),
                           ),
@@ -329,23 +318,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: screenHeight * 0.023),
                   processedData.isNotEmpty
                       ? Text(
-                    '${NumberFormat('#,###').format(processedData.last["POINT"])}원',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
+                          '${NumberFormat('#,###').format(processedData.last["POINT"])}원',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
                       : const SizedBox(
-                    width: 15,
-                    height: 15,
-                    child: CircularProgressIndicator(color: Colors.black, strokeWidth: 1.5),
-                  ),
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                              color: Colors.black, strokeWidth: 1.5),
+                        ),
                 ],
               ),
             ),
           ],
         ),
-
         Container(
           width: screenWidth - 48,
           height: screenHeight * 0.57,
@@ -373,8 +362,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   children: [
                     const Text('이용내역',
-                        style:
-                        TextStyle(fontWeight: FontWeight.w500, fontSize: 18)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 18)),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.45),
                     Text(filterStr!),
                     buildPopupMenuButton(),
@@ -382,88 +371,88 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                  child: RefreshIndicator(
-                    color: Colors.black,
-                    onRefresh: () async {
-                      accrual_details(user.phonenumber.toString());
-                    },
-                    child: ScrollConfiguration(
-                      behavior: const ScrollBehavior(),
-                      child: GlowingOverscrollIndicator(
-                        axisDirection: AxisDirection.down,
-                        color: Colors.white,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: filteredData.length,
-                          reverse: true,
-                          controller: _scrollController,
-                          itemBuilder: (context, index) {
-                            final item = filteredData[index];
-                            int gen = item["GEN"];
-                            int can = item["CAN"];
-                            int pet = item["PET"];
-                            int cntValue = (gen + can + pet) * 100;
+                    child: RefreshIndicator(
+                        color: Colors.black,
+                        onRefresh: () async {
+                          accrualdetails(user.phonenumber.toString());
+                        },
+                        child: ScrollConfiguration(
+                          behavior: const ScrollBehavior(),
+                          child: GlowingOverscrollIndicator(
+                            axisDirection: AxisDirection.down,
+                            color: Colors.white,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: filteredData.length,
+                              reverse: true,
+                              controller: _scrollController,
+                              itemBuilder: (context, index) {
+                                final item = filteredData[index];
+                                int gen = item["GEN"];
+                                int can = item["CAN"];
+                                int pet = item["PET"];
+                                int cntValue = (gen + can + pet) * 100;
 
-                            if (item["POINT"] == 0) {
-                              return Column(
-                                children: [
-                                  SizedBox(height: screenHeight * 0.16),
-                                  const Text(
-                                    "이용하신 내역이 없습니다.",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              DateTime dateTime = DateTime.parse(item['TIMESTAMP']);
-                              String formattedDate = '${dateTime.year}-${dateTime.month}-${dateTime.day}';
-
-                              if (index == processedData.length - 1 ||
-                                  formattedDate !=
-                                      '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
-                                // WidgetsBinding.instance.addPostFrameCallback((_) {
-                                //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                                // });
-                                return Column(
-                                  children: [
-                                    ListTile(
-                                      title: Text(
-                                        formattedDate,
-                                        style: const TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                if (item["POINT"] == 0) {
+                                  return Column(
+                                    children: [
+                                      SizedBox(height: screenHeight * 0.16),
+                                      const Text(
+                                        "이용하신 내역이 없습니다.",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w400,
                                         ),
                                       ),
-                                    ),
-                                    _ListTile(
+                                    ],
+                                  );
+                                } else {
+                                  DateTime dateTime =
+                                      DateTime.parse(item['TIMESTAMP']);
+                                  String formattedDate =
+                                      '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+
+                                  if (index == processedData.length - 1 ||
+                                      formattedDate !=
+                                          '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
+                                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+                                    // });
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          title: Text(
+                                            formattedDate,
+                                            style: const TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        listTile(
+                                          context,
+                                          '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                          item['TIMESTAMP'],
+                                          cntValue,
+                                          item["POINT"],
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return listTile(
                                       context,
                                       '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
                                       item['TIMESTAMP'],
                                       cntValue,
                                       item["POINT"],
-                                    ),
-                                  ],
-                                );
-                              } else {
-                                return _ListTile(
-                                  context,
-                                  '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
-                                  item['TIMESTAMP'],
-                                  cntValue,
-                                  item["POINT"],
-                                );
-                              }
-                            }
-                          },
-                        ),
-                      ),
-                    )
-                  )
-                ),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ))),
               ],
             ),
           ),
@@ -473,7 +462,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget _ListTile(BuildContext context, String title, String date, int incPoint, totPoint) {
+Widget listTile(
+    BuildContext context, String title, String date, int incPoint, totPoint) {
   Color myColor = const Color(0xFFF8B195);
   var user = UserData();
 
@@ -481,9 +471,7 @@ Widget _ListTile(BuildContext context, String title, String date, int incPoint, 
     children: [
       Card(
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-              color: myColor.withOpacity(0.3)
-          ),
+          side: BorderSide(color: myColor.withOpacity(0.3)),
           borderRadius: BorderRadius.circular(15.0),
         ),
         elevation: 0,
@@ -492,8 +480,7 @@ Widget _ListTile(BuildContext context, String title, String date, int incPoint, 
           data: ThemeData().copyWith(
               dividerColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              splashColor: Colors.transparent
-          ),
+              splashColor: Colors.transparent),
           child: ListTile(
             horizontalTitleGap: 0,
             contentPadding: const EdgeInsets.symmetric(horizontal: 25),
@@ -507,8 +494,11 @@ Widget _ListTile(BuildContext context, String title, String date, int incPoint, 
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('+${user.formatInt(incPoint)}', style: const TextStyle(fontSize: 17, color: Colors.red)),
-                    Text('${user.formatInt(totPoint)}원', style: const TextStyle(fontSize: 15)),
+                    Text('+${user.formatInt(incPoint)}',
+                        style:
+                            const TextStyle(fontSize: 17, color: Colors.red)),
+                    Text('${user.formatInt(totPoint)}원',
+                        style: const TextStyle(fontSize: 15)),
                   ],
                 ),
               ],

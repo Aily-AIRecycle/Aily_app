@@ -3,7 +3,7 @@ import 'package:aily/screens/mypage_screen/mypage_screen.dart';
 import 'package:aily/screens/map_screen/map_screen.dart';
 import 'package:flutter/material.dart';
 import '../dictionary_screen/category_screen.dart';
-import '../qr_screen/qr_Screen.dart';
+import '../qr_screen/qr_screen.dart';
 import '../home_screen/home_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -12,10 +12,11 @@ class NavigatorScreen extends StatefulWidget {
   const NavigatorScreen({Key? key}) : super(key: key);
 
   @override
-  _NavigatorScreenState createState() => _NavigatorScreenState();
+  NavigatorScreenState createState() => NavigatorScreenState();
 }
 
-class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderStateMixin {
+class NavigatorScreenState extends State<NavigatorScreen>
+    with TickerProviderStateMixin {
   Color myColor = const Color(0xFFF8B195);
   late String? username;
   late Uint8List? profile;
@@ -34,8 +35,10 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
     _animationController.forward(from: 0.0);
 
     KeyboardVisibilityController().onChange.listen((bool visible) {
@@ -59,14 +62,15 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     _children = [
       const HomeScreen(),
-      const categoryScreen(),
+      const CategoryScreen(),
       const MapScreen(),
-      const Mypage_screen(),
+      const Mypagescreen(),
     ];
 
-    Widget _fadeZoomTransition(Widget child) {
+    Widget fadeZoomTransition(Widget child) {
       return ScaleTransition(
-        scale: Tween<double>(begin: 0.99, end: 1.0).animate(_animationController),
+        scale:
+            Tween<double>(begin: 0.99, end: 1.0).animate(_animationController),
         child: FadeTransition(
           opacity: _animation,
           child: child,
@@ -74,12 +78,13 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
       );
     }
 
-    Widget _iconButton(String icon, int index) {
+    Widget iconButton(String icon, int index) {
       return IconButton(
         iconSize: 40,
         icon: SvgPicture.asset(
           'assets/images/icons/$icon.svg',
-          color: _currentIndex == index ? myColor : Colors.grey,
+          colorFilter: ColorFilter.mode(
+              _currentIndex == index ? myColor : Colors.grey, BlendMode.srcIn),
         ),
         onPressed: () {
           _onTap(index);
@@ -88,36 +93,36 @@ class _NavigatorScreenState extends State<NavigatorScreen> with TickerProviderSt
     }
 
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: PageView(
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          physics: const NeverScrollableScrollPhysics(),
-          children: _children.map((e) => _fadeZoomTransition(e)).toList(),
-        ),
-        bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-    child: SizedBox(
-    height: MediaQuery.of(context).size.height * 0.08,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-          _iconButton('home_icon', 0),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          _iconButton('story_icon', 1),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.2),
-          _iconButton('map_icon', 2),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.01),
-          _iconButton('profile_tab_icon', 3),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-        ],
+      resizeToAvoidBottomInset: false,
+      body: PageView(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
+        children: _children.map((e) => fadeZoomTransition(e)).toList(),
       ),
-    ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.08,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+              iconButton('home_icon', 0),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+              iconButton('story_icon', 1),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.2),
+              iconButton('map_icon', 2),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+              iconButton('profile_tab_icon', 3),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+            ],
+          ),
         ),
+      ),
       floatingActionButton: AnimatedContainer(
-        duration: Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 500),
         curve: Curves.easeOut,
         margin: EdgeInsets.only(bottom: _fabTopMargin ?? fabBottomMargin),
         child: FloatingActionButton(

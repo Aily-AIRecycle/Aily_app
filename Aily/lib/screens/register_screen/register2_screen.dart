@@ -1,19 +1,19 @@
-import 'package:aily/class/UserData.dart';
+import 'package:aily/class/user_data.dart';
 import 'package:aily/screens/register_screen/verification_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '../../class/URLs.dart';
+import '../../class/urls.dart';
 
-class register2Screen extends StatefulWidget {
-  const register2Screen({Key? key}) : super(key: key);
+class Register2Screen extends StatefulWidget {
+  const Register2Screen({Key? key}) : super(key: key);
 
   @override
-  _register2ScreenState createState() => _register2ScreenState();
+  Register2ScreenState createState() => Register2ScreenState();
 }
 
-class _register2ScreenState extends State<register2Screen> {
+class Register2ScreenState extends State<Register2Screen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController _nameTextController;
   late TextEditingController _birthdateTextController;
@@ -76,7 +76,7 @@ class _register2ScreenState extends State<register2Screen> {
       return response.data;
     } catch (error) {
       // Error handling
-      throw error;
+      rethrow;
     }
   }
 
@@ -175,7 +175,7 @@ class _register2ScreenState extends State<register2Screen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const verificationScreen()));
+              builder: (context) => const VerificationScreen()));
     }
   }
 
@@ -199,12 +199,12 @@ class _register2ScreenState extends State<register2Screen> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: RegisterWidget(context),
+        child: registerWidget(context),
       )
     );
   }
 
-  Widget RegisterWidget(BuildContext context) {
+  Widget registerWidget(BuildContext context) {
     return Column(
       children: [
         SizedBox(

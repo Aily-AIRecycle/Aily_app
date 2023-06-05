@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class pushScreen extends StatefulWidget {
-  const pushScreen({Key? key}) : super(key: key);
+class PushScreen extends StatefulWidget {
+  const PushScreen({Key? key}) : super(key: key);
 
   @override
-  _pushScreenState createState() => _pushScreenState();
+  PushScreenState createState() => PushScreenState();
 }
 
-class _pushScreenState extends State<pushScreen> {
+class PushScreenState extends State<PushScreen> {
   Color myColor = const Color(0xFFF8B195);
 
   @override

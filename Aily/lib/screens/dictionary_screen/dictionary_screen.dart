@@ -2,20 +2,20 @@ import 'dart:async';
 import 'package:aily/screens/dictionary_screen/dictcontents_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../class/URLs.dart';
+import '../../class/urls.dart';
 import 'package:dio/dio.dart';
 
-class dictionaryScreen extends StatefulWidget {
+class DictionaryScreen extends StatefulWidget {
   final String title;
   final int type;
 
-  const dictionaryScreen({Key? key, required this.title, required this.type}) : super(key: key);
+  const DictionaryScreen({Key? key, required this.title, required this.type}) : super(key: key);
 
   @override
-  _dictionaryScreenState createState() => _dictionaryScreenState();
+  DictionaryScreenState createState() => DictionaryScreenState();
 }
 
-class _dictionaryScreenState extends State<dictionaryScreen> {
+class DictionaryScreenState extends State<DictionaryScreen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController searchctrl;
   String searchStr = '';
@@ -96,13 +96,13 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
               },
             ),
           ),
-          body: DictionaryWidget(context),
+          body: dictionaryWidget(context),
         ),
       ),
     );
   }
 
-  Widget DictionaryWidget(BuildContext context) {
+  Widget dictionaryWidget(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -230,14 +230,14 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
       final status = lastDigit == 1;
 
       listTiles.add(
-        _ListTile(context, name, widget.title, status, contents),
+        listTile(context, name, widget.title, status, contents),
       );
     }
     return Column(children: listTiles);
   }
 }
 
-  Widget _ListTile(BuildContext context, String title, test1, bool isAvailable, String contents) {
+  Widget listTile(BuildContext context, String title, test1, bool isAvailable, String contents) {
   Color myColor = const Color(0xFFF8B195);
 
   return Column(
@@ -304,7 +304,7 @@ class _dictionaryScreenState extends State<dictionaryScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => dictContentsScreen(title: title, contents: contents)));
+                      builder: (context) => DictContentsScreen(title: title, contents: contents)));
             },
           ),
         ),

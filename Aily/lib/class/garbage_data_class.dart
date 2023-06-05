@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../class/URLs.dart';
+import 'urls.dart';
 
 class GarbageData {
   final int can;
@@ -67,6 +67,6 @@ Future<List<GarbageData>> fetchGarbage(String merch) async {
       throw Exception('Failed to fetch garbage');
     }
   } catch (error) {
-    throw error;
+    rethrow;
   }
 }

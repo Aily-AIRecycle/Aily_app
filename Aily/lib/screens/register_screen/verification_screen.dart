@@ -2,18 +2,18 @@ import 'dart:async';
 import 'package:aily/screens/register_screen/register3_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../class/URLs.dart';
-import '../../class/UserData.dart';
-import '../../utils/ShowDialog.dart';
+import '../../class/urls.dart';
+import '../../class/user_data.dart';
+import '../../utils/show_dialog.dart';
 
-class verificationScreen extends StatefulWidget {
-  const verificationScreen({Key? key}) : super(key: key);
+class VerificationScreen extends StatefulWidget {
+  const VerificationScreen({Key? key}) : super(key: key);
 
   @override
-  _verificationScreenState createState() => _verificationScreenState();
+  VerificationScreenState createState() => VerificationScreenState();
 }
 
-class _verificationScreenState extends State<verificationScreen> {
+class VerificationScreenState extends State<VerificationScreen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController _codeTextController;
   late String emailCode = '';
@@ -40,14 +40,19 @@ class _verificationScreenState extends State<verificationScreen> {
     Response<dynamic> response = await _sendemail(useremail);
     if (response.data != "Failed") {
       emailCode = response.data;
-      showMsg(context, "이메일", "메일을 발송했습니다.");
+      Future.delayed(Duration.zero, () {
+        showMsg(context, "이메일", "메일을 발송했습니다.");
+      });
+
       setState(() {
         isCodeSent = true;
         remainingTime = const Duration(minutes: 3);
       });
       startTimer(); // 타이머 시작
     } else {
-      showMsg(context, "이메일", "메일 발송에 실패했습니다.");
+      Future.delayed(Duration.zero, () {
+        showMsg(context, "이메일", "메일 발송에 실패했습니다.");
+      });
     }
   }
 
@@ -72,17 +77,16 @@ class _verificationScreenState extends State<verificationScreen> {
             'Content-Type': 'application/json; charset=UTF-8',
           },
         ),
-        data: {
-          'email': email
-        },
+        data: {'email': email},
       );
       return response;
     } catch (error) {
-      throw error;
+      rethrow;
     }
   }
 
-  Future<Map<String, dynamic>> signUser(String phone, String id, String password, String nickname, String birth) async {
+  Future<Map<String, dynamic>> signUser(String phone, String id,
+      String password, String nickname, String birth) async {
     final Map<String, dynamic> data = {
       "phonenumber": phone,
       "id": id,
@@ -108,24 +112,25 @@ class _verificationScreenState extends State<verificationScreen> {
       return response.data;
     } catch (error) {
       // Error handling
-      throw error;
+      rethrow;
     }
   }
 
   Future<void> signup() async {
-    if (_codeTextController.text.trim() == emailCode){
+    if (_codeTextController.text.trim() == emailCode) {
       showMsg(context, '인증', '이메일 인증에 성공하였습니다 !');
       try {
-        await signUser("0${user.phonenumber.toString()}", user.email!, user.password!, user.nickname!, user.birth!);
+        await signUser("0${user.phonenumber.toString()}", user.email!,
+            user.password!, user.nickname!, user.birth!);
       } catch (e) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const register3Screen(),
+            builder: (context) => const Register3Screen(),
           ),
         );
       }
-    }else{
+    } else {
       showMsg(context, '인증', '인증번호를 다시 한 번 확인해주세요.');
     }
   }
@@ -159,7 +164,7 @@ class _verificationScreenState extends State<verificationScreen> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: VerificationWidget(context),
+        child: verificationWidget(context),
       ),
       bottomNavigationBar: BottomAppBar(
         child: SizedBox(
@@ -196,7 +201,7 @@ class _verificationScreenState extends State<verificationScreen> {
     );
   }
 
-  Widget VerificationWidget(BuildContext context) {
+  Widget verificationWidget(BuildContext context) {
     String useremail = user.email!;
 
     return Padding(
@@ -232,15 +237,19 @@ class _verificationScreenState extends State<verificationScreen> {
                     Positioned(
                       right: 0,
                       child: ElevatedButton(
-                        onPressed: isCodeSent ? null : () async {
-                          sendVerificationCode(useremail);
-                        },
+                        onPressed: isCodeSent
+                            ? null
+                            : () async {
+                                sendVerificationCode(useremail);
+                              },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: myColor,
                         ),
                         child: Text(
-                          isCodeSent ? '${remainingTime.inMinutes.toString().padLeft(2, '0')}:${(remainingTime.inSeconds % 60).toString().padLeft(2, '0')}' : '인증요청',
+                          isCodeSent
+                              ? '${remainingTime.inMinutes.toString().padLeft(2, '0')}:${(remainingTime.inSeconds % 60).toString().padLeft(2, '0')}'
+                              : '인증요청',
                         ), // 버튼 텍스트 변경
                       ),
                     ),
@@ -260,9 +269,9 @@ class _verificationScreenState extends State<verificationScreen> {
                       controller: _codeTextController,
                       keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: '인증번호 입력',
-                        border: const UnderlineInputBorder(),
+                        border: UnderlineInputBorder(),
                       ),
                     ),
                   ],

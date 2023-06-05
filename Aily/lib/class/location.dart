@@ -28,20 +28,13 @@ class Location {
   );
 
   Future<void> getCurrentLocation() async {
-    StreamSubscription<Position> positionStream;
     try {
-      positionStream = Geolocator.getPositionStream(
+      Geolocator.getPositionStream(
         locationSettings: locationSettings,
       ).listen((Position newPosition) {
-        // 위치 업데이트를 받아온 후에 필요한 로직을 수행하세요
         latitude = newPosition.latitude;
         longitude = newPosition.longitude;
       });
-      // Position position = await Geolocator.getCurrentPosition(
-      //   desiredAccuracy: LocationAccuracy.bestForNavigation);
-      // latitude = position.latitude;
-      // longitude = position.longitude;
-
     } catch (e) {
       //
     }

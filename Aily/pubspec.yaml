@@ -35,48 +35,28 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_native_splash: ^2.3.0
   dio: ^5.1.2
   geolocator: ^9.0.2
   intl: ^0.18.1
   flutter_svg: ^2.0.6
   flutter_keyboard_visibility: ^5.4.1
   flutter_secure_storage: ^8.0.0
-  liquid_progress_indicator: ^0.4.0
   path_provider: ^2.0.15
   gradients: ^0.1.1+2
   webview_flutter: ^4.2.1
   image_picker: ^0.8.7+5
   qr_flutter: ^4.1.0
   webview_flutter_android: ^3.7.1
-
-flutter_native_splash:
-  android: true
-  ios: true
-  web: false
-  color: "#ffffff"
-  image: "assets/images/logo.svg"
-
-  android_12:
-    color: "#ffffff"
-    image: "assets/images/logo.svg"
-    icon_background_color: "#ffffff"
-
+  liquid_progress_indicator: ^0.4.0
+  crypto: ^3.0.3
+  webview_flutter_wkwebview: ^3.4.4
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
   fonts:
     - family: Waiting for the Sunrise

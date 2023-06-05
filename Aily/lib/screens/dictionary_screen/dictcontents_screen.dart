@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 
-class dictContentsScreen extends StatefulWidget {
+class DictContentsScreen extends StatefulWidget {
   final String title;
   final String contents;
 
-  const dictContentsScreen({Key? key, required this.title, required this.contents}) : super(key: key);
+  const DictContentsScreen({Key? key, required this.title, required this.contents}) : super(key: key);
 
   @override
-  _dictContentsScreenState createState() => _dictContentsScreenState();
+  DictContentsScreenState createState() => DictContentsScreenState();
 }
 
-class _dictContentsScreenState extends State<dictContentsScreen> {
+class DictContentsScreenState extends State<DictContentsScreen> {
   Color myColor = const Color(0xFFF8B195);
 
   @override
@@ -33,11 +33,11 @@ class _dictContentsScreenState extends State<dictContentsScreen> {
           },
         ),
       ),
-      body: DictionaryWidget(context),
+      body: dictionaryWidget(context),
     );
   }
 
-  Widget DictionaryWidget(BuildContext context) {
+  Widget dictionaryWidget(BuildContext context) {
     String contents = widget.contents.replaceAll('· ', '\n\n· ');
 
     return Column(

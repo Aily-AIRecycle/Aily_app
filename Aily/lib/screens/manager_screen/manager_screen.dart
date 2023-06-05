@@ -1,20 +1,20 @@
 import 'package:aily/screens/manager_screen/chart_screen.dart';
 import 'package:aily/screens/map_screen/map_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:aily/utils/ShowDialog.dart';
+import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gradients/gradients.dart';
 import '../login_screen/login_screen.dart';
-import '../../class/garbageData.dart';
+import '../../class/garbage_data_class.dart';
 
 class ManagerScreen extends StatefulWidget {
   const ManagerScreen({Key? key}) : super(key: key);
 
   @override
-  _ManagerScreenState createState() => _ManagerScreenState();
+  ManagerScreenState createState() => ManagerScreenState();
 }
 
-class _ManagerScreenState extends State<ManagerScreen> {
+class ManagerScreenState extends State<ManagerScreen> {
   Color myColor = const Color(0xFFF8B195);
   Color backColor = const Color(0xFFF6F1F6);
   final storage = const FlutterSecureStorage();
@@ -23,16 +23,18 @@ class _ManagerScreenState extends State<ManagerScreen> {
   Future<void> logout() async {
     await storage.delete(key: 'id');
     await storage.delete(key: 'pw');
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
-    showMsg(context, '로그아웃', '로그아웃 되었습니다.');
+    Future.delayed(Duration.zero, () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+      showMsg(context, '로그아웃', '로그아웃 되었습니다.');
+    });
   }
 
-  Future<void> _WidgetScreen(Widget widget) async {
+  Future<void> widgetScreen(Widget widget) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -46,12 +48,12 @@ class _ManagerScreenState extends State<ManagerScreen> {
     return Scaffold(
       backgroundColor: backColor,
       body: SingleChildScrollView(
-        child: ManagerWidget(context),
+        child: managerWidget(context),
       ),
     );
   }
 
-  Widget ManagerWidget(BuildContext context) {
+  Widget managerWidget(BuildContext context) {
     return Column(
       children: [
         SizedBox(height: MediaQuery.of(context).size.height * 0.08),
@@ -71,8 +73,7 @@ class _ManagerScreenState extends State<ManagerScreen> {
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.06,
                     left: MediaQuery.of(context).size.width * 0.16,
-                    right: MediaQuery.of(context).size.width * 0.16
-                ),
+                    right: MediaQuery.of(context).size.width * 0.16),
                 child: Column(
                   children: [
                     Row(
@@ -81,14 +82,15 @@ class _ManagerScreenState extends State<ManagerScreen> {
                           context,
                           '지도',
                           Icons.location_on,
-                              () => _WidgetScreen(const MapScreen()),
+                          () => widgetScreen(const MapScreen()),
                         ),
-                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.0)),
                         buildNavigationContainer(
                           context,
                           '통계',
                           Icons.bar_chart,
-                              () => _WidgetScreen(const ChartScreen()),
+                          () => widgetScreen(const ChartScreen()),
                         ),
                       ],
                     ),
@@ -99,14 +101,15 @@ class _ManagerScreenState extends State<ManagerScreen> {
                           context,
                           '설정',
                           Icons.settings,
-                              () => (){},
+                          () => () {},
                         ),
-                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.0)),
                         buildNavigationContainer(
                           context,
                           '로그아웃',
                           Icons.logout,
-                              () => logout(),
+                          () => logout(),
                         ),
                       ],
                     ),
@@ -122,11 +125,11 @@ class _ManagerScreenState extends State<ManagerScreen> {
 }
 
 Widget buildNavigationContainer(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Function() onTap,
-    ) {
+  BuildContext context,
+  String title,
+  IconData icon,
+  Function() onTap,
+) {
   var screenWidth = MediaQuery.of(context).size.width * 0.33;
   var screenHeight = MediaQuery.of(context).size.height * 0.2;
   Color containerColor = const Color(0xFF87A7dD);
@@ -139,8 +142,7 @@ Widget buildNavigationContainer(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         gradient: LinearGradientPainter(
-            colors: [containerColor, containerColor, containerColor]
-        ),
+            colors: [containerColor, containerColor, containerColor]),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -154,14 +156,10 @@ Widget buildNavigationContainer(
           Text(
             title,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight: FontWeight.bold
-            ),
+                color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
           ),
         ],
       ),
     ),
   );
 }
-

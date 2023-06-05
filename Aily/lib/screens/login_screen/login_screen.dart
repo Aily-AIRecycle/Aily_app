@@ -4,7 +4,7 @@ import 'package:aily/screens/register_screen/register_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import '../manager_screen/manager_screen.dart';
-import 'package:aily/utils/ShowDialog.dart';
+import 'package:aily/utils/show_dialog.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,17 +13,17 @@ import '../navigator_screen/navigator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../../class/location.dart';
-import '../../class/URLs.dart';
-import '../../class/UserData.dart';
+import '../../class/urls.dart';
+import '../../class/user_data.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   late TextEditingController idctrl;
   late TextEditingController passwordctrl;
 
@@ -87,11 +87,13 @@ class _LoginScreenState extends State<LoginScreen> {
         //
       }
       //현재 페이지를 제거 후 페이지 이동
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const NavigatorScreen()),
-            (route) => false,
-      );
+      Future.delayed(Duration.zero, () {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const NavigatorScreen()),
+          (route) => false,
+        );
+      });
     } catch (e) {
       //
     }
@@ -138,9 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
     String? id = await getSavedId();
     setState(() {
       savedId = id!;
-      if (savedId.isNotEmpty){
-
-      }
+      if (savedId.isNotEmpty) {}
       idctrl.text = savedId;
     });
   }
@@ -165,13 +165,17 @@ class _LoginScreenState extends State<LoginScreen> {
         phonenumber = jsonResponse[0]['User_phonenumber'];
         if (id == 'admin') {
           user.nickname = nickname;
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const ManagerScreen()),
-                (route) => false,
-          );
+          Future.delayed(Duration.zero, () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const ManagerScreen()),
+              (route) => false,
+            );
+          });
         } else {
-          showLoadingDialog(context);
+          Future.delayed(Duration.zero, () {
+            showLoadingDialog(context);
+          });
           downloadImageFromServer(nickname);
         }
       }
@@ -207,15 +211,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var bytes = utf8.encode(pw);
     var sha256Result = sha256.convert(bytes);
-    String Password = sha256Result.toString();
-    // 로그인 처리 로직 구현
+    String password = sha256Result.toString();
     if (id.isEmpty || pw.isEmpty) {
       showMsg(context, "로그인", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
       try {
-        Response<dynamic> response = await loginUser(id, Password);
+        Response<dynamic> response = await loginUser(id, password);
         if (response.statusCode == 200) {
-          //로그인 성공
           var jsonResponse = response.data;
           email = jsonResponse[0]['id'];
           birth = jsonResponse[0]["birth"];
@@ -224,17 +226,21 @@ class _LoginScreenState extends State<LoginScreen> {
           image = jsonResponse[0]['profile'];
           phonenumber = jsonResponse[0]['User_phonenumber'];
 
-          savedInfo(id, Password);
+          savedInfo(id, password);
           if (id == 'admin') {
             user.nickname = nickname;
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ManagerScreen(),
-              ),
-            );
+            Future.delayed(Duration.zero, () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ManagerScreen(),
+                ),
+              );
+            });
           } else {
-            showLoadingDialog(context);
+            Future.delayed(Duration.zero, () {
+              showLoadingDialog(context);
+            });
             downloadImageFromServer(nickname);
           }
         }
@@ -247,191 +253,197 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.13),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(
+        body: Column(
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.13),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 7, bottom: 10.0),
+                      child: SvgPicture.asset(
+                        'assets/images/logo.svg',
+                        width: 300.0,
+                        height: MediaQuery.of(context).size.height * 0.23,
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 7, bottom: 10.0),
-                        child: SvgPicture.asset(
-                          'assets/images/logo.svg',
-                          width: 300.0,
-                          height: MediaQuery.of(context).size.height * 0.23,
+                      Text(
+                        "Ai Recycling",
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'Waiting for the Sunrise',
+                          fontWeight: FontWeight.bold,
+                          color: myColor,
                         ),
+                      ),
+                      const SizedBox(height: 80.0),
+                      TextField(
+                        controller: idctrl,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          hintText: '아이디 입력',
+                          hintStyle: const TextStyle(
+                            color: Color(0xff969696),
+                          ),
+                          border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: myColor),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8.0),
+                      TextField(
+                        controller: passwordctrl,
+                        textInputAction: TextInputAction.go,
+                        onSubmitted: (value) {
+                          login();
+                        },
+                        decoration: InputDecoration(
+                          hintText: '비밀번호 입력',
+                          hintStyle: const TextStyle(
+                            color: Color(0xff969696),
+                          ),
+                          border: const OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: myColor),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        obscureText: true,
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isCheckboxChecked,
+                            checkColor: Colors.white,
+                            fillColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return myColor;
+                                }
+                                return Colors.black;
+                              },
+                            ),
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isCheckboxChecked = value!;
+                                isIdSaved = value; // 체크박스 상태를 아이디 저장 변수에 반영
+                                saveCheckboxState(value); // 체크박스 상태를 저장
+                                if (isIdSaved) {
+                                  final String id = idctrl.text.trim();
+                                  saveId(id);
+                                } else {
+                                  deleteSavedId();
+                                }
+                              });
+                            },
+                          ),
+                          const Text("아이디 저장"),
+                        ],
+                      ),
+                      const SizedBox(height: 5.0),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RegisterScreen()));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(
+                              MediaQuery.of(context).size.width * 0.9,
+                              MediaQuery.of(context).size.height * 0.07),
+                          elevation: 0.5,
+                          shadowColor: myColor,
+                          foregroundColor: myColor,
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 13.0, horizontal: 60.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: BorderSide(
+                              color: myColor, // 원하는 색상으로 변경
+                              width: 0.5, // 테두리 두께
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          '회원가입',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            color: myColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 13.0),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              login();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: myColor.withOpacity(0.9),
+                              elevation: 0,
+                              fixedSize: Size(
+                                  MediaQuery.of(context).size.width * 0.9,
+                                  MediaQuery.of(context).size.height * 0.07),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 13.0, horizontal: 60.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            child: const Text(
+                              '로그인',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Ai Recycling",
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontFamily: 'Waiting for the Sunrise',
-                            fontWeight: FontWeight.bold,
-                            color: myColor,
-                          ),
-                        ),
-                        const SizedBox(height: 80.0),
-                        TextField(
-                          controller: idctrl,
-                          keyboardType: TextInputType.emailAddress,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            hintText: '아이디 입력',
-                            hintStyle: const TextStyle(
-                              color: Color(0xff969696),
-                            ),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: myColor),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-
-                        ),
-                        const SizedBox(height: 8.0),
-                        TextField(
-                          controller: passwordctrl,
-                          textInputAction: TextInputAction.go,
-                          onSubmitted: (value){
-                            login();
-                          },
-                          decoration: InputDecoration(
-                            hintText: '비밀번호 입력',
-                            hintStyle: const TextStyle(
-                              color: Color(0xff969696),
-                            ),
-                            border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: myColor),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          obscureText: true,
-                        ),
-                        Row(
-                          children: [
-                            Checkbox(
-                              value: isCheckboxChecked,
-                              checkColor: Colors.white,
-                              fillColor: MaterialStateProperty.resolveWith<Color>(
-                                    (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.selected)) {
-                                    return myColor;
-                                  }
-                                  return Colors.black;
-                                },
-                              ),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  isCheckboxChecked = value!;
-                                  isIdSaved = value; // 체크박스 상태를 아이디 저장 변수에 반영
-                                  saveCheckboxState(value); // 체크박스 상태를 저장
-                                  if (isIdSaved) {
-                                    final String id = idctrl.text.trim();
-                                    saveId(id);
-                                  } else {
-                                    deleteSavedId();
-                                  }
-                                });
-                              },
-                            ),
-                            const Text("아이디 저장"),
-                          ],
-                        ),
-                        const SizedBox(height: 5.0),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const registerScreen()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
-                            elevation: 0.5,
-                            shadowColor: myColor,
-                            foregroundColor: myColor,
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 13.0, horizontal: 60.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              side: BorderSide(
-                                color: myColor, // 원하는 색상으로 변경
-                                width: 0.5, // 테두리 두께
-                              ),
-                            ),
-                          ),
-                          child: Text('회원가입',
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              color: myColor,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 13.0),
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                login();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: myColor.withOpacity(0.9),
-                                elevation: 0,
-                                fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 13.0, horizontal: 60.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              child: const Text(
-                                '로그인',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ],
-      )
-    );
+        ),
+      ],
+    ));
   }
 }

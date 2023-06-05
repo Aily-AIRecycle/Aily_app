@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import '../../class/UserData.dart';
+import '../../class/user_data.dart';
 
 class QRScreen extends StatefulWidget {
   const QRScreen({Key? key}) : super(key: key);
 
   @override
-  _QRScreenState createState() => _QRScreenState();
+  QRScreenState createState() => QRScreenState();
 }
 
-class _QRScreenState extends State<QRScreen> {
+class QRScreenState extends State<QRScreen> {
   Color myColor = const Color(0xFFF8B195);
   int? phonenumber;
 

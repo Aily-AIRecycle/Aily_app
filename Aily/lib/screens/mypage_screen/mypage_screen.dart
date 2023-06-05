@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:io';
 import 'package:aily/screens/login_screen/login_screen.dart';
-import 'package:aily/utils/ShowDialog.dart';
+import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:aily/board/faq_screen.dart';
 import 'package:aily/board/notice_screen.dart';
-import '../../class/UserData.dart';
+import '../../class/user_data.dart';
 
-
-class Mypage_screen extends StatefulWidget {
-  const Mypage_screen({Key? key}) : super(key: key);
+class Mypagescreen extends StatefulWidget {
+  const Mypagescreen({Key? key}) : super(key: key);
 
   @override
-  State<Mypage_screen> createState() => Mypage_screenState();
+  State<Mypagescreen> createState() => MypagescreenState();
 }
 
-class Mypage_screenState extends State<Mypage_screen> {
+class MypagescreenState extends State<Mypagescreen> {
   String? username;
   File? profile;
   UserData user = UserData();
@@ -44,14 +43,15 @@ class Mypage_screenState extends State<Mypage_screen> {
     await storage.delete(key: 'id');
     await storage.delete(key: 'pw');
     user.nickname = '';
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
-      ),
-    );
-    showMsg(context, '로그아웃', '로그아웃 되었습니다.');
+    Future.delayed(Duration.zero, () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+      showMsg(context, '로그아웃', '로그아웃 되었습니다.');
+    });
   }
 
   @override
@@ -62,7 +62,8 @@ class Mypage_screenState extends State<Mypage_screen> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.only(top: 72, left: 24, right: 24, bottom: 24),
+                padding: const EdgeInsets.only(
+                    top: 72, left: 24, right: 24, bottom: 24),
                 child: Column(
                   children: [
                     const Row(
@@ -95,8 +96,10 @@ class Mypage_screenState extends State<Mypage_screen> {
                       ),
                       child: FutureBuilder<UserData>(
                         future: _getUser(),
-                        builder: (BuildContext context, AsyncSnapshot<UserData> snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                        builder: (BuildContext context,
+                            AsyncSnapshot<UserData> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             // While waiting for the data, you can show a loading indicator
                             return const CircularProgressIndicator();
                           } else if (snapshot.hasError) {
@@ -112,7 +115,7 @@ class Mypage_screenState extends State<Mypage_screen> {
                                 backgroundColor: Colors.white,
                                 child: ClipOval(
                                   child: IconButton(
-                                    onPressed: (){},
+                                    onPressed: () {},
                                     splashRadius: 20,
                                     color: Colors.transparent,
                                     padding: EdgeInsets.zero,
@@ -153,7 +156,7 @@ class Mypage_screenState extends State<Mypage_screen> {
                                 final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const Profile_screen(),
+                                    builder: (context) => const ProfileScreen(),
                                   ),
                                 );
                                 if (result != null) {
@@ -174,63 +177,63 @@ class Mypage_screenState extends State<Mypage_screen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 24, right: 24),
-                width: MediaQuery.of(context).size.width - 48,
-                height: MediaQuery.of(context).size.height / 6,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color(0xff767676).withOpacity(0.25),
-                    width: 1,
+                  padding: const EdgeInsets.only(left: 24, right: 24),
+                  width: MediaQuery.of(context).size.width - 48,
+                  height: MediaQuery.of(context).size.height / 6,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xff767676).withOpacity(0.25),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 5,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 5,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text(
-                      '일상 속 지구를 위한 친환경 실천 !',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '일상 속 지구를 위한 친환경 실천 !',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500),
                       ),
-                    ),
-                    const Text('Aily와 함께 시작하세요.',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300
+                      const Text(
+                        'Aily와 함께 시작하세요.',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300),
                       ),
-                    ),
-                    Stack(
-                      children: [
-                        SizedBox(
-                          width: 40,
-                          height: 60,
-                          child: SvgPicture.asset('assets/images/icons/earth.svg'),
-                        ),
-                        Positioned(
-                          top: 30,
-                          child:SizedBox(
+                      Stack(
+                        children: [
+                          SizedBox(
                             width: 40,
-                            height: 40,
-                            child: SvgPicture.asset('assets/images/icons/hand.svg'),
+                            height: 60,
+                            child: SvgPicture.asset(
+                                'assets/images/icons/earth.svg'),
                           ),
-                        )
-                      ],
-                    ),
-                  ],
-                )
-              ),
+                          Positioned(
+                            top: 30,
+                            child: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: SvgPicture.asset(
+                                  'assets/images/icons/hand.svg'),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  )),
               SingleChildScrollView(
                 child: Column(
                   children: [
@@ -240,24 +243,23 @@ class Mypage_screenState extends State<Mypage_screen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _ListTile(context, 'assets/images/faq_icon.svg',
+                          listTile(context, 'assets/images/faq_icon.svg',
                               '자주 묻는 질문(FAQ)', () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => const FAQScreen()));
                           }),
-                          _ListTile(context, 'assets/images/notice_icon.svg',
-                              '공지사항', () {
+                          listTile(
+                              context, 'assets/images/notice_icon.svg', '공지사항',
+                              () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const NoticeScreen()));
                           }),
-                          _ListTile(
-                              context,
-                              'assets/images/logout-box-line.svg',
+                          listTile(context, 'assets/images/logout-box-line.svg',
                               '로그아웃', () {
                             logout(context);
                           }),
@@ -269,13 +271,12 @@ class Mypage_screenState extends State<Mypage_screen> {
               )
             ],
           ),
-        )
-    );
+        ));
   }
 }
 
-Widget _ListTile(BuildContext context, String leadingAsset, String title, Function onTap) {
-
+Widget listTile(
+    BuildContext context, String leadingAsset, String title, Function onTap) {
   return Column(
     children: [
       Theme(

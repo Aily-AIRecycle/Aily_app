@@ -1,27 +1,24 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:aily/screens/map_screen/garbage_screen.dart';
-import 'package:aily/utils/ShowDialog.dart';
+import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-import '../../class/URLs.dart';
-import '../../class/UserData.dart';
+import '../../class/urls.dart';
+import '../../class/user_data.dart';
 import '../../class/location.dart';
-import '../../class/garbageData.dart';
+import '../../class/garbage_data_class.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
 
   @override
-  _MapScreenState createState() => _MapScreenState();
+  MapScreenState createState() => MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
-  @override
-  bool get wantKeepAlive => true;
+class MapScreenState extends State<MapScreen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController searchctrl;
   late String searchStr = '';
@@ -214,19 +211,19 @@ Page resource error:
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: MapWidget(context),
+      body: mapWidget(context),
     );
   }
 
   Widget _buildListTiles() {
     List<Widget> listTiles = [];
     if (searchStr.isNotEmpty) {
-      listTiles.add(_ListTile(context, searchStr, int.parse(distance), status, gen, can, pet));
+      listTiles.add(listTile(context, searchStr, int.parse(distance), status, gen, can, pet));
     }
     return Column(children: listTiles);
   }
 
-  Widget MapWidget(BuildContext context) {
+  Widget mapWidget(BuildContext context) {
     double ratio = MediaQuery.of(context).devicePixelRatio * 0.4;
     return GestureDetector(
       onTap: () {
@@ -319,7 +316,7 @@ Page resource error:
   }
 }
 
-Widget _ListTile(BuildContext context, String title, int distance, bool isAvailable, int gen, can, pet) {
+Widget listTile(BuildContext context, String title, int distance, bool isAvailable, int gen, can, pet) {
   Color myColor = const Color(0xFFF8B195);
   GarbageMerch merch = GarbageMerch();
 

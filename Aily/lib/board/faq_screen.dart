@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import '../utils/ShowDialog.dart';
 
 class FAQScreen extends StatefulWidget {
   const FAQScreen({Key? key}) : super(key: key);
 
   @override
-  _FAQScreenState createState() => _FAQScreenState();
+  FAQScreenState createState() => FAQScreenState();
 }
 
-class _FAQScreenState extends State<FAQScreen> {
+class FAQScreenState extends State<FAQScreen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController searchctrl;
   String searchStr = '';
@@ -129,8 +128,8 @@ class _FAQScreenState extends State<FAQScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  filteredList.isEmpty ? Column(
-                    children: const [
+                  filteredList.isEmpty ? const Column(
+                    children: [
                       SizedBox(height: 50),
                       Text('검색 결과가 없습니다.', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                       SizedBox(height: 5),
@@ -147,7 +146,7 @@ class _FAQScreenState extends State<FAQScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Column(
                           children: [
-                            _ListTile(context, _searchFocusNode, faq['title']!, faq['content']!)
+                            listTile(context, _searchFocusNode, faq['title']!, faq['content']!)
                           ],
                         ),
                       );
@@ -163,7 +162,7 @@ class _FAQScreenState extends State<FAQScreen> {
   }
 }
 
-Widget _ListTile(BuildContext context, FocusNode focus, String title, String content) {
+Widget listTile(BuildContext context, FocusNode focus, String title, String content) {
   return Column(
     children: [
       Theme(

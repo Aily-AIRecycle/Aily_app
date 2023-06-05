@@ -11,10 +11,10 @@ class GarbageScreen extends StatefulWidget {
   const GarbageScreen({Key? key, required this.title, required this.gen, required this.can, required this.pet}) : super(key: key);
 
   @override
-  _GarbageScreenState createState() => _GarbageScreenState();
+  GarbageScreenState createState() => GarbageScreenState();
 }
 
-class _GarbageScreenState extends State<GarbageScreen> {
+class GarbageScreenState extends State<GarbageScreen> {
   int _genAmount = 0;
   int _petAmount = 0;
   int _canAmount = 0;
@@ -26,15 +26,15 @@ class _GarbageScreenState extends State<GarbageScreen> {
 
   Future<void> _getgarbage() async {
      _genAmount = widget.gen;
-    _genHeightPercent = HeightPercentage(widget.gen);
+    _genHeightPercent = heightPercentage(widget.gen);
     _canAmount = widget.can;
-    _canHeightPercent = HeightPercentage(widget.can);
+    _canHeightPercent = heightPercentage(widget.can);
     _petAmount = widget.pet;
-    _petHeightPercent = HeightPercentage(widget.pet);
+    _petHeightPercent = heightPercentage(widget.pet);
     setState(() {});
   }
 
-  double HeightPercentage(int n) {
+  double heightPercentage(int n) {
     return 1.0 - ((n / 50.0) * 0.55);
   }
 
@@ -69,11 +69,11 @@ class _GarbageScreenState extends State<GarbageScreen> {
           },
         ),
       ),
-      body: GarbageWidget(context),
+      body: garbageWidget(context),
     );
   }
 
-  Widget GarbageWidget(BuildContext context) {
+  Widget garbageWidget(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),

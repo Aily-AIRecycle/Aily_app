@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gradients/gradients.dart';
 import 'dart:math';
 
 class ChartScreen extends StatefulWidget {
@@ -18,12 +17,12 @@ class ChartScreenState extends State<ChartScreen> {
     return Scaffold(
       backgroundColor: backColor,
       body: SingleChildScrollView(
-        child: ChartWidget(context),
+        child: chartWidget(context),
       ),
     );
   }
 
-  Widget ChartWidget(BuildContext context) {
+  Widget chartWidget(BuildContext context) {
     return Column(
       children: [
         Container(

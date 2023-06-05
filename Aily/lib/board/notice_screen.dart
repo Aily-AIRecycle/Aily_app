@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import '../utils/ShowDialog.dart';
 
 class NoticeScreen extends StatefulWidget {
 
   const NoticeScreen({Key? key}) : super(key: key);
 
   @override
-  _NoticeScreenState createState() => _NoticeScreenState();
+  NoticeScreenState createState() => NoticeScreenState();
   }
 
-  class _NoticeScreenState extends State<NoticeScreen> with TickerProviderStateMixin {
+  class NoticeScreenState extends State<NoticeScreen> with TickerProviderStateMixin {
 
   Color myColor = const Color(0xFFF8B195);
 
@@ -63,7 +62,7 @@ class NoticeScreen extends StatefulWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Column(
                       children: [
-                        _ListTile(context, faq['title']!, faq['content']!)
+                        listTile(context, faq['title']!, faq['content']!)
                       ],
                     ),
                   );
@@ -77,7 +76,7 @@ class NoticeScreen extends StatefulWidget {
   }
 }
 
-Widget _ListTile(BuildContext context, String title, String content) {
+Widget listTile(BuildContext context, String title, String content) {
   return Column(
     children: [
       Theme(

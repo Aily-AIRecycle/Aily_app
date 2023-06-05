@@ -1,26 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dictionary_screen.dart';
 
-class categoryScreen extends StatefulWidget {
-  const categoryScreen({Key? key}) : super(key: key);
+class CategoryScreen extends StatefulWidget {
+  const CategoryScreen({Key? key}) : super(key: key);
 
   @override
-  _categoryScreenState createState() => _categoryScreenState();
+  CategoryScreenState createState() => CategoryScreenState();
 }
 
-class _categoryScreenState extends State<categoryScreen> {
+class CategoryScreenState extends State<CategoryScreen> {
   Color myColor = const Color(0xFFF8B195);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        body: CategoryWidget(context)
+        body: categoryWidget(context)
     );
   }
 
-  Widget CategoryWidget(BuildContext context) {
+  Widget categoryWidget(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -29,8 +28,8 @@ class _categoryScreenState extends State<categoryScreen> {
                 top: 72, left: 24, right: 24, bottom: 24),
             child: Column(
               children: [
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Text(
                       '재활용 사전',
                       style: TextStyle(
@@ -101,7 +100,7 @@ class _categoryScreenState extends State<categoryScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => dictionaryScreen(title: categoryName, type: index+1),
+                            builder: (context) => DictionaryScreen(title: categoryName, type: index+1),
                           ),
                         );
                       },

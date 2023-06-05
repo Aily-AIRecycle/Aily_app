@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../login_screen/login_screen.dart';
 
-class register3Screen extends StatefulWidget {
-  const register3Screen({Key? key}) : super(key: key);
+class Register3Screen extends StatefulWidget {
+  const Register3Screen({Key? key}) : super(key: key);
 
   @override
-  _register3ScreenState createState() => _register3ScreenState();
+  Register3ScreenState createState() => Register3ScreenState();
 }
 
-class _register3ScreenState extends State<register3Screen> {
+class Register3ScreenState extends State<Register3Screen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController _emailTextController;
 
@@ -34,19 +34,19 @@ class _register3ScreenState extends State<register3Screen> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: RegisterWidget(context),
+        child: registerWidget(context),
       ),
     );
   }
 
-  Widget RegisterWidget(BuildContext context) {
+  Widget registerWidget(BuildContext context) {
     return Column(
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.75,
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
+            children: [
               Text(
                 '환영합니다 !',
                 style: TextStyle(

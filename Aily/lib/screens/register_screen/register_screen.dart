@@ -1,23 +1,23 @@
 import 'dart:convert';
-import 'package:aily/class/UserData.dart';
-import 'package:aily/utils/ShowDialog.dart';
+import 'package:aily/class/user_data.dart';
+import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'register2_screen.dart';
 import 'package:crypto/crypto.dart';
 
-class registerScreen extends StatefulWidget {
-  const registerScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  _registerScreenState createState() => _registerScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _registerScreenState extends State<registerScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   Color myColor = const Color(0xFFF8B195);
-  late TextEditingController _emailController = TextEditingController();
-  late TextEditingController _domainController = TextEditingController();
-  late TextEditingController _password1Controller = TextEditingController();
-  late TextEditingController _password2Controller = TextEditingController();
+  late final TextEditingController _emailController = TextEditingController();
+  late final TextEditingController _domainController = TextEditingController();
+  late final TextEditingController _password1Controller = TextEditingController();
+  late final TextEditingController _password2Controller = TextEditingController();
   UserData user = UserData();
 
   @override
@@ -40,7 +40,7 @@ class _registerScreenState extends State<registerScreen> {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: RegisterWidget(context),
+        child: registerWidget(context),
       ),
       bottomNavigationBar: BottomAppBar(
         child: SizedBox(
@@ -136,13 +136,13 @@ class _registerScreenState extends State<registerScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => const register2Screen()));
+              builder: (context) => const Register2Screen()));
     }else{
       showMsg(context, '회원가입', '비밀번호를 다시 한 번 확인해주세요.');
     }
   }
 
-  Widget RegisterWidget(BuildContext context) {
+  Widget registerWidget(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(

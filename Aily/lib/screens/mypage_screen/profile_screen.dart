@@ -4,18 +4,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import '../../class/URLs.dart';
-import '../../class/UserData.dart';
+import '../../class/urls.dart';
+import '../../class/user_data.dart';
 
-
-class Profile_screen extends StatefulWidget {
-  const Profile_screen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<Profile_screen> createState() => Profile_screenState();
+  State<ProfileScreen> createState() => ProfileScreenState();
 }
 
-class Profile_screenState extends State<Profile_screen> {
+class ProfileScreenState extends State<ProfileScreen> {
   Color myColor = const Color(0xFFF8B195);
   late File? _image;
   String? email, username, phonemumber, birth;
@@ -31,7 +30,8 @@ class Profile_screenState extends State<Profile_screen> {
       phonemumber = "0${user.phonenumber.toString()}";
       //profile = user.profile;
       _image = user.profile;
-      DateTime dateTime = DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'").parseUtc(user.birth!);
+      DateTime dateTime =
+          DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'").parseUtc(user.birth!);
       birth = DateFormat("yyyy-MM-dd").format(dateTime);
     });
   }
@@ -66,7 +66,9 @@ class Profile_screenState extends State<Profile_screen> {
   Future<void> _updateInfo() async {
     _profileUpdate(context);
     await _uploadImage(_image!);
-    Navigator.pop(context, profile);
+    Future.delayed(Duration.zero, () {
+      Navigator.pop(context, profile);
+    });
   }
 
   Future<void> _uploadImage(File file) async {
@@ -92,8 +94,8 @@ class Profile_screenState extends State<Profile_screen> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.white,
-          title: const Text(
-              '프로필 편집', style: TextStyle(fontSize: 17, color: Colors.black)),
+          title: const Text('프로필 편집',
+              style: TextStyle(fontSize: 17, color: Colors.black)),
           iconTheme: const IconThemeData(color: Colors.black),
           elevation: 0,
           leading: IconButton(
@@ -108,81 +110,84 @@ class Profile_screenState extends State<Profile_screen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Container(
-                child: Center(
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          SizedBox(
-                            width: 250,
-                            height: 250,
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: ClipOval(
-                                child: Image.file(
-                                    _image!,
-                                    width: 200, height: 200,
-                                    fit: BoxFit.cover
-                                ),
-                              ),
+              Center(
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: 250,
+                          height: 250,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: Image.file(_image!,
+                                  width: 200, height: 200, fit: BoxFit.cover),
                             ),
                           ),
-                          Positioned(
+                        ),
+                        Positioned(
                             top: MediaQuery.of(context).size.height * 0.245,
                             left: MediaQuery.of(context).size.width * 0.252,
                             child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
+                                decoration: BoxDecoration(
                                   color: Colors.transparent,
-                                  width: 0.0,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.4),
-                                    spreadRadius: 3,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.transparent,
+                                    width: 0.0,
                                   ),
-                                ],
-                              ),
-                              child: GestureDetector(
-                                onTap: (){
-                                  _pickImage(context, ImageSource.gallery);
-                                },
-                                child: const Text('EDIT', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
-                              )
-                            )
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.4),
+                                      spreadRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _pickImage(context, ImageSource.gallery);
+                                  },
+                                  child: const Text('EDIT',
+                                      style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w500)),
+                                ))),
+                      ],
+                    ),
+                    Text(username!,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.grey.shade200,
+                          width: 12.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
-                      Text(username!, style: const TextStyle(fontSize: 20, fontFamily: 'Pretendard', fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.grey.shade200,
-                            width: 12.0,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Text(email!, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      ),
-                      const SizedBox(height: 30),
-                      Container(
-                        height: 0.5,
-                        width: MediaQuery.of(context).size.width * 0.87,
-                        color: Colors.grey.shade300,
-                      ),
-                      Theme(
+                      child: Text(email!,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      height: 0.5,
+                      width: MediaQuery.of(context).size.width * 0.87,
+                      color: Colors.grey.shade300,
+                    ),
+                    Theme(
                         data: ThemeData().copyWith(
                           dividerColor: Colors.transparent,
                           highlightColor: Colors.transparent,
@@ -190,11 +195,17 @@ class Profile_screenState extends State<Profile_screen> {
                         ),
                         child: Column(
                           children: [
-                            buildListTile(username!, '이름', 70.0, Icons.edit_off, Colors.grey, (){}),
-                            buildListTile("남자", '성별', 70.0, Icons.edit, Colors.black, (){}),
-                            buildListTile(phonemumber!, '연락처', 65.0, Icons.edit_off, Colors.grey, (){}),
-                            buildListTile(birth!, '생년월일', 50.0, Icons.edit, Colors.black, (){}),
-                            SizedBox(height: MediaQuery.of(context).size.height * 0.06),
+                            buildListTile(username!, '이름', 70.0, Icons.edit_off,
+                                Colors.grey, () {}),
+                            buildListTile("남자", '성별', 70.0, Icons.edit,
+                                Colors.black, () {}),
+                            buildListTile(phonemumber!, '연락처', 65.0,
+                                Icons.edit_off, Colors.grey, () {}),
+                            buildListTile(birth!, '생년월일', 50.0, Icons.edit,
+                                Colors.black, () {}),
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06),
                             ElevatedButton(
                               onPressed: () {
                                 //수정된 데이터 저장
@@ -203,7 +214,9 @@ class Profile_screenState extends State<Profile_screen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: myColor.withOpacity(0.7),
                                 elevation: 0,
-                                fixedSize: Size(MediaQuery.of(context).size.width * 0.9, MediaQuery.of(context).size.height * 0.07),
+                                fixedSize: Size(
+                                    MediaQuery.of(context).size.width * 0.9,
+                                    MediaQuery.of(context).size.height * 0.07),
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 13.0, horizontal: 60.0),
                                 shape: RoundedRectangleBorder(
@@ -221,26 +234,25 @@ class Profile_screenState extends State<Profile_screen> {
                               ),
                             ),
                           ],
-                        )
-                      ),
-                    ],
-                  ),
+                        )),
+                  ],
                 ),
               ),
             ],
           ),
-        )
-    );
+        ));
   }
 }
 
-Widget buildListTile(String title, String leadingText, double titleGap, IconData trailingIcon, Color iconColor, Function()? onTap) {
+Widget buildListTile(String title, String leadingText, double titleGap,
+    IconData trailingIcon, Color iconColor, Function()? onTap) {
   return ListTile(
     contentPadding: const EdgeInsets.only(left: 40),
     horizontalTitleGap: titleGap,
     leading: Text(
       leadingText,
-      style: const TextStyle(fontSize: 16, fontFamily: 'Pretendard', fontWeight: FontWeight.w400),
+      style: const TextStyle(
+          fontSize: 16, fontFamily: 'Pretendard', fontWeight: FontWeight.w400),
     ),
     title: Text(
       title,
@@ -259,4 +271,3 @@ Widget buildListTile(String title, String leadingText, double titleGap, IconData
     ),
   );
 }
-
