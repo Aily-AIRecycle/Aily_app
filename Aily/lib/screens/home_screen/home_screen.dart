@@ -167,7 +167,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final EdgeInsetsGeometry margin = isAndroid
-        ? const EdgeInsets.only(left: 24, top: 24) // 안드로이드일 경우
+        ? const EdgeInsets.only(left: 24, top: 14) // 안드로이드일 경우
         : const EdgeInsets.only(left: 24); // 아이폰일 경우
 
     final EdgeInsetsGeometry noticeMargin = isAndroid
