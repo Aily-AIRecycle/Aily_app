@@ -60,14 +60,13 @@ class DictContentsScreenState extends State<DictContentsScreen> {
                 ],
               ),
               Center(
-                child: Expanded(
-                  child: Column(
+                child: Column(
                     children: [
                       SizedBox(
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 48,
+                            .width * 0.88,
                         height: MediaQuery
                             .of(context)
                             .size
@@ -79,7 +78,7 @@ class DictContentsScreenState extends State<DictContentsScreen> {
                               Text(
                                 contents,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 16),
+                                    fontWeight: FontWeight.w400, fontSize: 16), //16
                               ),
                             ],
                           ),
@@ -87,7 +86,6 @@ class DictContentsScreenState extends State<DictContentsScreen> {
                       ),
                     ],
                   ),
-                ),
               ),
             ],
           ),

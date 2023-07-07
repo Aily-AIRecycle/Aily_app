@@ -16,7 +16,6 @@ class ManagerScreen extends StatefulWidget {
 
 class ManagerScreenState extends State<ManagerScreen> {
   Color myColor = const Color(0xFFF8B195);
-  Color backColor = const Color(0xFFF6F1F6);
   final storage = const FlutterSecureStorage();
   GarbageMerch merch = GarbageMerch();
 
@@ -46,7 +45,7 @@ class ManagerScreenState extends State<ManagerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backColor,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: managerWidget(context),
       ),

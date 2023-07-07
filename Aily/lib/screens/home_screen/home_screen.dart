@@ -33,7 +33,6 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getScreenSize();
     _getUser();
     timer = Timer.periodic(const Duration(milliseconds: 100),
         (timer) => accrualdetails(user.phonenumber.toString()));
@@ -44,15 +43,6 @@ class HomeScreenState extends State<HomeScreen> {
     super.dispose();
     dio.close();
     timer?.cancel();
-  }
-
-  void _getScreenSize() async {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        screenWidth = MediaQuery.of(context).size.width;
-        screenHeight = MediaQuery.of(context).size.height;
-      });
-    });
   }
 
   void _getUser() {
@@ -172,6 +162,9 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final EdgeInsetsGeometry margin = isAndroid
         ? const EdgeInsets.only(left: 24, top: 24) // 안드로이드일 경우
@@ -255,7 +248,7 @@ class HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: screenWidth - 48, // 포인트 컨테이너 길이
+              width: screenWidth * 0.88, // 포인트 컨테이너 길이
               height: screenHeight * 0.15, // 높이
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -336,7 +329,7 @@ class HomeScreenState extends State<HomeScreen> {
           ],
         ),
         Container(
-          width: screenWidth - 48,
+          width: screenWidth * 0.88,
           height: screenHeight * 0.57,
           decoration: BoxDecoration(
             color: Colors.white,

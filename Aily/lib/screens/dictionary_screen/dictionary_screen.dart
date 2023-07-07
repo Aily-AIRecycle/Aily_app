@@ -9,7 +9,8 @@ class DictionaryScreen extends StatefulWidget {
   final String title;
   final int type;
 
-  const DictionaryScreen({Key? key, required this.title, required this.type}) : super(key: key);
+  const DictionaryScreen({Key? key, required this.title, required this.type})
+      : super(key: key);
 
   @override
   DictionaryScreenState createState() => DictionaryScreenState();
@@ -107,8 +108,8 @@ class DictionaryScreenState extends State<DictionaryScreen> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.only(
-                top: 50, left: 24, right: 24, bottom: 24),
+            padding:
+                const EdgeInsets.only(top: 50, left: 24, right: 24, bottom: 24),
             child: Column(
               children: [
                 Row(
@@ -124,85 +125,68 @@ class DictionaryScreenState extends State<DictionaryScreen> {
                   ],
                 ),
                 Center(
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        SizedBox(height: MediaQuery
-                            .of(context)
-                            .size
-                            .height * 0.03),
-                        SizedBox(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width * 0.9,
-                          child: TextField(
-                            focusNode: _searchFocusNode,
-                            textInputAction: TextInputAction.search,
-                            onSubmitted: (value) {
-                              setState(() {
-                                searchStr = value;
-                              });
-                            },
-                            style: TextStyle(color: Colors.grey.shade600),
-                            controller: searchctrl,
-                            decoration: InputDecoration(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 20),
-                              hintText: "물품 검색",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30)),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: myColor),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.grey.shade400),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              prefixIcon: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    searchStr = searchctrl.text;
-                                    _searchFocusNode.unfocus();
-                                  });
-                                },
-                                child: SvgPicture.asset(
-                                    'assets/images/icons/search.svg'),
-                              ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.03),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: TextField(
+                          focusNode: _searchFocusNode,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (value) {
+                            setState(() {
+                              searchStr = value;
+                            });
+                          },
+                          style: TextStyle(color: Colors.grey.shade600),
+                          controller: searchctrl,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 20),
+                            hintText: "물품 검색",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: myColor),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            prefixIcon: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  searchStr = searchctrl.text;
+                                  _searchFocusNode.unfocus();
+                                });
+                              },
+                              child: SvgPicture.asset(
+                                  'assets/images/icons/search.svg'),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
-                        SizedBox(
-                          width: MediaQuery
-                              .of(context)
-                              .size
-                              .width - 48,
-                          height: MediaQuery
-                              .of(context)
-                              .size
-                              .height * 0.61,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                '검색한 물품의 재활용 여부가 나타나요.',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 16),
-                              ),
-                              const SizedBox(height: 30),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: _buildListTiles(),
-                                )
-                              ),
-                            ],
-                          ),
+                      ),
+                      const SizedBox(height: 30),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width - 48,
+                        height: MediaQuery.of(context).size.height * 0.61,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text(
+                              '검색한 물품의 재활용 여부가 나타나요.',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 16),
+                            ),
+                            const SizedBox(height: 30),
+                            _buildListTiles(),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -217,8 +201,8 @@ class DictionaryScreenState extends State<DictionaryScreen> {
     List<Widget> listTiles = [];
 
     // dataList에서 검색어에 맞는 데이터만 필터링하여 리스트에 추가
-    final filteredList = dataList.where((data) =>
-        data['name'].contains(searchStr)).toList();
+    final filteredList =
+        dataList.where((data) => data['name'].contains(searchStr)).toList();
 
     for (final data in filteredList) {
       final int number = data['number'];
@@ -233,20 +217,21 @@ class DictionaryScreenState extends State<DictionaryScreen> {
         listTile(context, name, widget.title, status, contents),
       );
     }
-    return Column(children: listTiles);
+    return Expanded(
+      child: SingleChildScrollView(child: Column(children: listTiles)),
+    );
   }
 }
 
-  Widget listTile(BuildContext context, String title, test1, bool isAvailable, String contents) {
+Widget listTile(BuildContext context, String title, test1, bool isAvailable,
+    String contents) {
   Color myColor = const Color(0xFFF8B195);
 
   return Column(
     children: [
       Card(
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-              color: myColor.withOpacity(0.3)
-          ),
+          side: BorderSide(color: myColor.withOpacity(0.3)),
           borderRadius: BorderRadius.circular(15.0),
         ),
         elevation: 0,
@@ -255,14 +240,16 @@ class DictionaryScreenState extends State<DictionaryScreen> {
           data: ThemeData().copyWith(
               dividerColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              splashColor: Colors.transparent
-          ),
+              splashColor: Colors.transparent),
           child: ListTile(
             horizontalTitleGap: 0,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             leading: const Icon(Icons.restore_from_trash, color: Colors.black),
-            title: Text(title, style: const TextStyle(fontSize: 18, color: Colors.black)),
-            subtitle: Text(test1, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+            title: Text(title,
+                style: const TextStyle(fontSize: 18, color: Colors.black)),
+            subtitle: Text(test1,
+                style: const TextStyle(fontSize: 13, color: Colors.grey)),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -278,24 +265,24 @@ class DictionaryScreenState extends State<DictionaryScreen> {
                     const SizedBox(height: 5),
                     isAvailable
                         ? const Icon(Icons.circle,
-                        color: Colors.lightGreenAccent, size: 14)
+                            color: Colors.lightGreenAccent, size: 14)
                         : const Icon(Icons.circle, color: Colors.red, size: 14),
                     const SizedBox(height: 3),
                     isAvailable
                         ? const Text(
-                      '가능',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff767676),
-                      ),
-                    )
+                            '가능',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff767676),
+                            ),
+                          )
                         : const Text(
-                      '불가능',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xff767676),
-                      ),
-                    ),
+                            '불가능',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff767676),
+                            ),
+                          ),
                   ],
                 ),
               ],
@@ -304,7 +291,8 @@ class DictionaryScreenState extends State<DictionaryScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => DictContentsScreen(title: title, contents: contents)));
+                      builder: (context) => DictContentsScreen(
+                          title: title, contents: contents)));
             },
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -10,72 +11,133 @@ class ChartScreen extends StatefulWidget {
 
 class ChartScreenState extends State<ChartScreen> {
   Color myColor = const Color(0xFFF8B195);
-  Color backColor = const Color(0xFFF6F1F6);
+  Dio dio = Dio();
+  List<Map<String, dynamic>> responseData = [];
+  List<int> dropdownValues = [];
+  int filterValue = 1;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backColor,
-      body: SingleChildScrollView(
-        child: chartWidget(context),
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() async {
+    try {
+      Response response = await Dio().get('https://aliy.store/member/member/showshowata');
+      if (response.statusCode == 200) {
+        responseData = List<Map<String, dynamic>>.from(response.data);
+
+        dropdownValues = responseData.map((data) => int.parse(data['ailynumber'])).toList();
+        setState(() {});
+      }
+    } catch (error) {
+      //
+    }
+  }
+
+  PopupMenuButton<int> buildPopupMenuButton(List<int> members) {
+    return PopupMenuButton<int>(
+      initialValue: filterValue,
+      itemBuilder: (BuildContext context) {
+        return members.map((int member) {
+          return buildPopupMenuItem(member);
+        }).toList();
+      },
+      onSelected: (int value) {
+        setState(() {
+          filterValue = value;
+        });
+      },
+      child: const Icon(Icons.keyboard_arrow_down_outlined,
+          size: 24, color: Colors.grey),
+    );
+  }
+
+  PopupMenuItem<int> buildPopupMenuItem(int value) {
+    return PopupMenuItem<int>(
+      value: value,
+      child: Text(
+        "${value.toString()}번 기기",
+        style: TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+          color: Colors.grey.shade700,
+        ),
       ),
     );
   }
 
-  Widget chartWidget(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.only(
-              top: 72, left: 24, right: 24, bottom: 24),
-          child: Column(
-            children: [
 
-              Container(
-                height: 0.5,
-                width: MediaQuery.of(context).size.width * 0.85,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 20),
-              const Text('월별', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-              //SizedBox(height: MediaQuery.of(context).size.height * 0.5),
-              CustomPaint(
-                size: Size(MediaQuery.of(context).size.width * 0.85, MediaQuery.of(context).size.height * 0.4),
-                foregroundPainter: BarChart(
-                  data: <double>[105, 55, 99, 150, 300, 500, 120, 1000, 1300, 1800],
-                  labels: <String>[
-                    '1',
-                    '2',
-                    '3',
-                    '4',
-                    '5',
-                    '6',
-                    '7',
-                    '8',
-                    '9',
-                    '10'
-                  ],
-                  color: Colors.deepOrange,
-                ),
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: chartWidget(context),
+    );
+  }
+
+  Widget chartWidget(BuildContext context) {
+    int index = dropdownValues.indexOf(filterValue);
+
+    return Center(
+      child: responseData.isEmpty || index >= responseData.length
+          ? const CircularProgressIndicator(
+        color: Colors.black,
+        strokeWidth: 1.5,
+      )
+          : Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+          // 데이터 통계
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("${filterValue.toString()}번 기기", style: const TextStyle(fontSize: 23)),
+              buildPopupMenuButton(dropdownValues),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 200),
+          CustomPaint(
+            size: Size(
+              MediaQuery.of(context).size.width * 0.85,
+              MediaQuery.of(context).size.height * 0.4,
+            ),
+            foregroundPainter: BarChart(
+              title: responseData[index]['day'],
+              data: [
+                double.parse(responseData[index]['avggen']),
+                double.parse(responseData[index]['avgcan']),
+                double.parse(responseData[index]['avgpet'])
+              ],
+              labels: ['일반', '캔', '페트'],
+              color: Colors.deepOrange,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
+
 
 class BarChart extends CustomPainter {
   final Color color;
   final List<double> data;
   final List<String> labels;
+  final String title;
   double bottomPadding = 0.0;
   double leftPadding = 0.0;
   double textScaleFactorXAxis = 0.5; //X 폰트사이즈
-  double textScaleFactorYAxis = 1.2; //Y 폰트사이즈
+  double textScaleFactorYAxis = 0.3; //Y 폰트사이즈
 
-  BarChart({required this.data, required this.labels, this.color = Colors.blue});
+  BarChart({
+    required this.data,
+    required this.labels,
+    required this.title,
+    this.color = Colors.blue,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -87,7 +149,9 @@ class BarChart extends CustomPainter {
     drawBar(canvas, size, coordinates);
     drawXLabels(canvas, size, coordinates);
     drawYLabels(canvas, size, coordinates);
+    //drawYLines(canvas, size, coordinates);
     drawLines(canvas, size, coordinates);
+    drawTitle(canvas, size, coordinates);
   }
 
   @override
@@ -109,8 +173,8 @@ class BarChart extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // 막대 그래프 넓이
-    double barWidthMargin = size.width * 0.05;
-    double barOffset = 7.0;
+    double barWidthMargin = size.width * 0.1;
+    double barOffset = 10.0;
 
     for (int index = 0; index < coordinates.length; index++) {
       Offset offset = coordinates[index];
@@ -126,7 +190,7 @@ class BarChart extends CustomPainter {
       canvas.drawRect(rect, paint);
 
       // 데이터 값을 그래프 위에 표시
-      String dataValue = '${data[index].toInt()}';
+      String dataValue = data[index].toStringAsFixed(2);
       TextSpan span = TextSpan(
         style: TextStyle(
           color: Colors.blueAccent.shade700,
@@ -153,51 +217,66 @@ class BarChart extends CustomPainter {
 
     for (int index = 0; index < labels.length; index++) {
       TextSpan span = TextSpan(
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.black,
-          fontSize: fontSize,
+          fontSize: 20, //fontSize
           fontFamily: 'Roboto',
           fontWeight: FontWeight.w400,
         ),
         text: labels[index],
       );
+
       TextPainter tp =
       TextPainter(text: span, textDirection: TextDirection.ltr);
       tp.layout();
 
       Offset offset = coordinates[index];
-      double dx = offset.dx;
+      double dx = offset.dx + 10;
       double dy = size.height - tp.height;
 
       tp.paint(canvas, Offset(dx, dy));
     }
   }
 
-  // Y축 텍스트(레이블)를 그린다. 최저값과 최고값을 Y축에 표시한다.
+  // void drawYLines(Canvas canvas, Size size, List<Offset> coordinates) {
+  //   double minValue = data.reduce(min);
+  //   double maxValue = data.reduce(max);
+  //
+  //   for (int index = 0; index < coordinates.length; index++) {
+  //     double dataValue = data[index];
+  //     String dataValueText = '${dataValue.toInt()}';
+  //
+  //     double fontSize = 12;
+  //     TextSpan span = TextSpan(
+  //       style: TextStyle(
+  //         fontSize: fontSize,
+  //         color: Colors.black,
+  //         fontFamily: 'Roboto',
+  //         fontWeight: FontWeight.w600,
+  //       ),
+  //       text: dataValueText,
+  //     );
+  //     TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+  //
+  //     tp.layout();
+  //
+  //     double dx = 10;
+  //     double dy = coordinates[index].dy - (tp.height / 2);
+  //
+  //     Offset offset = Offset(dx, dy);
+  //     tp.paint(canvas, offset);
+  //   }
+  // }
+
   void drawYLabels(Canvas canvas, Size size, List<Offset> coordinates) {
-    double bottomY = coordinates[0].dy;
-    double topY = coordinates[0].dy;
-    int indexOfMin = 0;
-    int indexOfMax = 0;
+    double minValue = data.reduce(min);
+    double maxValue = data.reduce(max);
 
-    for (int index = 0; index < coordinates.length; index++) {
-      double dy = coordinates[index].dy;
-      if (bottomY < dy) {
-        bottomY = dy;
-        indexOfMin = index;
-      }
-      if (topY > dy) {
-        topY = dy;
-        indexOfMax = index;
-      }
-    }
-    String minValue = '${data[indexOfMin].toInt()}';
-    String maxValue = '${data[indexOfMax].toInt()}';
+    String minValueText = '${minValue.toInt()}';
+    String maxValueText = '${maxValue.toInt()}';
 
-    double fontSize = calculateFontSize(maxValue, size, xAxis: false);
-
-    drawYText(canvas, minValue, fontSize, bottomY);
-    drawYText(canvas, maxValue, fontSize, topY);
+    drawYText(canvas, "0", 18, size.height - 50);
+    drawYText(canvas, "100", 18, size.height - 320);
   }
 
   // 화면 크기에 비례해 폰트 크기를 계산한다.
@@ -234,6 +313,27 @@ class BarChart extends CustomPainter {
     canvas.drawPath(path, paint);
   }
 
+  void drawTitle(Canvas canvas, Size size, List<Offset> coordinates) {
+    TextSpan span = TextSpan(
+      style: const TextStyle(
+        fontSize: 23,
+        color: Colors.black,
+        fontWeight: FontWeight.w500,
+      ),
+      text: title,
+    );
+    TextPainter tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+    tp.layout();
+
+    int indexOfMax = coordinates.indexWhere((offset) => offset.dy == coordinates.map((offset) => offset.dy).reduce(max));
+
+    double dx = (size.width - tp.width) / 2;
+    double dy = tp.height - 80;//coordinates[indexOfMax].dy - tp.height - 50;
+
+    tp.paint(canvas, Offset(dx, dy));
+  }
+
+
   void drawYText(Canvas canvas, String text, double fontSize, double y) {
     TextSpan span = TextSpan(
       style: TextStyle(
@@ -254,26 +354,21 @@ class BarChart extends CustomPainter {
 
   List<Offset> getCoordinates(Size size) {
     List<Offset> coordinates = <Offset>[];
-
-    double maxData = data.reduce(max);
+    double maxData = 100.0;
 
     double width = size.width - leftPadding;
     double minBarWidth = width / data.length;
 
     for (int index = 0; index < data.length; index++) {
-      // 그래프의 가로 위치를 정한다.
       double left = minBarWidth * (index) + leftPadding;
-      // 그래프의 높이가 [0~1] 사이가 되도록 정규화 한다.
       double normalized = data[index] / maxData;
-      // x축에 표시되는 글자들과 겹치지 않게 높이에서 패딩을 제외한다.
       double height = size.height - bottomPadding;
-      // 정규화된 값을 통해 높이를 구한다.
       double top = height - normalized * height;
 
       Offset offset = Offset(left, top);
       coordinates.add(offset);
     }
-
     return coordinates;
   }
+
 }

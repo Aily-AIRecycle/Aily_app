@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:aily/screens/map_screen/garbage_screen.dart';
-import 'package:aily/utils/show_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -8,7 +8,6 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import '../../class/urls.dart';
 import '../../class/user_data.dart';
-import '../../class/location.dart';
 import '../../class/garbage_data_class.dart';
 
 class MapScreen extends StatefulWidget {
@@ -21,26 +20,25 @@ class MapScreen extends StatefulWidget {
 class MapScreenState extends State<MapScreen> {
   Color myColor = const Color(0xFFF8B195);
   late TextEditingController searchctrl;
-  late String searchStr = '';
   final FocusNode _focusNode = FocusNode();
   late final WebViewController _controller;
-  late String label, distance = '';
-  List<List<String>> resultList = [];
-  Location location = Location();
-  GarbageMerch merch = GarbageMerch();
   UserData user = UserData();
-  bool updatebool = false;
-  bool status = false;
-  late int gen = 0;
-  late int can = 0;
-  late int pet = 0;
+
+  List<dynamic> data = []; // 데이터를 저장할 리스트
+  List<dynamic> filteredData = []; // 검색 결과를 저장할 리스트
+  bool isSearching = false; // 검색 중인지 여부를 저장하는 변수
+  List<String> distances = []; //마커 distance 리스트
+  List<String> labels = []; //마커 label 리스트
+  Map<String, dynamic> marker = {};
+
+
+  Dio dio = Dio();
   Timer? timer, timer2;
   late double latitude = 0.0;
   late double longitude = 0.0;
   late StreamSubscription<Position> positionStream;
-  final LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high
-  );
+  final LocationSettings locationSettings =
+      const LocationSettings(accuracy: LocationAccuracy.high);
 
   @override
   void initState() {
@@ -56,7 +54,7 @@ class MapScreenState extends State<MapScreen> {
     }
 
     final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
+        WebViewController.fromPlatformCreationParams(params);
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -104,7 +102,7 @@ Page resource error:
             String label = parts[0];
             String distance = parts[1];
             if (label.isNotEmpty && distance.isNotEmpty) {
-              Location().data[label] = distance;
+              marker[label] = distance;
             }
           }
         },
@@ -122,7 +120,8 @@ Page resource error:
     searchctrl = TextEditingController();
     _getLocation();
     _getDistance();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
+    timer =
+        Timer.periodic(const Duration(seconds: 1), (timer) => _getDistance());
   }
 
   void _getLocation() async {
@@ -142,271 +141,308 @@ Page resource error:
     super.dispose();
   }
 
-  String _getSearchString(String inputStr, List<GarbageData> garbageData) {
-    String searchStr = '';
-    status = garbageData[0].status;
-    gen = garbageData[0].gen;
-    can = garbageData[0].can;
-    pet = garbageData[0].pet;
+  void fetchData() async {
+    try {
+      Response response = await Dio().get(
+        URL().garbageURL,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        ),
+      );
 
-    if (inputStr.contains('Aily1') || inputStr.contains('고척')) {
-      searchStr = '고척스카이돔';
-    } else if (inputStr.contains('Aily2') || inputStr.contains('3호')) {
-      searchStr = '3호관';
-    } else if (inputStr.isEmpty) {
-      searchStr = '';
+      // 응답 데이터 리스트에 저장
+      setState(() {
+        data = response.data['garbage'];
+        List<Map<String, dynamic>> updatedData = [];
+
+        for (var item in data) {
+          String merch = item['merch'];
+          String distance = marker[merch];
+
+          Map<String, dynamic> updatedItem = {
+            'can': item['can'],
+            'gen': item['gen'],
+            'merch': merch,
+            'pet': item['pet'],
+            'distance': int.parse(distance),
+            'status': item['status'],
+          };
+          updatedData.add(updatedItem);
+        }
+        data = updatedData;
+      });
+    } catch (error) {
+      // error
     }
-    return searchStr;
   }
 
-  Future<void> _updateDistanceText() async {
-    final String str = searchctrl.text.trim();
-    List<GarbageData> garbageData = await fetchGarbage(str);
-    merch.merch = str;
-    final String searchStr = _getSearchString(str, garbageData);
-    distance = Location().data[searchStr]!;
-    setState(() {});
-  }
-
-  void _search() {
-    final String str = searchctrl.text.trim();
-    if (str.contains('Aily1') || str.contains('동양')) {
-      searchStr = '고척스카이돔';
-      distance = Location().data[searchStr]!;
-    } else if (str.contains('Aily2') || str.contains('3호')) {
-      searchStr = '3호관';
-      distance = Location().data[searchStr]!;
-    } else if (str.isEmpty) {
-      showMsg(context, '검색', '검색어를 입력해주세요.');
-      searchStr = '';
-    } else {
-      showMsg(context, '검색', '찾을 수 없습니다.');
+  void filterData(String keyword) {
+    if (keyword.isEmpty) {
+      setState(() {
+        filteredData = [];
+        isSearching = false;
+      });
+      return;
     }
-    _removeFocus();
-    updatebool = true;
-    setState(() {});
-  }
 
-  void _removeFocus() {
-    _focusNode.unfocus();
+    setState(() {
+      filteredData = data
+          .where((item) => item['merch']
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toLowerCase()))
+          .toList();
+      isSearching = true;
+    });
   }
 
   void _getDistance() async {
     //내 위치를 실시간으로 보냄
-    if (latitude != 0.0){
-      if (user.nickname != "관리자"){
-        await _controller.runJavaScript("getDistance($latitude, $longitude, false)");
-      }else{
-        await _controller.runJavaScript("getDistance($latitude, $longitude, true)");
-      }
-      if (updatebool && !_focusNode.hasFocus) {
-        _updateDistanceText();
+    if (latitude != 0.0) {
+      if (user.nickname != "관리자") {
+        await _controller
+            .runJavaScript("getDistance($latitude, $longitude, false)");
       } else {
-        updatebool = false;
+        await _controller
+            .runJavaScript("getDistance($latitude, $longitude, true)");
       }
+      fetchData();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: mapWidget(context),
+    return WillPopScope(
+      onWillPop: () async {
+        if (_focusNode.hasFocus) {
+          _focusNode.unfocus();
+          return false;
+        }
+        return true;
+      },
+      child: GestureDetector(
+        onTap: () {
+          _focusNode.unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: mapWidget(context),
+        ),
+      ),
     );
-  }
-
-  Widget _buildListTiles() {
-    List<Widget> listTiles = [];
-    if (searchStr.isNotEmpty) {
-      listTiles.add(listTile(context, searchStr, int.parse(distance), status, gen, can, pet));
-    }
-    return Column(children: listTiles);
   }
 
   Widget mapWidget(BuildContext context) {
     double ratio = MediaQuery.of(context).devicePixelRatio * 0.4;
-    return GestureDetector(
-      onTap: () {
-        _focusNode.unfocus();
-      },
-      child: Column(
-        children: <Widget>[
-          SizedBox(
+    return Column(
+      children: [
+        Expanded(
+          child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.4,
-            child: Expanded(
-              child: ClipRect(
-                child: Transform.scale(
-                  scale: ratio,
-                  child: WebViewWidget(controller: _controller),
-                ),
+            child: ClipRect(
+              child: Transform.scale(
+                scale: ratio,
+                child: WebViewWidget(controller: _controller),
               ),
             ),
           ),
-          Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      topRight: Radius.circular(30.0),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width - 48,
-                            height: 50,
-                            child: TextField(
-                              textInputAction: TextInputAction.search,
-                              onSubmitted: (value) {
-                                _search();
-                              },
-                              style: TextStyle(color: Colors.grey.shade600),
-                              focusNode: _focusNode,
-                              controller: searchctrl,
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 10),
-                                hintText: '주소, 지역 검색',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: myColor),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                suffixIcon: IconButton(
-                                  color: Colors.grey.shade400,
-                                  icon: const Icon(Icons.search),
-                                  onPressed: () {
-                                    _search();
-                                  },
-                                ),
-                              ),
-                              obscureText: false,
-                            ),
-                          ),
-                          const SizedBox(height: 30),
-                          Column(
-                            children: [
-                              const Text('현 위치에서 가까운 Aily의 위치가 나타나요.'),
-                              const SizedBox(height: 20),
-                              _buildListTiles(),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: TextField(
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) {
+              filterData(value);
+            },
+            style: TextStyle(color: Colors.grey.shade600),
+            focusNode: _focusNode,
+            controller: searchctrl,
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              hintText: '주소, 지역 검색',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: myColor),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              suffixIcon: IconButton(
+                color: Colors.grey.shade400,
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    filterData(searchctrl.text);
+                    _focusNode.unfocus();
+                  });
+                },
+              ),
+            ),
+            obscureText: false,
+          ),
+        ),
+        const SizedBox(height: 30),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  '현 위치에서 가까운 Aily의 위치가 나타나요.',
+                  style: TextStyle(fontWeight: FontWeight.w400, fontSize: 16),
                 ),
-              )),
-        ],
-      ),
+                const SizedBox(height: 30),
+                buildListTiles(distances),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
+  }
+
+  Widget buildListTiles(List<String> distances) {
+    List<Widget> listTiles = [];
+
+    final filteredList = isSearching ? filteredData : data;
+
+    for (int i = 0; i < filteredList.length; i++) {
+      //final String distance = distances[i];
+      final item = filteredList[i];
+      final String merch = item['merch'];
+      final int gen = item['gen'];
+      final int can = item['can'];
+      final int pet = item['pet'];
+      final int distance = item['distance'];
+      final int status = item['status'];
+
+      listTiles.add(
+          listTile(context, merch, distance, status, gen, can, pet));
+    }
+
+    return Column(children: listTiles);
   }
 }
 
-Widget listTile(BuildContext context, String title, int distance, bool isAvailable, int gen, can, pet) {
+Widget listTile(BuildContext context, String title, int distance,
+    int isAvailable, int gen, can, pet) {
   Color myColor = const Color(0xFFF8B195);
   GarbageMerch merch = GarbageMerch();
 
-  return Card(
-    shape: RoundedRectangleBorder(
-      side: BorderSide(color: myColor.withOpacity(0.25)),
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    elevation: 0.25,
-
-    margin: const EdgeInsets.symmetric(horizontal: 35),
-    child: Theme(
-      data: ThemeData().copyWith(
-          dividerColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent),
-      child: ListTile(
-        horizontalTitleGap: 0,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-        leading: Icon(Icons.directions_walk, color: myColor),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            color: myColor,
-            fontWeight: FontWeight.w600,
+  return Column(
+    children: [
+      Card(
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: myColor.withOpacity(0.25)),
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        elevation: 0.25,
+        margin: const EdgeInsets.symmetric(horizontal: 35),
+        child: Theme(
+          data: ThemeData().copyWith(
+              dividerColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent),
+          child: ListTile(
+            horizontalTitleGap: 0,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+            leading: Icon(Icons.directions_walk, color: myColor),
+            title: Text(
+              title,
+              style: TextStyle(
+                fontSize: 18,
+                color: myColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "남은 거리",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xff989898),
+                      ),
+                    ),
+                    Text('${distance}M\n'),
+                  ],
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '상태',
+                      style: TextStyle(fontSize: 12, color: Color(0xff989898)),
+                    ),
+                    const SizedBox(height: 5),
+                    isAvailable == 1
+                        ? const Icon(Icons.circle, color: Colors.red, size: 14)
+                        : isAvailable == 2
+                            ? const Icon(Icons.circle,
+                                color: Colors.yellow, size: 14)
+                            : const Icon(Icons.circle,
+                                color: Colors.lightGreenAccent, size: 14),
+                    const SizedBox(height: 3),
+                    isAvailable == 1
+                        ? const Text(
+                            '사용 불가',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff767676),
+                            ),
+                          )
+                        : isAvailable == 2
+                            ? const Text(
+                                '사용 가능',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xff767676),
+                                ),
+                              )
+                            : const Text(
+                                '사용 가능',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xff767676),
+                                ),
+                              ),
+                  ],
+                ),
+              ],
+            ),
+            onTap: () {
+              UserData user = UserData();
+              if (user.nickname == "관리자") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GarbageScreen(
+                            title: merch.merch!,
+                            gen: gen,
+                            can: can,
+                            pet: pet)));
+              }
+            },
           ),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "남은 거리",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xff989898),
-                  ),
-                ),
-                Text('${distance}M\n'),
-              ],
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '상태',
-                  style: TextStyle(fontSize: 12, color: Color(0xff989898)),
-                ),
-                const SizedBox(height: 5),
-                isAvailable
-                    ? const Icon(Icons.circle,
-                    color: Colors.lightGreenAccent, size: 14)
-                    : const Icon(Icons.circle, color: Colors.red, size: 14),
-                const SizedBox(height: 3),
-                isAvailable
-                    ? const Text(
-                  '사용 가능',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xff767676),
-                  ),
-                )
-                    : const Text(
-                  '사용 불가',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xff767676),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        onTap: () {
-          UserData user = UserData();
-          // if (user.nickname == "관리자"){
-          //   Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => GarbageScreen(title: merch.merch!, gen: gen, can: can, pet: pet)));
-          // }
-        },
       ),
-    ),
+      const SizedBox(height: 10)
+    ],
   );
 }

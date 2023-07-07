@@ -6,7 +6,7 @@ class GarbageData {
   final String merch;
   final int gen;
   final int pet;
-  final bool status;
+  final int status;
 
   GarbageData({
     required this.can,
@@ -22,7 +22,7 @@ class GarbageData {
       merch: json['merch'] as String,
       gen: json['gen'] as int,
       pet: json['pet'] as int,
-      status: json['status'] as bool,
+      status: json['status'] as int,
     );
   }
 }
