@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import '../utils/ShowDialog.dart';
 
 class NoticeScreen extends StatefulWidget {
 
   const NoticeScreen({Key? key}) : super(key: key);
 
   @override
-  _NoticeScreenState createState() => _NoticeScreenState();
+  NoticeScreenState createState() => NoticeScreenState();
   }
 
-  class _NoticeScreenState extends State<NoticeScreen> with TickerProviderStateMixin {
+  class NoticeScreenState extends State<NoticeScreen> with TickerProviderStateMixin {
 
   Color myColor = const Color(0xFFF8B195);
 
@@ -31,7 +30,6 @@ class NoticeScreen extends StatefulWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -64,7 +62,7 @@ class NoticeScreen extends StatefulWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Column(
                       children: [
-                        _ListTile(context, faq['title']!, faq['content']!)
+                        listTile(context, faq['title']!, faq['content']!)
                       ],
                     ),
                   );
@@ -78,7 +76,7 @@ class NoticeScreen extends StatefulWidget {
   }
 }
 
-Widget _ListTile(BuildContext context, String title, String content) {
+Widget listTile(BuildContext context, String title, String content) {
   return Column(
     children: [
       Theme(
@@ -88,7 +86,7 @@ Widget _ListTile(BuildContext context, String title, String content) {
           splashColor: Colors.transparent
         ),
         child: ExpansionTile(
-          textColor: const Color(0xFFF8B195),
+          textColor: Colors.black,
           iconColor: Colors.grey.shade600,
           title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
           children: [

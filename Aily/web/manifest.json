@@ -1,11 +1,11 @@
 {
-    "name": "test_flutter",
-    "short_name": "test_flutter",
+    "name": "aily",
+    "short_name": "aily",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "aily project",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
