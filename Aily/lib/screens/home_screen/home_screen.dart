@@ -24,7 +24,7 @@ class HomeScreenState extends State<HomeScreen> {
   var user = UserData();
   Dio dio = Dio();
   Timer? timer;
-
+  late int? totalPoints;
   String? filterStr = "전체";
   List<Map<String, dynamic>> filteredData = [];
   late List<Map<String, dynamic>> processedData = [];
@@ -35,7 +35,7 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getUser();
     timer = Timer.periodic(const Duration(milliseconds: 100),
-        (timer) => accrualdetails(user.phonenumber.toString()));
+        (timer) => accrualdetails(user.nickname!));
   }
 
   @override
@@ -52,40 +52,48 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   //이용내역
-  void accrualdetails(String phoneNumber) async {
+  void accrualdetails(String nickname) async {
     try {
+      Dio dio = Dio(); // Create a Dio instance
+      dio.options.headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      dio.options.responseType = ResponseType.json; // Set the responseType here
+
       Response response = await dio.post(
         URL().staticsURL,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-        ),
         data: {
-          'phonenumber': "0$phoneNumber",
+          'nickname': user.nickname,
         },
       );
+
       if (response.statusCode == 200) {
         timer?.cancel();
-        Map<String, dynamic> data = json.decode(response.data);
-        List<dynamic> phoneNumberList = data["0$phoneNumber"];
+
+        List<dynamic> responseData = response.data;
+        List<Map<String, dynamic>> phoneNumberList = List<Map<String, dynamic>>.from(responseData);
 
         setState(() {
           processedData = phoneNumberList.map((item) {
+            String dateString = item["day"] + " " + item["time"];
+            DateTime time = DateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초").parse(dateString);
+            String timestamp = time.toLocal().toString().split(".")[0]; // Remove milliseconds
             return {
-              "phonenumber": item["phonenumber"],
-              "GEN": item["GEN"],
-              "CAN": item["CAN"],
-              "PET": item["PET"],
-              "POINT": item["POINT"],
-              "TIMESTAMP": item["TIMESTAMP"],
+              "gen": item["gen"],
+              "can": item["can"],
+              "pet": item["pet"],
+              "point": item["point"],
+              "day": item["day"],
+              "time": item["time"],
+              "TIMESTAMP": timestamp,
             };
           }).toList();
+           totalPoints = processedData.map((item) => item["point"] as int).reduce((sum, point) => sum + point);
           _refreshData();
         });
       }
     } catch (error) {
-      //
+      // Handle errors
     }
   }
 
@@ -109,7 +117,7 @@ class HomeScreenState extends State<HomeScreen> {
         startDate = now.subtract(const Duration(days: 90));
       } else if (filterStr == '6개월') {
         startDate = now.subtract(const Duration(days: 180));
-      } else if (filterStr == '12개월') {
+      } else if (filterStr == '1년') {
         startDate = now.subtract(const Duration(days: 365));
       }
 
@@ -131,7 +139,7 @@ class HomeScreenState extends State<HomeScreen> {
           buildPopupMenuItem('1개월'),
           buildPopupMenuItem('3개월'),
           buildPopupMenuItem('6개월'),
-          buildPopupMenuItem('12개월'),
+          buildPopupMenuItem('1년'),
         ];
       },
       onSelected: (String value) {
@@ -300,7 +308,7 @@ class HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.only(right: 15),
                           child: GestureDetector(
                             onTap: () {
-                              accrualdetails(user.phonenumber.toString());
+                              accrualdetails(user.nickname!);
                             },
                             child: const Icon(Icons.refresh, size: 25),
                           ),
@@ -311,7 +319,7 @@ class HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: screenHeight * 0.023),
                   processedData.isNotEmpty
                       ? Text(
-                          '${NumberFormat('#,###').format(processedData.last["POINT"])}원',
+                          '${NumberFormat('#,###').format(totalPoints)}원',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w500,
@@ -367,7 +375,7 @@ class HomeScreenState extends State<HomeScreen> {
                     child: RefreshIndicator(
                         color: Colors.black,
                         onRefresh: () async {
-                          accrualdetails(user.phonenumber.toString());
+                          accrualdetails(user.nickname!);
                         },
                         child: ScrollConfiguration(
                           behavior: const ScrollBehavior(),
@@ -381,12 +389,12 @@ class HomeScreenState extends State<HomeScreen> {
                               controller: _scrollController,
                               itemBuilder: (context, index) {
                                 final item = filteredData[index];
-                                int gen = item["GEN"];
-                                int can = item["CAN"];
-                                int pet = item["PET"];
+                                int gen = item["gen"];
+                                int can = item["can"];
+                                int pet = item["pet"];
                                 int cntValue = (gen + can + pet) * 100;
 
-                                if (item["POINT"] == 0) {
+                                if (item["point"] == 0) {
                                   return Column(
                                     children: [
                                       SizedBox(height: screenHeight * 0.16),
@@ -425,20 +433,20 @@ class HomeScreenState extends State<HomeScreen> {
                                         ),
                                         listTile(
                                           context,
-                                          '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                          '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
                                           item['TIMESTAMP'],
                                           cntValue,
-                                          item["POINT"],
+                                          item["point"],
                                         ),
                                       ],
                                     );
                                   } else {
                                     return listTile(
                                       context,
-                                      '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                      '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
                                       item['TIMESTAMP'],
                                       cntValue,
-                                      item["POINT"],
+                                      item["point"],
                                     );
                                   }
                                 }

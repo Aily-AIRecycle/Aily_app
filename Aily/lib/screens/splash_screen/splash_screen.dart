@@ -23,8 +23,8 @@ class SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   Color myColor = const Color(0xFFF8B195);
   final storage = const FlutterSecureStorage();
-  late int point, phonenumber;
-  late String nickname, image, email, birth;
+  late int point;
+  late String nickname, image, email, birth, phonenumber, gender;
   late File? profile;
   UserData user = UserData();
   Dio dio = Dio();
@@ -60,6 +60,7 @@ class SplashScreenState extends State<SplashScreen>
         user.point = point;
         user.profile = profile;
         user.phonenumber = phonenumber;
+        user.gender = gender;
       } catch (e) {
         //
       }
@@ -76,7 +77,7 @@ class SplashScreenState extends State<SplashScreen>
     }
   }
 
-  Future<Response<dynamic>> loginUser(String id, String password) async {
+  Future<Response<dynamic>> loginUser(String email, String password) async {
     try {
       Response<dynamic> response = await dio.post(
         URL().loginURL,
@@ -86,12 +87,13 @@ class SplashScreenState extends State<SplashScreen>
           },
         ),
         data: {
-          'id': id,
+          'email': email,
           'password': password,
         },
       );
 
       return response;
+
     } catch (error) {
       rethrow;
     }
@@ -106,12 +108,13 @@ class SplashScreenState extends State<SplashScreen>
         if (response.statusCode == 200) {
           // 로그인 성공
           var jsonResponse = response.data;
-          email = jsonResponse[0]['id'];
-          birth = jsonResponse[0]["birth"];
-          nickname = jsonResponse[0]['nickname'];
-          point = jsonResponse[0]['point'];
-          image = jsonResponse[0]['profile'];
-          phonenumber = jsonResponse[0]['User_phonenumber'];
+          email = jsonResponse['email'];
+          birth = jsonResponse["birth"];
+          nickname = jsonResponse['nickname'];
+          point = jsonResponse['point'];
+          image = jsonResponse['profile'];
+          phonenumber = jsonResponse['phonenumber'];
+          gender = jsonResponse['gender'];
           if (id == 'admin') {
             user.nickname = nickname;
             Future.delayed(Duration.zero, () {

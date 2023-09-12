@@ -30,8 +30,8 @@ class LoginScreenState extends State<LoginScreen> {
   Color myColor = const Color(0xFFF8B195);
   late Uint8List imgData;
   final storage = const FlutterSecureStorage();
-  late int point, phonenumber;
-  late String nickname, image, email, birth;
+  late int point;
+  late String nickname, image, email, birth, phonenumber, gender;
   late File? profile;
   late String savedId;
   bool isIdSaved = false;
@@ -83,6 +83,7 @@ class LoginScreenState extends State<LoginScreen> {
         user.point = point;
         user.profile = profile;
         user.phonenumber = phonenumber;
+        user.gender = gender;
       } catch (e) {
         //
       }
@@ -157,12 +158,13 @@ class LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         //로그인 성공
         var jsonResponse = response.data;
-        email = jsonResponse[0]['id'];
-        birth = jsonResponse[0]["birth"];
-        nickname = jsonResponse[0]['nickname'];
-        point = jsonResponse[0]['point'];
-        image = jsonResponse[0]['profile'];
-        phonenumber = jsonResponse[0]['User_phonenumber'];
+        email = jsonResponse['email'];
+        birth = jsonResponse["birth"];
+        nickname = jsonResponse['nickname'];
+        point = jsonResponse['point'];
+        image = jsonResponse['profile'];
+        phonenumber = jsonResponse['phonenumber'];
+        gender = jsonResponse['gender'];
         if (id == 'admin') {
           user.nickname = nickname;
           Future.delayed(Duration.zero, () {
@@ -184,7 +186,7 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<Response<dynamic>> loginUser(String id, String password) async {
+  Future<Response<dynamic>> loginUser(String email, String password) async {
     try {
       Response<dynamic> response = await dio.post(
         URL().loginURL,
@@ -194,12 +196,13 @@ class LoginScreenState extends State<LoginScreen> {
           },
         ),
         data: {
-          'id': id,
+          'email': email,
           'password': password,
         },
       );
 
       return response;
+
     } catch (error) {
       rethrow;
     }
@@ -209,26 +212,24 @@ class LoginScreenState extends State<LoginScreen> {
     final String id = idctrl.text.trim();
     final String pw = passwordctrl.text.trim();
 
-    var bytes = utf8.encode(pw);
-    var sha256Result = sha256.convert(bytes);
-    String password = sha256Result.toString();
     // 로그인 처리 로직 구현
     if (id.isEmpty || pw.isEmpty) {
       showMsg(context, "로그인", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
       try {
-        Response<dynamic> response = await loginUser(id, password);
+        Response<dynamic> response = await loginUser(id, pw);
         if (response.statusCode == 200) {
           //로그인 성공
           var jsonResponse = response.data;
-          email = jsonResponse[0]['id'];
-          birth = jsonResponse[0]["birth"];
-          nickname = jsonResponse[0]['nickname'];
-          point = jsonResponse[0]['point'];
-          image = jsonResponse[0]['profile'];
-          phonenumber = jsonResponse[0]['User_phonenumber'];
+          email = jsonResponse['email'];
+          birth = jsonResponse["birth"];
+          nickname = jsonResponse['nickname'];
+          point = jsonResponse['point'];
+          image = jsonResponse['profile'];
+          phonenumber = jsonResponse['phonenumber'];
+          gender = jsonResponse['gender'];
 
-          savedInfo(id, password);
+          savedInfo(id, pw);
           if (id == 'admin') {
             user.nickname = nickname;
             Future.delayed(Duration.zero, () {
@@ -247,7 +248,8 @@ class LoginScreenState extends State<LoginScreen> {
           }
         }
       } catch (e) {
-        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
+        showMsg(context, "로그인", e);
+        //showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
       }
     }
   }

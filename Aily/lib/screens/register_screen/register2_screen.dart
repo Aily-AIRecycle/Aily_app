@@ -168,7 +168,7 @@ class Register2ScreenState extends State<Register2Screen> {
         setState(() {});
       }
     } catch (e) {
-      user.phonenumber = int.parse(phone);
+      user.phonenumber = phone;
       user.nickname = nickname;
       user.birth = birth;
 
