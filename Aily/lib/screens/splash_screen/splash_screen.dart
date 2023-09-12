@@ -145,11 +145,14 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    double imageWidth = MediaQuery.of(context).size.width * 0.2;
+    double imageHeight = MediaQuery.of(context).size.height * 0.2;
+
     return Center(
       child: SvgPicture.asset(
         'assets/images/logo.svg',
-        width: 35, // 이미지 크기
-        height: 35,
+        width: imageWidth, // 이미지 크기
+        height: imageHeight,
       ),
     );
   }
