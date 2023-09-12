@@ -55,6 +55,21 @@ class EditnameScreenState extends State<EditnameScreen> {
         //로그인 성공
         var jsonResponse = response.data;
         if (jsonResponse == "yes"){
+          await dio.post(
+            URL().namechangeURL,
+            options: Options(
+              headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+              },
+            ),
+            data: {
+              "birth": user.birth,
+              "email": user.email,
+              "gender": user.gender,
+              "nickname": name,
+              "phonenumber": user.phonenumber
+            },
+          );
           //showMsg(context, jsonResponse, '사용 가능합니다.');
           user.nickname = name;
           Future.delayed(Duration.zero, () {
