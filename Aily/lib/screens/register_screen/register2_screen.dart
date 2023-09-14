@@ -19,18 +19,17 @@ class Register2ScreenState extends State<Register2Screen> {
   late TextEditingController _birthdateTextController;
   late TextEditingController _phoneTextController;
   late TextEditingController _nicknameTextController;
-  String? _gender = '남성';
-  late String usernameChk = "";
+  late String? _gender = '남성';
   late String nicknameChk = "";
   late String idChk = "";
   late String phoneChk = "";
   late String birthChk = "";
-  late Color usernameColor = Colors.red;
   late Color nicknameColor = Colors.red;
   late Color idColor = Colors.red;
   late Color phoneColor = Colors.red;
   late Color birthColor = Colors.red;
   UserData user = UserData();
+  Dio dio = Dio();
 
   @override
   void initState() {
@@ -50,73 +49,16 @@ class Register2ScreenState extends State<Register2Screen> {
     super.dispose();
   }
 
-  Future<Map<String, dynamic>> signUser(String phone, String id, String password, String nickname, String birth, bool awaitData) async {
-    final Map<String, dynamic> data = {
-      "phonenumber": phone,
-      "id": id,
-      "password": password,
-      "birth": birth,
-      "nickname": nickname,
-      "profile": "${URL().baseURL}/static/images/default/image.png",
-      "await": awaitData
-    };
-
-    try {
-      Dio dio = Dio();
-      Response<dynamic> response = await dio.post(
-        URL().signURL,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
-        data: data,
-      );
-
-      return response.data;
-    } catch (error) {
-      // Error handling
-      rethrow;
-    }
-  }
-
-  void updateStatus(String key, String value) {
-    List<String> parts = value.split(":");
-    String chk = parts[0];
-    Color color = Color(int.parse(parts[1], radix: 16));
-
-    if (key == "닉네임") {
-      nicknameChk = chk;
-      nicknameColor = color;
-    }
-    if (key == "아이디") {
-      idChk = chk;
-      idColor = color;
-    }
-    if (key == "전화번호") {
-      phoneChk = chk;
-      phoneColor = color;
-    }
-  }
-
   Future<void> signup() async {
-    String username = _nameTextController.text.trim();
     String phone = _phoneTextController.text.trim();
     String nickname = _nicknameTextController.text.trim();
     String birth = _birthdateTextController.text.trim();
-    String email = user.email!;
-    String password = user.password!;
-
-    if (username.isEmpty) {
-      setState(() {
-        usernameColor = Colors.red;
-        usernameChk = 'ⓘ 이름을 입력해주세요.';
-        return;
-      });
+    String gender = "";
+    if (_gender == "남성"){
+      gender = "M";
     } else {
-      usernameChk = "";
+      gender = "F";
     }
-
     if (birth.isEmpty) {
       setState(() {
         birthColor = Colors.red;
@@ -158,24 +100,36 @@ class Register2ScreenState extends State<Register2Screen> {
     }
 
     try {
-      Map<String, dynamic> response = await signUser(phone, email, password, nickname, birth, false);
-      final result = response['result'];
+      Response<dynamic> response = await dio.get(
+        "${URL().nameChkURL}/$nickname",
+      );
+      if (response.statusCode == 200) {
+        var jsonResponse = response.data;
+        if (jsonResponse == "yes"){
+          setState(() {
+            nicknameColor = Colors.green;
+            nicknameChk = "ⓘ 사용가능한 닉네임입니다.";
 
-      if (result != null) {
-        result.forEach((key, value) {
-          updateStatus(key, value);
-        });
-        setState(() {});
+            user.phonenumber = phone;
+            user.nickname = nickname;
+            user.birth = birth;
+            user.gender = gender;
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const VerificationScreen()));
+          });
+        }
+        else{
+          setState(() {
+            nicknameColor = Colors.red;
+            nicknameChk = "ⓘ 중복된 닉네임입니다.";
+          });
+        }
       }
     } catch (e) {
-      user.phonenumber = phone;
-      user.nickname = nickname;
-      user.birth = birth;
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const VerificationScreen()));
+      //
     }
   }
 
@@ -209,73 +163,15 @@ class Register2ScreenState extends State<Register2Screen> {
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.75,
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 '간단한 정보를 알려주세요.',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 25,
                   fontWeight: FontWeight.w400,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.06),
-              const Text(
-                '이름',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-              TextField(
-                textInputAction: TextInputAction.done,
-                controller: _nameTextController,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-zA-Z]{1,8}$')),
-                ],
-                decoration: InputDecoration(
-                  hintText: '홍길동',
-                  hintStyle: const TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  border: InputBorder.none,
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFFE0E0E0),
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFFE0E0E0),
-                      width: 1,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    icon: const Icon(Icons.clear, size: 17, color: Colors.black),
-                    onPressed: () {
-                      _nameTextController.clear();
-                    },
-                  ),
-                ),
-                onEditingComplete: (){
-                  signup();
-                },
-              ),
-              Text(
-                usernameChk,
-                style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: usernameColor
                 ),
               ),
             ],

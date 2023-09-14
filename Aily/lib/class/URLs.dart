@@ -14,8 +14,8 @@ class URL {
   String get imageURL => 'https://ailymit.store/member/member/upload';
 
   //닉네임 중복체크, 닉네임 변경
-  String get namechkURL => 'https://ailymit.store/member/member/ChNick';
-  String get namechangeURL => 'https://ailymit.store/member/member/UIC';
+  String get nameChkURL => 'https://ailymit.store/member/member/ChNick';
+  String get nameChangeURL => 'https://ailymit.store/member/member/UIC';
 
   //포인트 적립
   String get staticsURL => 'https://ailymit.store/member/member/historypax';
@@ -23,16 +23,16 @@ class URL {
   //포화도
   String get garbageURL => '$baseURL/api/garbage';
 
-  //포인트
-  String get pointURL => '$baseURL/api/point';
-
   //지도
   String get mapURL => '$baseURL/map';
 
   //회원가입, 이메일
-  String get signURL => '$baseURL/api/sign';
-  String get authURL => '$baseURL/api/SignAuth';
+  String get emailChkURL => "https://ailymit.store/member/member/EmailCheck";
+  String get emailAuthURL => "https://ailymit.store/member/member/auth-email";
+  String get joinURL => "https://ailymit.store/member/member/join";
 
   //재활용
   String get typeURL => '$baseURL/api/type';
 }
+
+//재활용, 포화도

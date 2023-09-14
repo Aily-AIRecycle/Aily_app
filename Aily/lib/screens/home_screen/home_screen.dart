@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:js_interop';
 import 'package:aily/screens/home_screen/push_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -29,6 +30,7 @@ class HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> filteredData = [];
   late List<Map<String, dynamic>> processedData = [];
   final ScrollController _scrollController = ScrollController();
+  bool dataAvailable = true;
 
   @override
   void initState() {
@@ -54,11 +56,11 @@ class HomeScreenState extends State<HomeScreen> {
   //이용내역
   void accrualdetails(String nickname) async {
     try {
-      Dio dio = Dio(); // Create a Dio instance
+      Dio dio = Dio();
       dio.options.headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
-      dio.options.responseType = ResponseType.json; // Set the responseType here
+      dio.options.responseType = ResponseType.json;
 
       Response response = await dio.post(
         URL().staticsURL,
@@ -67,29 +69,38 @@ class HomeScreenState extends State<HomeScreen> {
         },
       );
 
-      if (response.statusCode == 200) {
-        timer?.cancel();
+      if (response.data != null) {
+        if (response.statusCode == 200) {
 
-        List<dynamic> responseData = response.data;
-        List<Map<String, dynamic>> phoneNumberList = List<Map<String, dynamic>>.from(responseData);
+          timer?.cancel();
+          List<dynamic> responseData = response.data;
 
+          List<Map<String, dynamic>> phoneNumberList = List<Map<String, dynamic>>.from(responseData);
+
+          setState(() {
+            processedData = phoneNumberList.map((item) {
+              String dateString = item["day"] + " " + item["time"];
+              DateTime time = DateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초").parse(dateString);
+              String timestamp = time.toLocal().toString().split(".")[0]; // Remove milliseconds
+              return {
+                "gen": item["gen"],
+                "can": item["can"],
+                "pet": item["pet"],
+                "point": item["point"],
+                "day": item["day"],
+                "time": item["time"],
+                "TIMESTAMP": timestamp,
+              };
+            }).toList();
+            totalPoints = processedData.map((item) => item["point"] as int).reduce((sum, point) => sum + point);
+            dataAvailable = processedData.isNotEmpty;
+            _refreshData();
+          });
+        }
+      } else{
         setState(() {
-          processedData = phoneNumberList.map((item) {
-            String dateString = item["day"] + " " + item["time"];
-            DateTime time = DateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초").parse(dateString);
-            String timestamp = time.toLocal().toString().split(".")[0]; // Remove milliseconds
-            return {
-              "gen": item["gen"],
-              "can": item["can"],
-              "pet": item["pet"],
-              "point": item["point"],
-              "day": item["day"],
-              "time": item["time"],
-              "TIMESTAMP": timestamp,
-            };
-          }).toList();
-           totalPoints = processedData.map((item) => item["point"] as int).reduce((sum, point) => sum + point);
-          _refreshData();
+          dataAvailable = false;
+          print("aa");
         });
       }
     } catch (error) {
@@ -325,12 +336,13 @@ class HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         )
-                      : const SizedBox(
-                          width: 15,
-                          height: 15,
-                          child: CircularProgressIndicator(
-                              color: Colors.black, strokeWidth: 1.5),
-                        ),
+                      : const Text(
+                    '0원',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -372,88 +384,87 @@ class HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                    child: RefreshIndicator(
-                        color: Colors.black,
-                        onRefresh: () async {
-                          accrualdetails(user.nickname!);
-                        },
-                        child: ScrollConfiguration(
-                          behavior: const ScrollBehavior(),
-                          child: GlowingOverscrollIndicator(
-                            axisDirection: AxisDirection.down,
-                            color: Colors.white,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: filteredData.length,
-                              reverse: true,
-                              controller: _scrollController,
-                              itemBuilder: (context, index) {
-                                final item = filteredData[index];
-                                int gen = item["gen"];
-                                int can = item["can"];
-                                int pet = item["pet"];
-                                int cntValue = (gen + can + pet) * 100;
+                  child: RefreshIndicator(
+                    color: Colors.black,
+                    onRefresh: () async {
+                      accrualdetails(user.nickname!);
+                    },
+                    child: ScrollConfiguration(
+                      behavior: const ScrollBehavior(),
+                      child: GlowingOverscrollIndicator(
+                        axisDirection: AxisDirection.down,
+                        color: Colors.white,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: dataAvailable ? filteredData.length : 1, // Adjust the itemCount
+                          reverse: true,
+                          controller: _scrollController,
+                          itemBuilder: (context, index) {
+                            if (!dataAvailable) {
+                              return Column(
+                                children: [
+                                  SizedBox(height: screenHeight * 0.16),
+                                  const Text(
+                                    "이용하신 내역이 없습니다.",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              final item = filteredData[index];
+                              int gen = item["gen"];
+                              int can = item["can"];
+                              int pet = item["pet"];
+                              int cntValue = (gen + can + pet) * 100;
 
-                                if (item["point"] == 0) {
-                                  return Column(
-                                    children: [
-                                      SizedBox(height: screenHeight * 0.16),
-                                      const Text(
-                                        "이용하신 내역이 없습니다.",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
+                              DateTime dateTime = DateTime.parse(item['TIMESTAMP']);
+                              String formattedDate =
+                                  '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+
+                              if (index == processedData.length - 1 ||
+                                  formattedDate !=
+                                      '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        formattedDate,
+                                        style: const TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    ],
-                                  );
-                                } else {
-                                  DateTime dateTime =
-                                      DateTime.parse(item['TIMESTAMP']);
-                                  String formattedDate =
-                                      '${dateTime.year}-${dateTime.month}-${dateTime.day}';
-
-                                  if (index == processedData.length - 1 ||
-                                      formattedDate !=
-                                          '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
-                                    // WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                                    // });
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          title: Text(
-                                            formattedDate,
-                                            style: const TextStyle(
-                                              color: Colors.black54,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        listTile(
-                                          context,
-                                          '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
-                                          item['TIMESTAMP'],
-                                          cntValue,
-                                          item["point"],
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return listTile(
+                                    ),
+                                    listTile(
                                       context,
                                       '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
                                       item['TIMESTAMP'],
                                       cntValue,
                                       item["point"],
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                          ),
-                        ))),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return listTile(
+                                  context,
+                                  '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
+                                  item['TIMESTAMP'],
+                                  cntValue,
+                                  item["point"],
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+
               ],
             ),
           ),

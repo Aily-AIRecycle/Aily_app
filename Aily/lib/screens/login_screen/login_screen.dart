@@ -165,6 +165,7 @@ class LoginScreenState extends State<LoginScreen> {
         image = jsonResponse['profile'];
         phonenumber = jsonResponse['phonenumber'];
         gender = jsonResponse['gender'];
+
         if (id == 'admin') {
           user.nickname = nickname;
           Future.delayed(Duration.zero, () {

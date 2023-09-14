@@ -36,7 +36,7 @@ class EditnameScreenState extends State<EditnameScreen> {
   Future<Response<dynamic>> namechk(String name) async {
     try {
       Response<dynamic> response = await dio.get(
-        "${URL().namechkURL}/$name",
+        "${URL().nameChkURL}/$name",
       );
 
       return response;
@@ -56,7 +56,7 @@ class EditnameScreenState extends State<EditnameScreen> {
         var jsonResponse = response.data;
         if (jsonResponse == "yes"){
           await dio.post(
-            URL().namechangeURL,
+            URL().nameChangeURL,
             options: Options(
               headers: {
                 'Content-Type': 'application/json; charset=UTF-8',

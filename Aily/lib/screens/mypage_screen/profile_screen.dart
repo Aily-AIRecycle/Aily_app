@@ -38,7 +38,6 @@ class ProfileScreenState extends State<ProfileScreen> {
         gender = "남자";
       }
     });
-    print(username);
   }
 
   @override
