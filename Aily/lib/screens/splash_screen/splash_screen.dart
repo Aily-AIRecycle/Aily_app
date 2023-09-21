@@ -8,7 +8,6 @@ import '../../class/user_data.dart';
 import '../login_screen/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-
 import '../manager_screen/manager_screen.dart';
 import '../navigator_screen/navigator.dart';
 

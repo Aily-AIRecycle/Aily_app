@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:aily/screens/register_screen/register_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import '../manager_screen/manager_screen.dart';
 import 'package:aily/utils/show_dialog.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -249,8 +247,7 @@ class LoginScreenState extends State<LoginScreen> {
           }
         }
       } catch (e) {
-        showMsg(context, "로그인", e);
-        //showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
+        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
       }
     }
   }

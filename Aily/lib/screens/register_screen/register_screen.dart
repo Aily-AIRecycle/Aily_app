@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'package:aily/class/user_data.dart';
 import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'register2_screen.dart';
-import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import '../../class/urls.dart';
 

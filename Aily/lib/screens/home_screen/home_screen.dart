@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:async';
-import 'dart:js_interop';
 import 'package:aily/screens/home_screen/push_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -377,9 +375,15 @@ class HomeScreenState extends State<HomeScreen> {
                     const Text('이용내역',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 18)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.45),
-                    Text(filterStr!),
-                    buildPopupMenuButton(),
+                    const Expanded(
+                      child: SizedBox.shrink(),
+                    ),
+                    Row(
+                      children: [
+                        Text(filterStr!),
+                        buildPopupMenuButton(),
+                      ],
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
