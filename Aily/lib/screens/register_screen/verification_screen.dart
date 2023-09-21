@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:aily/screens/register_screen/register3_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../class/urls.dart';
+import '../../class/URLs.dart';
 import '../../class/user_data.dart';
 import '../../utils/show_dialog.dart';
 

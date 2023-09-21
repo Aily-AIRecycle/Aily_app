@@ -1,7 +1,7 @@
 import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import '../../class/urls.dart';
+import '../../class/URLs.dart';
 import '../../class/user_data.dart';
 
 class EditnameScreen extends StatefulWidget {
