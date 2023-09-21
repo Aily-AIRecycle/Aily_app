@@ -74,7 +74,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-    Future<void> _uploadImage(File file) async {
+  Future<void> _uploadImage(File file) async {
     try {
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(file.path, filename: 'image.png'),
@@ -118,8 +118,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                     Stack(
                       children: [
                         SizedBox(
-                          width: 250,
-                          height: 250,
+                          width: MediaQuery.of(context).size.width * 1,
+                          height: MediaQuery.of(context).size.height * 0.33,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             child: ClipOval(
@@ -128,33 +128,37 @@ class ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        Positioned(
-                            top: MediaQuery.of(context).size.height * 0.245,
-                            left: MediaQuery.of(context).size.width * 0.252,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 0.0,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.4),
-                                      spreadRadius: 3,
-                                    ),
-                                  ],
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.45,
+                              top: MediaQuery.of(context).size.height * 0.26),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 0.0,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 3,
                                 ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _pickImage(context, ImageSource.gallery);
-                                  },
-                                  child: const Text('EDIT',
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w500)),
-                                ))),
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                _pickImage(context, ImageSource.gallery);
+                              },
+                              child: const Text('EDIT',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500)
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                     Text(username!,
@@ -219,7 +223,7 @@ class ProfileScreenState extends State<ProfileScreen> {
                                 Colors.grey, () {}),
                             SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.06),
+                                MediaQuery.of(context).size.height * 0.03),
                             ElevatedButton(
                               onPressed: () {
                                 //수정된 데이터 저장
@@ -248,13 +252,15 @@ class ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ],
-                        )),
+                        ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-        ));
+        ),
+    );
   }
 }
 
