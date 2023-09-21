@@ -90,7 +90,7 @@ class LoginScreenState extends State<LoginScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const NavigatorScreen()),
-          (route) => false,
+              (route) => false,
         );
       });
     } catch (e) {
@@ -170,7 +170,7 @@ class LoginScreenState extends State<LoginScreen> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const ManagerScreen()),
-              (route) => false,
+                  (route) => false,
             );
           });
         } else {
@@ -215,10 +215,11 @@ class LoginScreenState extends State<LoginScreen> {
     if (id.isEmpty || pw.isEmpty) {
       showMsg(context, "로그인", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
-      try {
-        Response<dynamic> response = await loginUser(id, pw);
-        if (response.statusCode == 200) {
-          //로그인 성공
+      //try {
+      Response<dynamic> response = await loginUser(id, pw);
+      if (response.statusCode == 200) {
+        //로그인 성공
+        try {
           var jsonResponse = response.data;
           email = jsonResponse['email'];
           birth = jsonResponse["birth"];
@@ -245,9 +246,11 @@ class LoginScreenState extends State<LoginScreen> {
             });
             downloadImageFromServer(nickname);
           }
+        } catch (e) {
+          Future.delayed(Duration.zero, () {
+            showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
+          });
         }
-      } catch (e) {
-        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
       }
     }
   }
@@ -301,7 +304,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             border: const OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                              BorderRadius.all(Radius.circular(10.0)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: myColor),
@@ -309,7 +312,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
+                              BorderSide(color: Colors.grey.shade400),
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
@@ -328,7 +331,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             border: const OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                              BorderRadius.all(Radius.circular(10.0)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: myColor),
@@ -336,7 +339,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
+                              BorderSide(color: Colors.grey.shade400),
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
@@ -348,8 +351,8 @@ class LoginScreenState extends State<LoginScreen> {
                               value: isCheckboxChecked,
                               checkColor: Colors.white,
                               fillColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
+                              MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) {
                                   if (states.contains(MaterialState.selected)) {
                                     return myColor;
                                   }
@@ -380,7 +383,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const RegisterScreen()));
+                                    const RegisterScreen()));
                           },
                           style: ElevatedButton.styleFrom(
                             fixedSize: Size(
