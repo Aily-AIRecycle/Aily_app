@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import '../../class/urls.dart';
+import '../../class/URLs.dart';
 
 class Register2Screen extends StatefulWidget {
   const Register2Screen({Key? key}) : super(key: key);

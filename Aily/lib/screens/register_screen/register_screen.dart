@@ -3,7 +3,7 @@ import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'register2_screen.dart';
 import 'package:dio/dio.dart';
-import '../../class/urls.dart';
+import '../../class/URLs.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
