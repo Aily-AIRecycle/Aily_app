@@ -203,6 +203,9 @@ class LoginScreenState extends State<LoginScreen> {
       return response;
 
     } catch (error) {
+      Future.delayed(Duration.zero, () {
+        showMsg(context, "로그인", "Server is down");
+      });
       rethrow;
     }
   }

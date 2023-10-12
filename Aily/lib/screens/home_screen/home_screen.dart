@@ -98,7 +98,6 @@ class HomeScreenState extends State<HomeScreen> {
       } else{
         setState(() {
           dataAvailable = false;
-          print("aa");
         });
       }
     } catch (error) {
