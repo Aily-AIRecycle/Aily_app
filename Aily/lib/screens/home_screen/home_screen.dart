@@ -61,7 +61,7 @@ class HomeScreenState extends State<HomeScreen> {
       dio.options.responseType = ResponseType.json;
 
       Response response = await dio.post(
-        URL().staticsURL,
+        URL().historypaxURL,
         data: {
           'nickname': user.nickname,
         },

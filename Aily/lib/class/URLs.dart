@@ -6,33 +6,33 @@ class URL {
   }
 
   URL._internal();
-  String baseURL = 'https://ailyproject.shop';
+  String baseURL = 'https://ailymit.store/member';
   //로그인
-  String get loginURL => 'https://ailymit.store/member/member/login';
+  String get loginURL => '$baseURL/login';
 
   //프로필 변경
-  String get imageURL => 'https://ailymit.store/member/member/upload';
+  String get imageURL => '$baseURL/upload';
 
   //닉네임 중복체크, 닉네임 변경
-  String get nameChkURL => 'https://ailymit.store/member/member/ChNick';
-  String get nameChangeURL => 'https://ailymit.store/member/member/UIC';
+  String get nameChkURL => '$baseURL/ChNick';
+  String get nameChangeURL => '$baseURL/UIC';
 
   //포인트 적립
-  String get staticsURL => 'https://ailymit.store/member/member/historypax';
+  String get historypaxURL => '$baseURL/historypax';
 
   //포화도
-  String get garbageURL => '$baseURL/api/garbage';
+  String get garbageURL => 'https://ailyproject.shop/api/garbage';
 
   //지도
-  String get mapURL => '$baseURL/map';
+  String get mapURL => 'https://ailyproject.shop/map';
 
   //회원가입, 이메일
-  String get emailChkURL => "https://ailymit.store/member/member/EmailCheck";
-  String get emailAuthURL => "https://ailymit.store/member/member/auth-email";
-  String get joinURL => "https://ailymit.store/member/member/join";
+  String get emailChkURL => "$baseURL/EmailCheck";
+  String get emailAuthURL => "$baseURL/auth-email";
+  String get joinURL => "$baseURL/join";
 
   //재활용
-  String get typeURL => '$baseURL/api/type';
+  String get typeURL => 'https://ailyproject.shop/api/type';
 }
 
 //재활용, 포화도

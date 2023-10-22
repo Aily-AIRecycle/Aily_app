@@ -164,6 +164,7 @@ class LoginScreenState extends State<LoginScreen> {
         phonenumber = jsonResponse['phonenumber'];
         gender = jsonResponse['gender'];
 
+
         if (id == 'admin') {
           user.nickname = nickname;
           Future.delayed(Duration.zero, () {
@@ -228,7 +229,6 @@ class LoginScreenState extends State<LoginScreen> {
           birth = jsonResponse["birth"];
           nickname = jsonResponse['nickname'];
           point = jsonResponse['point'];
-          image = jsonResponse['profile'];
           phonenumber = jsonResponse['phonenumber'];
           gender = jsonResponse['gender'];
 
