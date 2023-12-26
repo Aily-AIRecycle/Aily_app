@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:aily/screens/register_screen/register3_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import '../../class/urls.dart';
+import '../../class/URLs.dart';
 import '../../class/user_data.dart';
 import '../../utils/show_dialog.dart';
 
@@ -26,7 +26,7 @@ class VerificationScreenState extends State<VerificationScreen> {
     const oneSecond = Duration(seconds: 1);
     Timer.periodic(oneSecond, (Timer timer) {
       setState(() {
-        remainingTime -= oneSecond; // 1초씩 감소
+        remainingTime -= oneSecond;
         if (remainingTime <= Duration.zero) {
           emailCode = 'zzk~!#@28765tj942jgd)__(&&%(*@#';
           timer.cancel();
@@ -37,8 +37,8 @@ class VerificationScreenState extends State<VerificationScreen> {
   }
 
   void sendVerificationCode(useremail) async {
-    Response<dynamic> response = await _sendemail(useremail);
-    if (response.data != "Failed") {
+    Response<dynamic> response = await _sendEmail(useremail);
+    if (response.statusCode == 200) {
       emailCode = response.data;
       Future.delayed(Duration.zero, () {
         showMsg(context, "이메일", "메일을 발송했습니다.");
@@ -55,7 +55,6 @@ class VerificationScreenState extends State<VerificationScreen> {
       });
     }
   }
-
   @override
   void initState() {
     super.initState();
@@ -68,10 +67,10 @@ class VerificationScreenState extends State<VerificationScreen> {
     super.dispose();
   }
 
-  Future<Response<dynamic>> _sendemail(String email) async {
+  Future<Response<dynamic>> _sendEmail(String email) async {
     try {
       Response<dynamic> response = await dio.post(
-        URL().authURL,
+        URL().emailAuthURL,
         options: Options(
           headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -85,22 +84,21 @@ class VerificationScreenState extends State<VerificationScreen> {
     }
   }
 
-  Future<Map<String, dynamic>> signUser(String phone, String id,
-      String password, String nickname, String birth) async {
+  Future<Map<String, dynamic>> signUser(String birth, String email, String password,
+      String gender, String nickname, String phone) async {
     final Map<String, dynamic> data = {
-      "phonenumber": phone,
-      "id": id,
-      "password": password,
       "birth": birth,
+      "email": email,
+      "password": password,
+      "gender": gender,
       "nickname": nickname,
-      "profile": "${URL().baseURL}/static/images/default/image.png",
-      "await": true
+      "phonenumber": phone
     };
 
     try {
       Dio dio = Dio();
       Response<dynamic> response = await dio.post(
-        URL().signURL,
+        URL().joinURL,
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -120,8 +118,8 @@ class VerificationScreenState extends State<VerificationScreen> {
     if (_codeTextController.text.trim() == emailCode) {
       showMsg(context, '인증', '이메일 인증에 성공하였습니다 !');
       try {
-        await signUser("0${user.phonenumber.toString()}", user.email!,
-            user.password!, user.nickname!, user.birth!);
+        await signUser(user.birth!, user.email!, user.password!,
+            user.gender!, user.nickname!, user.phonenumber!);
       } catch (e) {
         Navigator.pushReplacement(
           context,

@@ -18,6 +18,7 @@ class UserData {
   String? nickname = '';
   String? birth = '';
   int? point = 0;
-  int? phonenumber = 0;
+  String? phonenumber = '';
+  String? gender = '';
   File? profile = File('');
 }

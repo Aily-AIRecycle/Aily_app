@@ -11,7 +11,7 @@ class QRScreen extends StatefulWidget {
 
 class QRScreenState extends State<QRScreen> {
   Color myColor = const Color(0xFFF8B195);
-  int? phonenumber;
+  String? phonenumber;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class QRScreenState extends State<QRScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final qrSize = screenWidth * 0.6;
     final qrCode = QrImageView(
-      data: "0$phonenumber",
+      data: phonenumber!,
       version: QrVersions.auto,
       size: qrSize,
     );
@@ -72,7 +72,7 @@ class QRScreenState extends State<QRScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '전화번호 : 0$phonenumber',
+                '전화번호 : $phonenumber',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18.0,

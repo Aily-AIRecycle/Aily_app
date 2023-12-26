@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import '../../class/urls.dart';
 import '../../class/user_data.dart';
+import 'editname_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class ProfileScreenState extends State<ProfileScreen> {
   Color myColor = const Color(0xFFF8B195);
   late File? _image;
-  String? email, username, phonemumber, birth;
+  String? email, username, phonemumber, birth, gender;
   File? profile;
   UserData user = UserData();
   final storage = const FlutterSecureStorage();
@@ -27,12 +27,15 @@ class ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       email = user.email;
       username = user.nickname;
-      phonemumber = "0${user.phonenumber.toString()}";
-      //profile = user.profile;
+      phonemumber = user.phonenumber;
       _image = user.profile;
-      DateTime dateTime =
-          DateFormat("E, dd MMM yyyy HH:mm:ss 'GMT'").parseUtc(user.birth!);
-      birth = DateFormat("yyyy-MM-dd").format(dateTime);
+      birth = user.birth;
+      gender = user.gender;
+      if (gender == "F") {
+        gender = "여자";
+      } else{
+        gender = "남자";
+      }
     });
   }
 
@@ -74,10 +77,9 @@ class ProfileScreenState extends State<ProfileScreen> {
   Future<void> _uploadImage(File file) async {
     try {
       final formData = FormData.fromMap({
-        'username': username,
-        'file': await MultipartFile.fromFile(file.path, filename: 'image.png'),
+        'image': await MultipartFile.fromFile(file.path, filename: 'image.png'),
       });
-      final response = await Dio().post(URL().imageURL, data: formData);
+      final response = await Dio().post("${URL().imageURL}/$username", data: formData);
 
       if (response.statusCode == 200) {
         //
@@ -116,8 +118,8 @@ class ProfileScreenState extends State<ProfileScreen> {
                     Stack(
                       children: [
                         SizedBox(
-                          width: 250,
-                          height: 250,
+                          width: MediaQuery.of(context).size.width * 1,
+                          height: MediaQuery.of(context).size.height * 0.33,
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             child: ClipOval(
@@ -126,33 +128,37 @@ class ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        Positioned(
-                            top: MediaQuery.of(context).size.height * 0.245,
-                            left: MediaQuery.of(context).size.width * 0.252,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.transparent,
-                                    width: 0.0,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.4),
-                                      spreadRadius: 3,
-                                    ),
-                                  ],
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.45,
+                              top: MediaQuery.of(context).size.height * 0.26),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.transparent,
+                                width: 0.0,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 3,
                                 ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _pickImage(context, ImageSource.gallery);
-                                  },
-                                  child: const Text('EDIT',
-                                      style: TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w500)),
-                                ))),
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                _pickImage(context, ImageSource.gallery);
+                              },
+                              child: const Text('EDIT',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500)
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                     Text(username!,
@@ -195,17 +201,29 @@ class ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: Column(
                           children: [
-                            buildListTile(username!, '이름', 70.0, Icons.edit_off,
+                            buildListTile(username!, '이름', 70.0, Icons.edit,
+                                Colors.black, () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const EditnameScreen(),
+                                    ),
+                                  );
+                                  if (result != null) {
+                                    setState(() {
+                                      _getUser();
+                                    });
+                                  }
+                                }),
+                            buildListTile(gender!, '성별', 70.0, Icons.done,
                                 Colors.grey, () {}),
-                            buildListTile("남자", '성별', 70.0, Icons.edit,
-                                Colors.black, () {}),
                             buildListTile(phonemumber!, '연락처', 65.0,
-                                Icons.edit_off, Colors.grey, () {}),
-                            buildListTile(birth!, '생년월일', 50.0, Icons.edit,
-                                Colors.black, () {}),
+                                Icons.done, Colors.grey, () {}),
+                            buildListTile(birth!, '생년월일', 50.0, Icons.done,
+                                Colors.grey, () {}),
                             SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.06),
+                                MediaQuery.of(context).size.height * 0.03),
                             ElevatedButton(
                               onPressed: () {
                                 //수정된 데이터 저장
@@ -234,13 +252,15 @@ class ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ],
-                        )),
+                        ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-        ));
+        ),
+    );
   }
 }
 

@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:aily/screens/register_screen/register_screen.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import '../manager_screen/manager_screen.dart';
 import 'package:aily/utils/show_dialog.dart';
-import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -30,8 +28,8 @@ class LoginScreenState extends State<LoginScreen> {
   Color myColor = const Color(0xFFF8B195);
   late Uint8List imgData;
   final storage = const FlutterSecureStorage();
-  late int point, phonenumber;
-  late String nickname, image, email, birth;
+  late int point;
+  late String nickname, image, email, birth, phonenumber, gender;
   late File? profile;
   late String savedId;
   bool isIdSaved = false;
@@ -83,6 +81,7 @@ class LoginScreenState extends State<LoginScreen> {
         user.point = point;
         user.profile = profile;
         user.phonenumber = phonenumber;
+        user.gender = gender;
       } catch (e) {
         //
       }
@@ -91,7 +90,7 @@ class LoginScreenState extends State<LoginScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const NavigatorScreen()),
-          (route) => false,
+              (route) => false,
         );
       });
     } catch (e) {
@@ -157,19 +156,22 @@ class LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         //로그인 성공
         var jsonResponse = response.data;
-        email = jsonResponse[0]['id'];
-        birth = jsonResponse[0]["birth"];
-        nickname = jsonResponse[0]['nickname'];
-        point = jsonResponse[0]['point'];
-        image = jsonResponse[0]['profile'];
-        phonenumber = jsonResponse[0]['User_phonenumber'];
+        email = jsonResponse['email'];
+        birth = jsonResponse["birth"];
+        nickname = jsonResponse['nickname'];
+        point = jsonResponse['point'];
+        image = jsonResponse['profile'];
+        phonenumber = jsonResponse['phonenumber'];
+        gender = jsonResponse['gender'];
+
+
         if (id == 'admin') {
           user.nickname = nickname;
           Future.delayed(Duration.zero, () {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const ManagerScreen()),
-              (route) => false,
+                  (route) => false,
             );
           });
         } else {
@@ -184,7 +186,7 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<Response<dynamic>> loginUser(String id, String password) async {
+  Future<Response<dynamic>> loginUser(String email, String password) async {
     try {
       Response<dynamic> response = await dio.post(
         URL().loginURL,
@@ -194,13 +196,17 @@ class LoginScreenState extends State<LoginScreen> {
           },
         ),
         data: {
-          'id': id,
+          'email': email,
           'password': password,
         },
       );
 
       return response;
+
     } catch (error) {
+      Future.delayed(Duration.zero, () {
+        showMsg(context, "로그인", "Server is down");
+      });
       rethrow;
     }
   }
@@ -209,26 +215,25 @@ class LoginScreenState extends State<LoginScreen> {
     final String id = idctrl.text.trim();
     final String pw = passwordctrl.text.trim();
 
-    var bytes = utf8.encode(pw);
-    var sha256Result = sha256.convert(bytes);
-    String password = sha256Result.toString();
     // 로그인 처리 로직 구현
     if (id.isEmpty || pw.isEmpty) {
       showMsg(context, "로그인", "아이디 또는 비밀번호를 입력해주세요.");
     } else {
-      try {
-        Response<dynamic> response = await loginUser(id, password);
-        if (response.statusCode == 200) {
-          //로그인 성공
+      //try {
+      Response<dynamic> response = await loginUser(id, pw);
+      if (response.statusCode == 200) {
+        //로그인 성공
+        try {
           var jsonResponse = response.data;
-          email = jsonResponse[0]['id'];
-          birth = jsonResponse[0]["birth"];
-          nickname = jsonResponse[0]['nickname'];
-          point = jsonResponse[0]['point'];
-          image = jsonResponse[0]['profile'];
-          phonenumber = jsonResponse[0]['User_phonenumber'];
+          email = jsonResponse['email'];
+          birth = jsonResponse["birth"];
+          nickname = jsonResponse['nickname'];
+          point = jsonResponse['point'];
+          phonenumber = jsonResponse['phonenumber'];
+          image = jsonResponse['profile'];
+          gender = jsonResponse['gender'];
 
-          savedInfo(id, password);
+          savedInfo(id, pw);
           if (id == 'admin') {
             user.nickname = nickname;
             Future.delayed(Duration.zero, () {
@@ -245,9 +250,11 @@ class LoginScreenState extends State<LoginScreen> {
             });
             downloadImageFromServer(nickname);
           }
+        } catch (e) {
+          Future.delayed(Duration.zero, () {
+            showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
+          });
         }
-      } catch (e) {
-        showMsg(context, "로그인", "아이디 또는 비밀번호가 올바르지 않습니다.");
       }
     }
   }
@@ -301,7 +308,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             border: const OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                              BorderRadius.all(Radius.circular(10.0)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: myColor),
@@ -309,7 +316,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
+                              BorderSide(color: Colors.grey.shade400),
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
@@ -328,7 +335,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             border: const OutlineInputBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
+                              BorderRadius.all(Radius.circular(10.0)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: myColor),
@@ -336,7 +343,7 @@ class LoginScreenState extends State<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade400),
+                              BorderSide(color: Colors.grey.shade400),
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
@@ -348,8 +355,8 @@ class LoginScreenState extends State<LoginScreen> {
                               value: isCheckboxChecked,
                               checkColor: Colors.white,
                               fillColor:
-                                  MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
+                              MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) {
                                   if (states.contains(MaterialState.selected)) {
                                     return myColor;
                                   }
@@ -380,7 +387,7 @@ class LoginScreenState extends State<LoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const RegisterScreen()));
+                                    const RegisterScreen()));
                           },
                           style: ElevatedButton.styleFrom(
                             fixedSize: Size(

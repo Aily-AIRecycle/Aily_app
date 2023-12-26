@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:async';
 import 'package:aily/screens/home_screen/push_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +23,19 @@ class HomeScreenState extends State<HomeScreen> {
   var user = UserData();
   Dio dio = Dio();
   Timer? timer;
-
+  late int? totalPoints;
   String? filterStr = "전체";
   List<Map<String, dynamic>> filteredData = [];
   late List<Map<String, dynamic>> processedData = [];
   final ScrollController _scrollController = ScrollController();
+  bool dataAvailable = true;
 
   @override
   void initState() {
     super.initState();
     _getUser();
     timer = Timer.periodic(const Duration(milliseconds: 100),
-        (timer) => accrualdetails(user.phonenumber.toString()));
+        (timer) => accrualdetails(user.nickname!));
   }
 
   @override
@@ -52,40 +52,56 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   //이용내역
-  void accrualdetails(String phoneNumber) async {
+  void accrualdetails(String nickname) async {
     try {
+      Dio dio = Dio();
+      dio.options.headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      dio.options.responseType = ResponseType.json;
+
       Response response = await dio.post(
-        URL().staticsURL,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-        ),
+        URL().historypaxURL,
         data: {
-          'phonenumber': "0$phoneNumber",
+          'nickname': user.nickname,
         },
       );
-      if (response.statusCode == 200) {
-        timer?.cancel();
-        Map<String, dynamic> data = json.decode(response.data);
-        List<dynamic> phoneNumberList = data["0$phoneNumber"];
 
+      if (response.data != null) {
+        if (response.statusCode == 200) {
+
+          timer?.cancel();
+          List<dynamic> responseData = response.data;
+
+          List<Map<String, dynamic>> phoneNumberList = List<Map<String, dynamic>>.from(responseData);
+
+          setState(() {
+            processedData = phoneNumberList.map((item) {
+              String dateString = item["day"] + " " + item["time"];
+              DateTime time = DateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초").parse(dateString);
+              String timestamp = time.toLocal().toString().split(".")[0]; // Remove milliseconds
+              return {
+                "gen": item["gen"],
+                "can": item["can"],
+                "pet": item["pet"],
+                "point": item["point"],
+                "day": item["day"],
+                "time": item["time"],
+                "TIMESTAMP": timestamp,
+              };
+            }).toList();
+            totalPoints = processedData.map((item) => item["point"] as int).reduce((sum, point) => sum + point);
+            dataAvailable = processedData.isNotEmpty;
+            _refreshData();
+          });
+        }
+      } else{
         setState(() {
-          processedData = phoneNumberList.map((item) {
-            return {
-              "phonenumber": item["phonenumber"],
-              "GEN": item["GEN"],
-              "CAN": item["CAN"],
-              "PET": item["PET"],
-              "POINT": item["POINT"],
-              "TIMESTAMP": item["TIMESTAMP"],
-            };
-          }).toList();
-          _refreshData();
+          dataAvailable = false;
         });
       }
     } catch (error) {
-      //
+      // Handle errors
     }
   }
 
@@ -109,7 +125,7 @@ class HomeScreenState extends State<HomeScreen> {
         startDate = now.subtract(const Duration(days: 90));
       } else if (filterStr == '6개월') {
         startDate = now.subtract(const Duration(days: 180));
-      } else if (filterStr == '12개월') {
+      } else if (filterStr == '1년') {
         startDate = now.subtract(const Duration(days: 365));
       }
 
@@ -131,7 +147,7 @@ class HomeScreenState extends State<HomeScreen> {
           buildPopupMenuItem('1개월'),
           buildPopupMenuItem('3개월'),
           buildPopupMenuItem('6개월'),
-          buildPopupMenuItem('12개월'),
+          buildPopupMenuItem('1년'),
         ];
       },
       onSelected: (String value) {
@@ -300,7 +316,7 @@ class HomeScreenState extends State<HomeScreen> {
                           padding: const EdgeInsets.only(right: 15),
                           child: GestureDetector(
                             onTap: () {
-                              accrualdetails(user.phonenumber.toString());
+                              accrualdetails(user.nickname!);
                             },
                             child: const Icon(Icons.refresh, size: 25),
                           ),
@@ -311,18 +327,19 @@ class HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: screenHeight * 0.023),
                   processedData.isNotEmpty
                       ? Text(
-                          '${NumberFormat('#,###').format(processedData.last["POINT"])}원',
+                          '${NumberFormat('#,###').format(totalPoints)}원',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w500,
                           ),
                         )
-                      : const SizedBox(
-                          width: 15,
-                          height: 15,
-                          child: CircularProgressIndicator(
-                              color: Colors.black, strokeWidth: 1.5),
-                        ),
+                      : const Text(
+                    '0원',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
                 ],
               ),
             ),
@@ -357,95 +374,100 @@ class HomeScreenState extends State<HomeScreen> {
                     const Text('이용내역',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 18)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.45),
-                    Text(filterStr!),
-                    buildPopupMenuButton(),
+                    const Expanded(
+                      child: SizedBox.shrink(),
+                    ),
+                    Row(
+                      children: [
+                        Text(filterStr!),
+                        buildPopupMenuButton(),
+                      ],
+                    )
                   ],
                 ),
                 const SizedBox(height: 20),
                 Expanded(
-                    child: RefreshIndicator(
-                        color: Colors.black,
-                        onRefresh: () async {
-                          accrualdetails(user.phonenumber.toString());
-                        },
-                        child: ScrollConfiguration(
-                          behavior: const ScrollBehavior(),
-                          child: GlowingOverscrollIndicator(
-                            axisDirection: AxisDirection.down,
-                            color: Colors.white,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: filteredData.length,
-                              reverse: true,
-                              controller: _scrollController,
-                              itemBuilder: (context, index) {
-                                final item = filteredData[index];
-                                int gen = item["GEN"];
-                                int can = item["CAN"];
-                                int pet = item["PET"];
-                                int cntValue = (gen + can + pet) * 100;
+                  child: RefreshIndicator(
+                    color: Colors.black,
+                    onRefresh: () async {
+                      accrualdetails(user.nickname!);
+                    },
+                    child: ScrollConfiguration(
+                      behavior: const ScrollBehavior(),
+                      child: GlowingOverscrollIndicator(
+                        axisDirection: AxisDirection.down,
+                        color: Colors.white,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: dataAvailable ? filteredData.length : 1, // Adjust the itemCount
+                          reverse: true,
+                          controller: _scrollController,
+                          itemBuilder: (context, index) {
+                            if (!dataAvailable) {
+                              return Column(
+                                children: [
+                                  SizedBox(height: screenHeight * 0.16),
+                                  const Text(
+                                    "이용하신 내역이 없습니다.",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              final item = filteredData[index];
+                              int gen = item["gen"];
+                              int can = item["can"];
+                              int pet = item["pet"];
+                              int cntValue = (gen + can + pet) * 100;
 
-                                if (item["POINT"] == 0) {
-                                  return Column(
-                                    children: [
-                                      SizedBox(height: screenHeight * 0.16),
-                                      const Text(
-                                        "이용하신 내역이 없습니다.",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w400,
+                              DateTime dateTime = DateTime.parse(item['TIMESTAMP']);
+                              String formattedDate =
+                                  '${dateTime.year}-${dateTime.month}-${dateTime.day}';
+
+                              if (index == processedData.length - 1 ||
+                                  formattedDate !=
+                                      '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
+                                return Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        formattedDate,
+                                        style: const TextStyle(
+                                          color: Colors.black54,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    ],
-                                  );
-                                } else {
-                                  DateTime dateTime =
-                                      DateTime.parse(item['TIMESTAMP']);
-                                  String formattedDate =
-                                      '${dateTime.year}-${dateTime.month}-${dateTime.day}';
-
-                                  if (index == processedData.length - 1 ||
-                                      formattedDate !=
-                                          '${DateTime.parse(processedData[index + 1]['TIMESTAMP']).year}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).month}-${DateTime.parse(processedData[index + 1]['TIMESTAMP']).day}') {
-                                    // WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-                                    // });
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          title: Text(
-                                            formattedDate,
-                                            style: const TextStyle(
-                                              color: Colors.black54,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                        listTile(
-                                          context,
-                                          '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
-                                          item['TIMESTAMP'],
-                                          cntValue,
-                                          item["POINT"],
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return listTile(
+                                    ),
+                                    listTile(
                                       context,
-                                      '일반: ${item["GEN"]}, 캔: ${item["CAN"]}, 페트: ${item["PET"]}',
+                                      '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
                                       item['TIMESTAMP'],
                                       cntValue,
-                                      item["POINT"],
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                          ),
-                        ))),
+                                      item["point"],
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return listTile(
+                                  context,
+                                  '일반: ${item["gen"]}, 캔: ${item["can"]}, 페트: ${item["pet"]}',
+                                  item['TIMESTAMP'],
+                                  cntValue,
+                                  item["point"],
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+
               ],
             ),
           ),

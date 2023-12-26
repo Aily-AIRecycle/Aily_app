@@ -50,6 +50,8 @@ dependencies:
   liquid_progress_indicator: ^0.4.0
   crypto: ^3.0.3
   webview_flutter_wkwebview: ^3.4.4
+  cached_network_image: ^3.3.0
+  fl_chart: ^0.64.0
     
 dev_dependencies:
   flutter_test:

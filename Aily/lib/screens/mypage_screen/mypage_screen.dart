@@ -1,3 +1,4 @@
+import 'package:aily/screens/manager_screen/chart_screen.dart';
 import 'package:aily/screens/mypage_screen/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:aily/board/faq_screen.dart';
 import 'package:aily/board/notice_screen.dart';
 import '../../class/user_data.dart';
+import 'chart_screen.dart';
 
 class Mypagescreen extends StatefulWidget {
   const Mypagescreen({Key? key}) : super(key: key);
@@ -77,14 +79,6 @@ class MypagescreenState extends State<Mypagescreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        // IconButton(
-                        //   onPressed: () {},
-                        //   icon: SvgPicture.asset(
-                        //     'assets/images/setting_icon.svg',
-                        //     width: 24,
-                        //     height: 24,
-                        //   ),
-                        // ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -239,30 +233,37 @@ class MypagescreenState extends State<Mypagescreen> {
                   children: [
                     Container(
                       height: MediaQuery.of(context).size.height * 0.45,
-                      padding: const EdgeInsets.fromLTRB(24, 80, 24, 50),
+                      padding: const EdgeInsets.fromLTRB(24, 60, 24, 50),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          listTile(context, 'assets/images/chart.svg',
+                              '통계', () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const UserChartScreen()));
+                              }),
                           listTile(context, 'assets/images/faq_icon.svg',
                               '자주 묻는 질문(FAQ)', () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const FAQScreen()));
-                          }),
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const FAQScreen()));
+                              }),
                           listTile(
                               context, 'assets/images/notice_icon.svg', '공지사항',
-                              () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
+                                  () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
                                         const NoticeScreen()));
-                          }),
+                              }),
                           listTile(context, 'assets/images/logout-box-line.svg',
                               '로그아웃', () {
-                            logout(context);
-                          }),
+                                logout(context);
+                              }),
                         ],
                       ),
                     ),

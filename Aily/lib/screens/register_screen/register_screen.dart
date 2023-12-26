@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:aily/class/user_data.dart';
 import 'package:aily/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'register2_screen.dart';
-import 'package:crypto/crypto.dart';
+import 'package:dio/dio.dart';
+import '../../class/URLs.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -16,9 +16,12 @@ class RegisterScreenState extends State<RegisterScreen> {
   Color myColor = const Color(0xFFF8B195);
   late final TextEditingController _emailController = TextEditingController();
   late final TextEditingController _domainController = TextEditingController();
-  late final TextEditingController _password1Controller = TextEditingController();
-  late final TextEditingController _password2Controller = TextEditingController();
+  late final TextEditingController _password1Controller =
+      TextEditingController();
+  late final TextEditingController _password2Controller =
+      TextEditingController();
   UserData user = UserData();
+  Dio dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +80,8 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  PopupMenuButton<String> buildPopupMenuButton(TextEditingController controller) {
+  PopupMenuButton<String> buildPopupMenuButton(
+      TextEditingController controller) {
     return PopupMenuButton<String>(
       itemBuilder: (BuildContext context) {
         return <PopupMenuEntry<String>>[
@@ -94,7 +98,8 @@ class RegisterScreenState extends State<RegisterScreen> {
           controller.text = value;
         });
       },
-      child: const Icon(Icons.keyboard_arrow_down_outlined, size: 24, color: Colors.grey),
+      child: const Icon(Icons.keyboard_arrow_down_outlined,
+          size: 24, color: Colors.grey),
     );
   }
 
@@ -113,13 +118,15 @@ class RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void _nextpage() {
-    String email     = _emailController.text.trim();
-    String domain    = _domainController.text.trim();
+  Future<void> _nextpage() async {
+    String email = _emailController.text.trim();
+    String domain = _domainController.text.trim();
     String password1 = _password1Controller.text.trim();
     String password2 = _password2Controller.text.trim();
 
-    if (email.isEmpty || !RegExp(r'^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$').hasMatch(domain)){
+    if (email.isEmpty ||
+        !RegExp(r'^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,})$')
+            .hasMatch(domain)) {
       showMsg(context, '회원가입', '이메일 형식이 올바르지 않습니다.');
       return;
     }
@@ -129,15 +136,25 @@ class RegisterScreenState extends State<RegisterScreen> {
             .hasMatch(password1)) {
       showMsg(context, '회원가입', '영문, 숫자, 특수문자 조합 8글자 이상을 입력해주세요.');
       return;
-    } else if (password1 == password2){
+    } else if (password1 == password2) {
       //성공
       user.email = '$email@$domain';
-      user.password = sha256.convert(utf8.encode(password2)).toString();
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const Register2Screen()));
-    }else{
+      user.password = password2.toString();
+      Response response = await dio.post(
+        URL().emailChkURL,
+        data: {
+          'email': user.email,
+        },
+      );
+
+      var jsonResponse = response.data;
+      if (jsonResponse == "yes") {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Register2Screen()));
+      } else {
+        showMsg(context, '회원가입', '이미 사용중인 이메일입니다.');
+      }
+
+    } else {
       showMsg(context, '회원가입', '비밀번호를 다시 한 번 확인해주세요.');
     }
   }
@@ -201,7 +218,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.03),
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.03),
                 child: const Text(
                   '@',
                   style: TextStyle(
@@ -251,7 +269,6 @@ class RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
-
           SizedBox(height: MediaQuery.of(context).size.height * 0.06),
           const Text(
             '비밀번호',
@@ -310,7 +327,7 @@ class RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            onEditingComplete: (){
+            onEditingComplete: () {
               _nextpage();
             },
             obscureText: true,

@@ -208,13 +208,14 @@ class DictionaryScreenState extends State<DictionaryScreen> {
       final int number = data['number'];
       final String name = data['name'];
       final String contents = data['contents'];
+      final String image = data['image'];
 
       // number 값의 맨 끝 자리 숫자를 이용하여 재활용 가능 여부확인
       final lastDigit = number % 10;
       final status = lastDigit == 1;
 
       listTiles.add(
-        listTile(context, name, widget.title, status, contents),
+        listTile(context, name, widget.title, status, contents, image),
       );
     }
     return Expanded(
@@ -224,7 +225,7 @@ class DictionaryScreenState extends State<DictionaryScreen> {
 }
 
 Widget listTile(BuildContext context, String title, test1, bool isAvailable,
-    String contents) {
+    String contents, String image) {
   Color myColor = const Color(0xFFF8B195);
 
   return Column(
@@ -292,7 +293,7 @@ Widget listTile(BuildContext context, String title, test1, bool isAvailable,
                   context,
                   MaterialPageRoute(
                       builder: (context) => DictContentsScreen(
-                          title: title, contents: contents)));
+                          title: title, contents: contents, image: image)));
             },
           ),
         ),
