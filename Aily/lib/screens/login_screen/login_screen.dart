@@ -230,6 +230,7 @@ class LoginScreenState extends State<LoginScreen> {
           nickname = jsonResponse['nickname'];
           point = jsonResponse['point'];
           phonenumber = jsonResponse['phonenumber'];
+          image = jsonResponse['profile'];
           gender = jsonResponse['gender'];
 
           savedInfo(id, pw);
