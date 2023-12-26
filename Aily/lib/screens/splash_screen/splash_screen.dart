@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:path_provider/path_provider.dart';
+//import 'package:path_provider/path_provider.dart';
 import '../../class/urls.dart';
 import '../../class/user_data.dart';
 import '../login_screen/login_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import '../manager_screen/manager_screen.dart';
+//import '../manager_screen/manager_screen.dart';
 import '../navigator_screen/navigator.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -36,34 +36,41 @@ class SplashScreenState extends State<SplashScreen>
 
   Future<void> downloadImageFromServer(String nickname) async {
     try {
-      final directory = await getApplicationDocumentsDirectory();
-      final imagePath = '${directory.path}/profile.png';
-      final profileFile = File(imagePath);
+      // final directory = await getApplicationDocumentsDirectory();
+      // final imagePath = '${directory.path}/profile.png';
+      // final profileFile = File(imagePath);
 
-      try {
-        Response response = await dio.get(
-          image,
-          options: Options(responseType: ResponseType.bytes),
-        );
+      // try {
+      //   Response response = await dio.get(
+      //     image,
+      //     options: Options(responseType: ResponseType.bytes),
+      //   );
 
-        if (await profileFile.exists()) {
-          await profileFile.delete();
-        }
-        await profileFile.writeAsBytes(response.data, flush: true);
-        setState(() {
-          profile = profileFile;
-        });
-        user.email = email;
-        user.birth = birth;
-        user.nickname = nickname;
-        user.point = point;
-        user.profile = profile;
-        user.phonenumber = phonenumber;
-        user.gender = gender;
-      } catch (e) {
-        //
-      }
+      //   if (await profileFile.exists()) {
+      //     await profileFile.delete();
+      //   }
+      //   await profileFile.writeAsBytes(response.data, flush: true);
+      //   setState(() {
+      //     profile = profileFile;
+      //   });
+      //   user.email = email;
+      //   user.birth = birth;
+      //   user.nickname = nickname;
+      //   user.point = point;
+      //   user.profile = profile;
+      //   user.phonenumber = phonenumber;
+      //   user.gender = gender;
+      // } catch (e) {
+      //   //
+      // }
       //현재 페이지를 제거 후 페이지 이동
+      user.email = "tlsdbscks123@gmail.com";
+      user.birth = "2000-07-07";
+      user.nickname = nickname;
+      user.point = 0;
+      //user.profile = profile;
+      user.phonenumber = "01033567286";
+      user.gender = "M";
       Future.delayed(Duration.zero, () {
         Navigator.pushAndRemoveUntil(
           context,
@@ -92,54 +99,55 @@ class SplashScreenState extends State<SplashScreen>
       );
 
       return response;
-
     } catch (error) {
       rethrow;
     }
   }
 
   Future<void> stroageChk() async {
-    final id = await storage.read(key: 'id');
-    final pw = await storage.read(key: 'pw');
-    if (id != null && pw != null && id.isNotEmpty && pw.isNotEmpty) {
-      try {
-        Response<dynamic> response = await loginUser(id, pw);
-        if (response.statusCode == 200) {
-          // 로그인 성공
-          var jsonResponse = response.data;
-          email = jsonResponse['email'];
-          birth = jsonResponse["birth"];
-          nickname = jsonResponse['nickname'];
-          point = jsonResponse['point'];
-          image = jsonResponse['profile'];
-          phonenumber = jsonResponse['phonenumber'];
-          gender = jsonResponse['gender'];
-          if (id == 'admin') {
-            user.nickname = nickname;
-            Future.delayed(Duration.zero, () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const ManagerScreen()),
-                (route) => false,
-              );
-            });
-          } else {
-            downloadImageFromServer(nickname);
-          }
-        }
-      } catch (e) {
-        // 오류 처리
-      }
-    } else {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
-      });
-    }
+    nickname = "신윤찬";
+    downloadImageFromServer(nickname);
+    // final id = await storage.read(key: 'id');
+    // final pw = await storage.read(key: 'pw');
+    // if (id != null && pw != null && id.isNotEmpty && pw.isNotEmpty) {
+    //   try {
+    //     Response<dynamic> response = await loginUser(id, pw);
+    //     if (response.statusCode == 200) {
+    //       // 로그인 성공
+    //       var jsonResponse = response.data;
+    //       email = jsonResponse['email'];
+    //       birth = jsonResponse["birth"];
+    //       nickname = jsonResponse['nickname'];
+    //       point = jsonResponse['point'];
+    //       image = jsonResponse['profile'];
+    //       phonenumber = jsonResponse['phonenumber'];
+    //       gender = jsonResponse['gender'];
+    //       if (id == 'admin') {
+    //         user.nickname = nickname;
+    //         Future.delayed(Duration.zero, () {
+    //           Navigator.pushAndRemoveUntil(
+    //             context,
+    //             MaterialPageRoute(builder: (context) => const ManagerScreen()),
+    //             (route) => false,
+    //           );
+    //         });
+    //       } else {
+    //         downloadImageFromServer(nickname);
+    //       }
+    //     }
+    //   } catch (e) {
+    //     // 오류 처리
+    //   }
+    // } else {
+    //   Future.delayed(Duration.zero, () {
+    //     Navigator.pushReplacement(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => const LoginScreen(),
+    //       ),
+    //     );
+    //   });
+    // }
   }
 
   @override
